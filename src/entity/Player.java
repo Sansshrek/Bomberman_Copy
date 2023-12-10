@@ -156,12 +156,17 @@ public class Player extends Entity{
             // gp.bombs.add(bomb);
             // gp.obj.add(bomb);
         }
-        if(keyH.statsPressed){
+        if(keyH.statsPressed){ // da eliminare
             System.out.println("\nFire "+firePower);
             System.out.println("Speed "+speed);
             System.out.println("BombNumber "+bombNumber);
             System.out.println("Life "+lifeNumber);
             keyH.statsPressed = false;
+        }
+        if(keyH.firePressed){
+            firePower++;
+            System.out.println("Range fuoco aumentato");
+            keyH.firePressed = false;
         }
     }
 

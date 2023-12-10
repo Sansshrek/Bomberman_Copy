@@ -112,63 +112,90 @@ public class Bomb extends SuperObject{
     
         // Draw the horizontal line of the explosion
         for (int i = 1; i <= firePower; i++) {
-            
 
             //da eliminare
             g2.setColor(Color.GREEN);
-            g2.drawRect(x - i*bombWidth, y, gp.tileSize, gp.tileSize);
+            g2.drawRect(x + i*bombWidth, y, gp.tileSize, gp.tileSize);
 
-            if((x-i*bombWidth) > (gp.gameBorderLeftX)){
-
-                int positionSx = (((x - i*bombWidth- (gp.tileSize+gp.tileSize/2)))/gp.tileSize)  * 10 + ((y - (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize );
-                int positionDx = (((x + i*bombWidth- (gp.tileSize+gp.tileSize/2)))/gp.tileSize)  * 10 + ((y - (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize );
-                
-                if(gp.obj.get(positionSx) != null){
+            int positionSx = (((x - i*bombWidth- (gp.tileSize+gp.tileSize/2)))/gp.tileSize)  * 10 + ((y - (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize );
+            if(positionSx >= 0 && positionSx < 140) {  // check se la posizione è nell'array
+                if(gp.obj.get(positionSx) != null){   // check se quella posizione è un blocco esistente
                     System.out.println(gp.obj.get(positionSx).name);
                     gp.obj.set(positionSx, gp.obj.get(positionSx).power);
                 }
-                if(gp.obj.get(positionDx) != null){
-                    System.out.println(gp.obj.get(positionDx).name);
-                    gp.obj.set(positionDx, gp.obj.get(positionDx).power);
-                }
+                
                 // Draw the middle part of the explosion
                 if (i < firePower) { 
-                    g2.drawImage(expMidSx[fireTimer], x - i * bombWidth, y, bombWidth, bombHeight, null);
-                    
-                    g2.drawImage(expMidDx[fireTimer], x + i * bombWidth, y, bombWidth, bombHeight, null);
+                    if((x-i*bombWidth) > (gp.gameBorderLeftX-1))
+                        g2.drawImage(expMidSx[fireTimer], x - i * bombWidth, y, bombWidth, bombHeight, null);
                 }
 
                 // Draw the end part of the explosion
                 if (i == firePower) {
-                    g2.drawImage(expEndSx[fireTimer], x - i * bombWidth, y, bombWidth, bombHeight, null);
-                    g2.drawImage(expEndDx[fireTimer], x + i * bombWidth, y, bombWidth, bombHeight, null);
+                    if((x-i*bombWidth) > (gp.gameBorderLeftX-1))
+                        g2.drawImage(expEndSx[fireTimer], x - i * bombWidth, y, bombWidth, bombHeight, null);
+                }
+            }
+            
+            int positionDx = (((x + i*bombWidth- (gp.tileSize+gp.tileSize/2)))/gp.tileSize)  * 10 + ((y - (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize);
+            if(positionDx >= 0 && positionDx <140){
+                if(gp.obj.get(positionDx) != null){
+                    System.out.println(gp.obj.get(positionDx).name);
+                    gp.obj.set(positionDx, gp.obj.get(positionDx).power);
+                }
+
+                if (i < firePower){
+                    if((x+i*bombWidth) < gp.gameBorderRightX)
+                        g2.drawImage(expMidDx[fireTimer], x + i * bombWidth, y, bombWidth, bombHeight, null);
+                }
+
+                if (i == firePower){
+                    if((x+i*bombWidth) < gp.gameBorderRightX)
+                        g2.drawImage(expEndDx[fireTimer], x + i * bombWidth, y, bombWidth, bombHeight, null);
                 }
             }
         }
 
         // Draw the vertical line of the explosion
         for (int i = 1; i <= firePower; i++) {
+
             int positionUp = ((x-(gp.tileSize+gp.tileSize/2))/gp.tileSize ) * 10 + ((y- i*bombWidth- (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize );
+            if(positionUp >= 0 && positionUp <140){
+                if(gp.obj.get(positionUp) != null){
+                    System.out.println(gp.obj.get(positionUp).name);
+                    gp.obj.set(positionUp, gp.obj.get(positionUp).power);
+                }
+
+                if (i < firePower){
+                    if((y-i*bombWidth) > gp.gameBorderUpY-1)
+                        g2.drawImage(expMidUp[fireTimer], x, y - i * bombHeight, bombWidth, bombHeight, null);
+                }
+                
+                if (i == firePower){
+                    if((y-i*bombWidth) > gp.gameBorderUpY-1)
+                        g2.drawImage(expEndUp[fireTimer], x, y - i * bombHeight, bombWidth, bombHeight, null);
+                }
+            }
+
             int positionDw = ((x-(gp.tileSize+gp.tileSize/2))/gp.tileSize ) * 10 + ((y+ i*bombWidth- (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize );
-            if(gp.obj.get(positionUp) != null){
-                System.out.println(gp.obj.get(positionUp).name);
-                gp.obj.set(positionUp, gp.obj.get(positionUp).power);
+            if(positionDw >= 0 && positionDw <140){
+                if(gp.obj.get(positionDw) != null){
+                    System.out.println(gp.obj.get(positionDw).name);
+                    gp.obj.set(positionDw, gp.obj.get(positionDw).power);
+                }
+
+                if (i < firePower){
+                    if((y+i*bombWidth) < gp.gameBorderDownY)
+                        g2.drawImage(expMidBtm[fireTimer], x, y + i * bombHeight, bombWidth, bombHeight, null);
+                }
+                
+                if (i == firePower){
+                    if((y+i*bombWidth) < gp.gameBorderDownY)
+                        g2.drawImage(expEndBtm[fireTimer], x, y + i * bombHeight, bombWidth, bombHeight, null);
+                }
             }
-            if(gp.obj.get(positionDw) != null){
-                System.out.println(gp.obj.get(positionDw).name);
-                gp.obj.set(positionDw, gp.obj.get(positionDw).power);
-            }
-            // Draw the middle part of the explosion
-            if (i < firePower) {
-                g2.drawImage(expMidUp[fireTimer], x, y - i * bombHeight, bombWidth, bombHeight, null);
-                g2.drawImage(expMidBtm[fireTimer], x, y + i * bombHeight, bombWidth, bombHeight, null);
-            }
-    
-            // Draw the end part of the explosion
-            if (i == firePower) {
-                g2.drawImage(expEndUp[fireTimer], x, y - i * bombHeight, bombWidth, bombHeight, null);
-                g2.drawImage(expEndBtm[fireTimer], x, y + i * bombHeight, bombWidth, bombHeight, null);
-            }
+
+            
         }
     }  
 }  
