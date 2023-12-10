@@ -1,0 +1,29 @@
+CONSEGNA
+1) Consegnare il diagramma delle classi (esclusivamente in formato PDF)
+2) Il progetto eclipse del gioco, con tutte le cartelle relative a codice sorgente e
+risorse (la classe JBomberMan deve contenere il main del gioco)
+(esclusivamente in formato ZIP e NON RAR o altri formati)
+3) la documentazione completa generata con javadoc (nella forma di una
+cartella contenuta nel progetto eclipse del punto 2)
+4) Una relazione INDIVIDUALE (esclusivamente in formato PDF) che descrive,
+almeno i seguenti punti:
+    a) Il numero di matricola
+    b) corso (presenza MZ o Teledidattica)
+    c) nome, cognome
+    d) le decisioni di progettazione relative a ognuna delle specifiche (vedi
+    sotto)
+    e) I design pattern adottati, dove e perchè
+    f) l’uso degli stream
+    g) altre note progettuali e di sviluppo
+
+
+SPECIFICHE
+1) gestione del profilo utente, nickname, avatar, partite giocate, vinte e perse, livello ...
+2) gestione di una partita completa con almeno due livelli giocabili, due tipi di nemici
+con grafica e comportamento di gioco differenti, con gestione del punteggio, delle
+vite, di 3 power up, shermata hai vinto, game over, continua.
+3) uso appropriato di MVC [1,2], Observer Observable e di altri Design Pattern
+4) adozione di Java Swing [2] o JavaFX [3] per la GUI
+5) utilizzo appropriato di stream
+6) riproduzione di audio sample (si veda appendice AudioManager.Java)
+7) animazioni ed effetti speciali
