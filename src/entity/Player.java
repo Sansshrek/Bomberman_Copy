@@ -52,6 +52,7 @@ public class Player extends Entity{
         hitboxDefaultX = hitboxX;
         hitboxDefaultY = hitboxY;
 
+        gp.bombH.addBombNumber();
         setPlayerDefaultValues();
         getPlayerImage();
     }
@@ -62,7 +63,6 @@ public class Player extends Entity{
         speed = 2;
         direction = "down";
         firePower = 1;
-        bombNumber = 1;
         lifeNumber = 5;
         score = 0;
     }
@@ -88,6 +88,7 @@ public class Player extends Entity{
     }
 
     public void update(){  // update viene chiamato 60 volte al secondo
+
 
         if(keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed){
 
@@ -196,7 +197,7 @@ public class Player extends Entity{
                 break;
                 case "bomb":
                     score += 10;
-                    bombNumber += 1;
+                    gp.bombH.addBombNumber();
                 break;
                 case "skate":
                     score += 10;
@@ -286,7 +287,6 @@ public class Player extends Entity{
 
          //da eliminare
         g2.setColor(Color.YELLOW);
-        g2.drawRect(gp.gameBorderLeftX, gp.gameBorderUpY, 13*gp.tileSize, 11*gp.tileSize);
-
+        g2.drawRect(gp.gameBorderLeftX, gp.gameBorderUpY-1, 13*gp.tileSize, 11*gp.tileSize);
     }
 }

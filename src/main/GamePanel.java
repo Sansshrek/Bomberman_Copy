@@ -39,10 +39,10 @@ public class GamePanel extends JPanel implements Runnable{
 
     public HUD hud = new HUD(this);
     public CollisionChecker cChecker = new CollisionChecker(this);
-    TileManager tileM = new TileManager(this);
+    public TileManager tileM = new TileManager(this);
     KeyHandler keyH = new KeyHandler();
-    public BombHandler bombH = new BombHandler(tileSize);
     Thread gameThread;
+    public BombHandler bombH = new BombHandler(tileSize);
     public Player player = new Player(this, keyH);
     public Enemy enemy = new Enemy(this, 10,0);
     public Enemy enemy2 = new Enemy(this, 10,3);

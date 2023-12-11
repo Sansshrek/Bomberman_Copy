@@ -135,6 +135,16 @@ public class TileManager {
         }
     }
 
+    public boolean isHouse(int x, int y) {
+        // Assicurati che la posizione x e y sia all'interno dei limiti della mappa
+        if (x >= gp.gameBorderLeftX && x < 13*gp.tileSize && y >= gp.gameBorderUpY && y < 11*gp.tileSize) {
+            if(groundTileNum[(((x - (gp.tileSize+gp.tileSize/2)))/gp.tileSize)][((y - (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize )] == 3){
+                return true; // Restituisci true se il tile corrispondente alla posizione (x, y) è un palazzo
+            }
+        } 
+        return false;
+    }
+
     public void drawMap(Graphics2D g2, int startWidth, int startHeight, String type){
         int col = 0;
         int row = 0;

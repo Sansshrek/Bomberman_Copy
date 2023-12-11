@@ -15,8 +15,9 @@ public class Bomb extends SuperObject{
     int spriteCounter = 0;
     int spriteNum = 1;
     int firePower;
-    public boolean exploded = false, extinguished = false;
+    public boolean exploded = false, extinguished = false, newBombAv = false;
     public boolean endedAnimation = false;
+    int blockIndexSx = 10, blockIndexDx = 10, blockIndexUp = 10, blockIndexDw = 10;
     BufferedImage bombImage, largeBomb, mediumBomb, smallBomb;
     int bombWidth, bombHeight;
     BufferedImage[] expCenter = new BufferedImage[5];
@@ -94,6 +95,10 @@ public class Bomb extends SuperObject{
         g2.drawImage(bombImage, x, y, bombWidth, bombHeight, null); 
     }
     public void generateFires(Graphics2D g2){
+        if(!newBombAv){
+            newBombAv = true;
+            gp.bombH.addBombNumber();
+        }
         if(fireTimer == 4){  // dopo 9 animazioni / 1.5 secondi
             extinguished = true;
         }else if(spriteCounter > 10){  // ogni 10/60 volte al secondo 
@@ -110,18 +115,36 @@ public class Bomb extends SuperObject{
         // Draw the center of the explosion
         g2.drawImage(expCenter[fireTimer], x, y, bombWidth, bombHeight, null); 
     
+        g2.setColor(Color.RED);  // da eliminare
         // Draw the horizontal line of the explosion
+
         for (int i = 1; i <= firePower; i++) {
+            int positionSx = (((x - i*bombWidth - (gp.tileSize+gp.tileSize/2)))/gp.tileSize)  * 10 + ((y - (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize );
+            
+            // System.out.println("PosSX "+positionSx+" PosDX "+positionDx+" PosUP "+positionUp+" PosDW "+positionDw);
 
-            //da eliminare
-            g2.setColor(Color.GREEN);
-            g2.drawRect(x + i*bombWidth, y, gp.tileSize, gp.tileSize);
+            // g2.drawRect(x - i*bombWidth, y, gp.tileSize, gp.tileSize);
+            g2.drawRect(x - i*bombWidth, y, gp.tileSize, gp.tileSize);
 
-            int positionSx = (((x - i*bombWidth- (gp.tileSize+gp.tileSize/2)))/gp.tileSize)  * 10 + ((y - (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize );
+            if(i >= blockIndexSx){
+                break;
+            }
+
             if(positionSx >= 0 && positionSx < 140) {  // check se la posizione è nell'array
+                // int tileFire = gp.tileM.groundTileNum[(x-i*bombWidth)/gp.tileSize][y/gp.tileSize];
+                // if(gp.tileM.tile[tileFire].collision){
+                //     System.out.println("collision");
+                // }
+                if(gp.tileM.isHouse(x-i*bombWidth, y)){
+                    // System.out.println("X "+(x-i*bombWidth)+" Y "+y+" Collision SX true");
+                    break;
+                    // System.out.println("collision");
+                }
                 if(gp.obj.get(positionSx) != null){   // check se quella posizione è un blocco esistente
                     System.out.println(gp.obj.get(positionSx).name);
-                    gp.obj.set(positionSx, gp.obj.get(positionSx).power);
+                    gp.obj.get(positionSx).destroy();
+                    // gp.obj.set(positionSx, gp.obj.get(positionSx).power);
+                    blockIndexSx = i;
                 }
                 
                 // Draw the middle part of the explosion
@@ -137,11 +160,29 @@ public class Bomb extends SuperObject{
                 }
             }
             
+        }
+        
+        for (int i = 1; i <= firePower; i++) {
+            g2.drawRect(x + i*bombWidth, y, gp.tileSize, gp.tileSize);
+
+            if(i >= blockIndexDx){
+                break;
+            }
+
             int positionDx = (((x + i*bombWidth- (gp.tileSize+gp.tileSize/2)))/gp.tileSize)  * 10 + ((y - (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize);
             if(positionDx >= 0 && positionDx <140){
+
+                
+                if(gp.tileM.isHouse(x+i*bombWidth, y)){
+                    // System.out.println("X "+(x+i*bombWidth)+" Y "+y+" Collision DX true");
+                    break;
+                    // System.out.println("collision");
+                }
+
                 if(gp.obj.get(positionDx) != null){
                     System.out.println(gp.obj.get(positionDx).name);
-                    gp.obj.set(positionDx, gp.obj.get(positionDx).power);
+                    gp.obj.get(positionDx).destroy();
+                    blockIndexDx = i;
                 }
 
                 if (i < firePower){
@@ -156,17 +197,30 @@ public class Bomb extends SuperObject{
             }
         }
 
-        // Draw the vertical line of the explosion
         for (int i = 1; i <= firePower; i++) {
+            g2.drawRect(x, y - i*bombWidth, gp.tileSize, gp.tileSize);
+
+            if(i >= blockIndexUp){
+                break;
+            }
 
             int positionUp = ((x-(gp.tileSize+gp.tileSize/2))/gp.tileSize ) * 10 + ((y- i*bombWidth- (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize );
             if(positionUp >= 0 && positionUp <140){
+                
+                if(gp.tileM.isHouse(x, y-i*bombWidth)){
+                    // System.out.println("X "+x+" Y "+(y-i*bombWidth)+" Collision UP true");
+                    break;
+                    // System.out.println("collision");
+                }
+
                 if(gp.obj.get(positionUp) != null){
                     System.out.println(gp.obj.get(positionUp).name);
-                    gp.obj.set(positionUp, gp.obj.get(positionUp).power);
+                    gp.obj.get(positionUp).destroy();
+                    blockIndexUp = i;
                 }
 
                 if (i < firePower){
+                    System.out.println("y "+(y-i*bombWidth)+ " game "+gp.gameBorderUpY);
                     if((y-i*bombWidth) > gp.gameBorderUpY-1)
                         g2.drawImage(expMidUp[fireTimer], x, y - i * bombHeight, bombWidth, bombHeight, null);
                 }
@@ -176,13 +230,33 @@ public class Bomb extends SuperObject{
                         g2.drawImage(expEndUp[fireTimer], x, y - i * bombHeight, bombWidth, bombHeight, null);
                 }
             }
+        }
+        
+        for (int i = 1; i <= firePower; i++) {
+
+            g2.drawRect(x, y + i*bombWidth, gp.tileSize, gp.tileSize);
+
+            if(i >= blockIndexDw){
+                break;
+            }
 
             int positionDw = ((x-(gp.tileSize+gp.tileSize/2))/gp.tileSize ) * 10 + ((y+ i*bombWidth- (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize );
             if(positionDw >= 0 && positionDw <140){
-                if(gp.obj.get(positionDw) != null){
-                    System.out.println(gp.obj.get(positionDw).name);
-                    gp.obj.set(positionDw, gp.obj.get(positionDw).power);
+                
+                if(gp.tileM.isHouse(x, y+i*bombWidth)){
+                    // System.out.println("X "+x+" Y "+(y+i*bombWidth)+" Collision DW true");
+                    break;
+                    // System.out.println("collision");
                 }
+
+                if(gp.obj.get(positionDw).name == "block"){  // è un blocco
+                    System.out.println(gp.obj.get(positionDw).name);
+                    gp.obj.get(positionDw).destroy();
+                    blockIndexDw = i;
+                }
+                // else if(gp.obj.get(positionDw) != null && gp.obj.ge){  // è un powerUp
+                //     gp.obj.set(positionDw, null);
+                // }
 
                 if (i < firePower){
                     if((y+i*bombWidth) < gp.gameBorderDownY)
@@ -194,8 +268,6 @@ public class Bomb extends SuperObject{
                         g2.drawImage(expEndBtm[fireTimer], x, y + i * bombHeight, bombWidth, bombHeight, null);
                 }
             }
-
-            
         }
     }  
 }  

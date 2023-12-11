@@ -87,7 +87,7 @@ public class BombHandler extends Entity{
         x = (x*ogTileSize*scale) + (ogTileSize+ogTileSize/2)*gp.scale;   // posizione x dell'Enemy IN ALTO A SINISTRA
         y = (y*ogTileSize*scale) + (2*ogTileSize)*gp.scale;    // posizione y dell'Enemy IN ALTO A SINISTRA
         this.speed = 0;
-        this.direction = "down";''
+        this.direction = "down";
         
     }
 

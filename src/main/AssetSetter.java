@@ -30,9 +30,8 @@ public class AssetSetter {
     }
     public void setBlocks(){
         boolean checkExit = false;
-        int numBlock = (int)(Math.random()*(50-33))+33;  // 33-50 blocchi a random
+        int numBlock = (int)(Math.random()*(40-33))+33;  // 33-40 blocchi a random
         System.out.println(numBlock);
-        System.out.println("Ciao");
         ArrayList<Integer> avPos = availablePos();
         for(int i=0; i<avPos.size(); i++){
             System.out.println(avPos.get(i));
@@ -61,7 +60,7 @@ public class AssetSetter {
             }else
                 powerUp = getPowerUp();
             tileM.blockTileNum[blockX][blockY] = -1;
-            gp.obj.set(position, new Block(gp, blockX*gp.tileSize + (gp.tileSize+gp.tileSize/2), blockY*gp.tileSize + (2*gp.tileSize + (gp.tileSize/2)), powerUp));
+            gp.obj.set(position, new Block(gp, blockX*gp.tileSize + (gp.tileSize+gp.tileSize/2), blockY*gp.tileSize + (2*gp.tileSize + (gp.tileSize/2)), powerUp, position));
         }
         for(int i=0; i<130; i++){  // inizializzamo l'array vuoto cosi che dopo mettiamo 
             if(gp.obj.get(i) != null)

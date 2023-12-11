@@ -27,7 +27,7 @@ public class CollisionChecker {
         int entityBottomRow = entityBottomWorldY / gp.tileSize;
         int entityCenterX = ((entityLeftWorldX + entityRightWorldX) / 2 ) / gp.tileSize;
         int entityCenterY = ((entityTopWorldY + entityBottomWorldY) / 2 ) / gp.tileSize;
-
+        
         int tileNum1, tileNum2, tileCenter;
 
         switch(entity.direction){

@@ -4,25 +4,13 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-import javax.imageio.ImageIO;
-
 import main.GamePanel;
 
 public class BombHandler{
     int bombTimer = 0;
     int spriteCounter = 0;
     int spriteNum = 1;
-    BufferedImage bombImage, largeBomb, mediumBomb, smallBomb;
-    int bombWidth, bombHeight, tileSize;
-    BufferedImage[] expCenter = new BufferedImage[5];
-    BufferedImage[] expEndUp = new BufferedImage[5];
-    BufferedImage[] expEndBtm = new BufferedImage[5];
-    BufferedImage[] expEndSx = new BufferedImage[5];
-    BufferedImage[] expEndDx = new BufferedImage[5];
-    BufferedImage[] expMidUp = new BufferedImage[5];
-    BufferedImage[] expMidBtm = new BufferedImage[5];
-    BufferedImage[] expMidSx = new BufferedImage[5];
-    BufferedImage[] expMidDx = new BufferedImage[5];
+    int bombWidth, bombHeight, bombNumber, tileSize;
     private ArrayList<Bomb> bombs = new ArrayList<>();
     private ArrayList<Fire> fires = new ArrayList<>();
     public Graphics2D g2;
@@ -32,38 +20,22 @@ public class BombHandler{
         this.tileSize = tileSize;
         this.bombWidth = tileSize;
         this.bombHeight = tileSize;
-        try {
-            //sprite delle bombe
-            largeBomb = bombImage = ImageIO.read(getClass().getResourceAsStream("../res/bomb/largeBomb.png"));
-            mediumBomb = ImageIO.read(getClass().getResourceAsStream("../res/bomb/mediumBomb.png"));
-            smallBomb = ImageIO.read(getClass().getResourceAsStream("../res/bomb/smallBomb.png"));
-            // sprite delle esplosioni
-            for(int i=1; i<=5; i++){
-                expCenter[i-1] = ImageIO.read(getClass().getResourceAsStream("../res/bomb/exp"+i+"/expCenter.png"));
-                expEndUp[i-1] = ImageIO.read(getClass().getResourceAsStream("../res/bomb/exp"+i+"/expEndUp.png"));
-                expEndBtm[i-1] = ImageIO.read(getClass().getResourceAsStream("../res/bomb/exp"+i+"/expEndBtm.png"));
-                expEndSx[i-1] = ImageIO.read(getClass().getResourceAsStream("../res/bomb/exp"+i+"/expEndSx.png"));
-                expEndDx[i-1] = ImageIO.read(getClass().getResourceAsStream("../res/bomb/exp"+i+"/expEndDx.png"));
-                expMidUp[i-1] = ImageIO.read(getClass().getResourceAsStream("../res/bomb/exp"+i+"/expMidUp.png"));
-                expMidBtm[i-1] = ImageIO.read(getClass().getResourceAsStream("../res/bomb/exp"+i+"/expMidBtm.png"));
-                expMidSx[i-1] = ImageIO.read(getClass().getResourceAsStream("../res/bomb/exp"+i+"/expMidSx.png"));
-                expMidDx[i-1] = ImageIO.read(getClass().getResourceAsStream("../res/bomb/exp"+i+"/expMidDx.png"));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    }
+
+    public void addBombNumber(){
+        bombNumber+=1; 
     }
 
     public void createBomb(GamePanel gp, int x, int y, int firePower){
-        bombs.add(new Bomb(gp, x, y, firePower, tileSize, g2));
-        g2.drawImage(largeBomb, x, y, null);
+        if(bombNumber > 0){
+            bombs.add(new Bomb(gp, x, y, firePower, tileSize, g2));
+            bombNumber--;
+        }
     }
 
     public void updateBomb(){
         for (Bomb bomb : bombs) {
             if(bomb.exploded){
-                int explosionX = bomb.x;
-                int explosionY = bomb.y;
                 bomb.generateFires(g2);
             }else if(!bomb.extinguished){
                 bomb.draw(g2); 

@@ -11,6 +11,7 @@ public class SuperObject {
     public BufferedImage image;
     public String name;
     public int x, y;
+    public int indexObj;
     public boolean collision = false;
     public Rectangle hitbox;
     public int hitboxDefaultX = 0;
@@ -27,6 +28,10 @@ public class SuperObject {
     public void draw(Graphics2D g2, GamePanel gp){
 
         g2.drawImage(image, x, y, tileSize, tileSize, null);
+    }
+    
+    public void destroy(){
+        
     }
 
     public void update(){
