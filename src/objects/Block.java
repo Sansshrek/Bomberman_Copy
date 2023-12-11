@@ -10,7 +10,7 @@ public class Block extends SuperObject {
     int spriteCounter = 0;
     int spriteNum = 1;
     BufferedImage img1, img2, img3, img4, destroyimg1, destroyimg2, destroyimg3, destroyimg4, destroyimg5, destroyimg6;
-    boolean exploded = false, extinguished = false;
+    boolean eploded = false, extinguished = false;
     public Block(GamePanel gp, int x, int y, String powerUp, int position){
         super(gp);
         this.x = x;
@@ -43,17 +43,16 @@ public class Block extends SuperObject {
         }
     }
 
-    public void destroy(){
-        spriteNum = 1;
-        exploded = true;
+    public void destroy(){  // se il blocco è esploso
+        spriteNum = 1;  // imposta a 1 lo spriteNum per prendere la prima animazione dell'esplosione
+        exploded = true;  // imposta la variabile bool dell'esplosione a true
     }
 
     public void update(){
         spriteCounter++;
-        if(!extinguished){
-            if(exploded){
+        if(!extinguished){  // se ancora non ha finito di esplodere
+            if(exploded){  // se il blocco è esploso inizia l'animazione dell'esplosione
                 if(spriteCounter > 10){
-                    System.out.println("EXPLODE");
                     switch(spriteNum){
                         case 1:
                             image = destroyimg1;
@@ -80,12 +79,12 @@ public class Block extends SuperObject {
                             spriteNum++;
                         break;
                         default:
-                            extinguished = true;
+                            extinguished = true;  // il blocco ha finito di esplodere
                     }
                     spriteCounter = 0;
                 }
             }
-            else{
+            else{  // altrimenti se il blocco ancora non è esploso continua l'animazione normale
                 if(spriteCounter > 15){  // ogni 15/60 volte al secondo 
                     switch(spriteNum){
                         case 1:  // dalla 1 alla 2
@@ -108,12 +107,11 @@ public class Block extends SuperObject {
                     spriteCounter = 0;
                 }
             }
-        }else{
-            extinguished = true;
-            if(power.name != "nothing")
-                gp.obj.set(indexObj, power);
+        }else{  // altrimenti se ha finito di esplodere
+            if(power.name != "nothing")  // se il blocco ha un powerUp
+                gp.obj.set(indexObj, power);  // allora il blocco viene cambiato in powerUp nella lista degli oggetti
             else
-                gp.obj.set(indexObj, null);
+                gp.obj.set(indexObj, null);  // altrimenti viene rimosso dalla lista se non ha powerUp
         }
     }
 }

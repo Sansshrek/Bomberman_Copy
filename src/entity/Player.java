@@ -287,6 +287,6 @@ public class Player extends Entity{
 
          //da eliminare
         g2.setColor(Color.YELLOW);
-        g2.drawRect(gp.gameBorderLeftX, gp.gameBorderUpY-1, 13*gp.tileSize, 11*gp.tileSize);
+        g2.drawRect(gp.gameBorderLeftX, gp.gameBorderUpY, 13*gp.tileSize, 11*gp.tileSize);
     }
 }

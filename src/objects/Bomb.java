@@ -17,7 +17,7 @@ public class Bomb extends SuperObject{
     int firePower;
     public boolean exploded = false, extinguished = false, newBombAv = false;
     public boolean endedAnimation = false;
-    int blockIndexSx = 10, blockIndexDx = 10, blockIndexUp = 10, blockIndexDw = 10;
+    int stopIndexSx = 10, stopIndexDx = 10, stopIndexUp = 10, stopIndexDw = 10;
     BufferedImage bombImage, largeBomb, mediumBomb, smallBomb;
     int bombWidth, bombHeight;
     BufferedImage[] expCenter = new BufferedImage[5];
@@ -117,7 +117,7 @@ public class Bomb extends SuperObject{
     
         g2.setColor(Color.RED);  // da eliminare
         // Draw the horizontal line of the explosion
-
+ 
         for (int i = 1; i <= firePower; i++) {
             int positionSx = (((x - i*bombWidth - (gp.tileSize+gp.tileSize/2)))/gp.tileSize)  * 10 + ((y - (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize );
             
@@ -126,25 +126,22 @@ public class Bomb extends SuperObject{
             // g2.drawRect(x - i*bombWidth, y, gp.tileSize, gp.tileSize);
             g2.drawRect(x - i*bombWidth, y, gp.tileSize, gp.tileSize);
 
-            if(i >= blockIndexSx){
+            if(i >= stopIndexSx){  // se il fuoco supera l'index del blocco distrutto allora ferma il fuoco
                 break;
             }
 
             if(positionSx >= 0 && positionSx < 140) {  // check se la posizione è nell'array
-                // int tileFire = gp.tileM.groundTileNum[(x-i*bombWidth)/gp.tileSize][y/gp.tileSize];
-                // if(gp.tileM.tile[tileFire].collision){
-                //     System.out.println("collision");
-                // }
-                if(gp.tileM.isHouse(x-i*bombWidth, y)){
+
+                // System.out.print("SX ");  // da eliminare
+                if(gp.tileM.isHouse(x-i*bombWidth, y)){  // se in quella pos. del fuoco c'è una casa 
                     // System.out.println("X "+(x-i*bombWidth)+" Y "+y+" Collision SX true");
-                    break;
-                    // System.out.println("collision");
+                    break;  // ferma il loop
                 }
-                if(gp.obj.get(positionSx) != null){   // check se quella posizione è un blocco esistente
+                if(gp.obj.get(positionSx) != null && gp.obj.get(positionSx).name != "exit"){   // check se quella posizione è un blocco esistente
                     System.out.println(gp.obj.get(positionSx).name);
-                    gp.obj.get(positionSx).destroy();
+                    gp.obj.get(positionSx).destroy();  // inizia l'animazione dell'esplosione del blocco
                     // gp.obj.set(positionSx, gp.obj.get(positionSx).power);
-                    blockIndexSx = i;
+                    stopIndexSx = i;  // salva la posizione del fuoco cosi che non vada oltre al blocco distrutto
                 }
                 
                 // Draw the middle part of the explosion
@@ -165,7 +162,7 @@ public class Bomb extends SuperObject{
         for (int i = 1; i <= firePower; i++) {
             g2.drawRect(x + i*bombWidth, y, gp.tileSize, gp.tileSize);
 
-            if(i >= blockIndexDx){
+            if(i >= stopIndexDx){
                 break;
             }
 
@@ -173,16 +170,17 @@ public class Bomb extends SuperObject{
             if(positionDx >= 0 && positionDx <140){
 
                 
+                // System.out.print("DX ");  // da eliminare
                 if(gp.tileM.isHouse(x+i*bombWidth, y)){
                     // System.out.println("X "+(x+i*bombWidth)+" Y "+y+" Collision DX true");
                     break;
                     // System.out.println("collision");
                 }
 
-                if(gp.obj.get(positionDx) != null){
+                if(gp.obj.get(positionDx) != null && gp.obj.get(positionDx).name != "exit"){
                     System.out.println(gp.obj.get(positionDx).name);
                     gp.obj.get(positionDx).destroy();
-                    blockIndexDx = i;
+                    stopIndexDx = i;
                 }
 
                 if (i < firePower){
@@ -200,23 +198,24 @@ public class Bomb extends SuperObject{
         for (int i = 1; i <= firePower; i++) {
             g2.drawRect(x, y - i*bombWidth, gp.tileSize, gp.tileSize);
 
-            if(i >= blockIndexUp){
+            if(i >= stopIndexUp){
                 break;
             }
 
             int positionUp = ((x-(gp.tileSize+gp.tileSize/2))/gp.tileSize ) * 10 + ((y- i*bombWidth- (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize );
             if(positionUp >= 0 && positionUp <140){
                 
+                // System.out.print("UP ");  // da eliminare
                 if(gp.tileM.isHouse(x, y-i*bombWidth)){
                     // System.out.println("X "+x+" Y "+(y-i*bombWidth)+" Collision UP true");
                     break;
                     // System.out.println("collision");
                 }
 
-                if(gp.obj.get(positionUp) != null){
+                if(gp.obj.get(positionUp) != null && gp.obj.get(positionUp).name != "exit"){
                     System.out.println(gp.obj.get(positionUp).name);
                     gp.obj.get(positionUp).destroy();
-                    blockIndexUp = i;
+                    stopIndexUp = i;
                 }
 
                 if (i < firePower){
@@ -234,26 +233,30 @@ public class Bomb extends SuperObject{
         
         for (int i = 1; i <= firePower; i++) {
 
-            g2.drawRect(x, y + i*bombWidth, gp.tileSize, gp.tileSize);
+            // g2.drawRect(x, y + i*bombWidth, gp.tileSize, gp.tileSize);
+            g2.setColor(Color.BLUE);
 
-            if(i >= blockIndexDw){
+            if(i >= stopIndexDw){
                 break;
             }
 
             int positionDw = ((x-(gp.tileSize+gp.tileSize/2))/gp.tileSize ) * 10 + ((y+ i*bombWidth- (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize );
             if(positionDw >= 0 && positionDw <140){
                 
+                // System.out.println("X "+x+" Y "+(y+i*bombWidth)+ " calc x:"+ (((x - (gp.tileSize+gp.tileSize/2)))/gp.tileSize)+ " y:"+(((y+i*bombWidth) - (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize ));
+                
+                // System.out.print("DW ");  // da eliminare
                 if(gp.tileM.isHouse(x, y+i*bombWidth)){
                     // System.out.println("X "+x+" Y "+(y+i*bombWidth)+" Collision DW true");
+                    g2.drawRect(x, y+i*bombWidth, bombWidth, bombWidth);
                     break;
                     // System.out.println("collision");
                 }
-
-                if(gp.obj.get(positionDw).name == "block"){  // è un blocco
-                    System.out.println(gp.obj.get(positionDw).name);
-                    gp.obj.get(positionDw).destroy();
-                    blockIndexDw = i;
-                }
+                    if(gp.obj.get(positionDw)!= null && gp.obj.get(positionDw).name != "exit"){  // è un blocco o powerUp che non sia l'uscita
+                        System.out.println(gp.obj.get(positionDw).name);
+                        gp.obj.get(positionDw).destroy();
+                        stopIndexDw = i;
+                    }
                 // else if(gp.obj.get(positionDw) != null && gp.obj.ge){  // è un powerUp
                 //     gp.obj.set(positionDw, null);
                 // }

@@ -137,8 +137,12 @@ public class TileManager {
 
     public boolean isHouse(int x, int y) {
         // Assicurati che la posizione x e y sia all'interno dei limiti della mappa
-        if (x >= gp.gameBorderLeftX && x < 13*gp.tileSize && y >= gp.gameBorderUpY && y < 11*gp.tileSize) {
-            if(groundTileNum[(((x - (gp.tileSize+gp.tileSize/2)))/gp.tileSize)][((y - (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize )] == 3){
+        int xBlock = (((x - (gp.tileSize+gp.tileSize/2)))/gp.tileSize);
+        int yBlock = ((y - (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize );
+        // System.out.print("x: "+xBlock+" y: "+yBlock); // da eliminare
+        if (xBlock >= 0 && xBlock < gp.maxScreenCol && yBlock >= 0 && yBlock < gp.maxScreenRow) {
+            // System.out.println(" block "+blockTileNum[xBlock][yBlock]);  // da eliminare
+            if(blockTileNum[xBlock][yBlock] == 3){
                 return true; // Restituisci true se il tile corrispondente alla posizione (x, y) è un palazzo
             }
         } 

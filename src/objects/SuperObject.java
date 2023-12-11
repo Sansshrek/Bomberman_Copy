@@ -18,6 +18,7 @@ public class SuperObject {
     public int hitboxDefaultY = 0;
     public int tileSize;
     public PowerUp power;
+    boolean exploded = false;
 
     public SuperObject(GamePanel gp){
         this.gp = gp;
@@ -31,7 +32,6 @@ public class SuperObject {
     }
     
     public void destroy(){
-        
     }
 
     public void update(){
