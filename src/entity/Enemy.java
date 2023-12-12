@@ -96,7 +96,6 @@ public class Enemy extends Entity{
         collisionOn = false;
         gp.cChecker.checkTile(this);
         int objIndex = gp.cChecker.checkObj(this, false);
-        powerUpHandler(objIndex); // controlliamo cosa fare con l'oggetto
         // If a collision occurs, check for collisions in all directions and choose a new direction
         if (collisionOn) {
             List<String> directions = Arrays.asList("up", "down", "left", "right");
@@ -165,45 +164,7 @@ public class Enemy extends Entity{
         int entityCenterY = ((entityTopWorldY + entityBottomWorldY) / 2 ) / gp.tileSize+2;
         return entityCenterY*gp.tileSize + gp.tileSize/2;
     }
-    public void powerUpHandler(int index){
-        if(index != 999){  // se non è il valore default
-            String objName = gp.obj.get(index).name;
-            if(objName != "block") // da eliminare
-                System.out.println(objName);
-            gp.obj.set(index, gp.obj.get(index).power);
-            switch(objName){
-                case "fire":
-                
-                break;
-                case "bomb":
-                
-                break;
-                case "skate":
-                
-                break;
-                case "life":
-                
-                break;
-                case "death":
-                    
-                break;
-                case "onigiri":
-                    
-                break;
-                case "apple":
-                    
-                break;
-                case "ice_cream":
-                    
-                break;
-                case "cake":
-                    ;
-                break;
-                case "nothing":
-                break;
-            }
-        }
-    }
+    
     public void draw(){
         BufferedImage image = null;
         
