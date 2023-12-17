@@ -48,16 +48,19 @@ public class Player extends Entity{
         this.hitboxWidth = 11*scale;// larghezza dell'hitbox del player
         this.hitboxHeight = 12*scale;// altezza dell'hitbox del player
         
-        hitbox = new Rectangle(hitboxX,hitboxY, hitboxWidth, hitboxHeight);
         hitboxDefaultX = hitboxX;
         hitboxDefaultY = hitboxY;
 
         gp.bombH.addBombNumber();
         setPlayerDefaultValues();
         getPlayerImage();
+
+        this.hitbox = new Rectangle(hitboxX+x, hitboxY+y, hitboxWidth, hitboxHeight);
     }
 
 	public void setPlayerDefaultValues(){
+        x=0;
+        y=0;
         x = (x*tileSize) + (tileSize+tileSize/2);   // posizione x del player IN ALTO A SINISTRA
         y = (y*tileSize) + 2*tileSize;    // posizione y del player IN ALTO A SINISTRA
         speed = 2;
@@ -107,7 +110,11 @@ public class Player extends Entity{
 
             // CONTROLLA COLLISIONE TILES
             collisionOn = false;
+            hitbox.x = x + hitboxX;
+            hitbox.y = y + hitboxY;
+
             gp.cChecker.checkTile(this);  // controlla se colpiamo qualche blocco
+            gp.cChecker.checkBomb(this);
             // CONTROLLA COLLISIONE OBJECT
             int objIndex = gp.cChecker.checkObj(this, true);
             powerUpHandler(objIndex); // controlliamo cosa fare con l'oggetto
@@ -147,7 +154,7 @@ public class Player extends Entity{
                     }
                 spriteCounter = 0;  // e resetta il counter
                 // System.out.println(x+" "+y);  // da eliminare
-                System.out.println(getPlayerTileX()+ " "+getPlayerTileY());
+                //System.out.println(getPlayerTileX()+ " "+getPlayerTileY());
             }
         }
         if(keyH.bombPressed){ // se preme il tasto P (bomba)
@@ -172,16 +179,28 @@ public class Player extends Entity{
     }
 
     public int getPlayerTileX(){
-        int entityLeftWorldX = x + hitbox.x - (24 * gp.scale);  // Coordinata x dove parte la hitbox
-        int entityRightWorldX = x + hitbox.x + hitbox.width - (24 * gp.scale);  // cordinata x dove arriva la hitbox
+        int entityLeftWorldX = x+hitbox.x - (24 * gp.scale);  // Coordinata x dove parte la hitbox
+        int entityRightWorldX = x+hitbox.x + hitbox.width - (24 * gp.scale);  // cordinata x dove arriva la hitbox
         int entityCenterX = ((entityLeftWorldX + entityRightWorldX) / 2 ) / gp.tileSize+1;
         return entityCenterX*gp.tileSize + gp.tileSize/2;
     }
+    public int getPlayerCenterX(){
+        int entityLeftWorldX = hitbox.x - (24 * gp.scale);  // Coordinata x dove parte la hitbox
+        int entityRightWorldX = hitbox.x + hitbox.width - (24 * gp.scale);  // cordinata x dove arriva la hitbox
+        int entityCenterX = ((entityLeftWorldX + entityRightWorldX) / 2 );
+        return entityCenterX;
+    }
     public int getPlayerTileY(){
-        int entityTopWorldY = y + hitbox.y - (gp.hudHeight + (8 * gp.scale));  // coordinata y dove parte la hitbox
-        int entityBottomWorldY = y + hitbox.y + hitbox.height - (gp.hudHeight + (8 * gp.scale));
+        int entityTopWorldY = y+hitbox.y - (gp.hudHeight + (8 * gp.scale));  // coordinata y dove parte la hitbox
+        int entityBottomWorldY = y+hitbox.y + hitbox.height - (gp.hudHeight + (8 * gp.scale));
         int entityCenterY = ((entityTopWorldY + entityBottomWorldY) / 2 ) / gp.tileSize+2;
         return entityCenterY*gp.tileSize + gp.tileSize/2;
+    }
+    public int getPlayerCenterY(){
+        int entityTopWorldY = hitbox.y - (gp.hudHeight + (8 * gp.scale));  // coordinata y dove parte la hitbox
+        int entityBottomWorldY = hitbox.y + hitbox.height - (gp.hudHeight + (8 * gp.scale));
+        int entityCenterY = ((entityTopWorldY + entityBottomWorldY) / 2 );
+        return entityCenterY;
     }
 
     public void powerUpHandler(int index){
@@ -280,7 +299,9 @@ public class Player extends Entity{
         g2.drawImage(image, x, y, gp.player.width, gp.player.height, null);  // disegna lo sprite del personaggio (image) nella posizione x,y di grandezza tileSize
         //da eliminare
         g2.setColor(Color.BLUE);
-        g2.drawRect(this.hitboxX+x, this.hitboxY+y, this.hitboxWidth, this.hitboxHeight);  
+        // g2.drawRect(this.hitboxX+x, this.hitboxY+y, this.hitboxWidth, this.hitboxHeight);  
+        g2.drawRect(hitbox.x, hitbox.y, hitboxWidth, hitboxHeight);
+        // System.out.println("x: "+hitbox.x+ " y: "+hitbox.y);
 
         g2.setColor(Color.GREEN);
         g2.drawRect(getPlayerTileX(), getPlayerTileY(), tileSize, tileSize);
@@ -289,6 +310,11 @@ public class Player extends Entity{
         g2.setColor(Color.YELLOW);
         g2.drawRect(gp.gameBorderLeftX, gp.gameBorderUpY, 13*gp.tileSize, 11*gp.tileSize);
 
-        System.err.println("CIAO");
+        g2.setColor(Color.RED);
+        g2.drawRect(getPlayerCenterX(), getPlayerCenterY(), 15, 15);
+
+        g2.setColor(Color.RED);
+        g2.drawRect(x, y, width, height);
+
     }
 }

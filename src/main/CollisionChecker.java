@@ -2,6 +2,7 @@ package main;
 
 import entity.Entity;
 import entity.Player;
+import objects.Bomb;
 
 public class CollisionChecker {
     GamePanel gp;
@@ -16,10 +17,10 @@ public class CollisionChecker {
     }
 
     public void checkTile(Entity entity){
-        int entityLeftWorldX = entity.x + entity.hitbox.x - (24 * gp.scale);  // Coordinata x dove parte la hitbox
-        int entityRightWorldX = entity.x + entity.hitbox.x + entity.hitbox.width - (24 * gp.scale);  // cordinata x dove arriva la hitbox
-        int entityTopWorldY = entity.y + entity.hitbox.y - (gp.hudHeight + (8 * gp.scale));  // coordinata y dove parte la hitbox
-        int entityBottomWorldY = entity.y + entity.hitbox.y + entity.hitbox.height - (gp.hudHeight + (8 * gp.scale));  // coordinata y dove arriva la hitbox
+        int entityLeftWorldX = entity.hitbox.x - (24 * gp.scale);  // Coordinata x dove parte la hitbox
+        int entityRightWorldX = entity.hitbox.x + entity.hitbox.width - (24 * gp.scale);  // cordinata x dove arriva la hitbox
+        int entityTopWorldY = entity.hitbox.y - (gp.hudHeight + (8 * gp.scale));  // coordinata y dove parte la hitbox
+        int entityBottomWorldY = entity.hitbox.y + entity.hitbox.height - (gp.hudHeight + (8 * gp.scale));  // coordinata y dove arriva la hitbox
 
         int entityLeftCol = entityLeftWorldX / gp.tileSize;
         int entityRightCol = entityRightWorldX / gp.tileSize;
@@ -33,98 +34,123 @@ public class CollisionChecker {
         switch(entity.direction){
             case "up":
                 entityTopRow = (int)(entityTopWorldY - entity.speed) / gp.tileSize;  // calcoliamo dove si trovera il player quando si va su
-                tileNum1 = gp.tileM.groundTileNum[entityLeftCol][entityTopRow];  // controlliamo l'angolo alto a destra e alto a sinistra della hitbox sul terreno
-                tileNum2 = gp.tileM.groundTileNum[entityRightCol][entityTopRow];
-                tileCenter = gp.tileM.groundTileNum[entityCenterX][entityTopRow];  // controlliamo il centro in alto
+                if(entityTopRow >= 0 && entityTopRow < 17){
+                    tileNum1 = gp.tileM.groundTileNum[entityLeftCol][entityTopRow];  // controlliamo l'angolo alto a destra e alto a sinistra della hitbox sul terreno
+                    tileNum2 = gp.tileM.groundTileNum[entityRightCol][entityTopRow];
+                    tileCenter = gp.tileM.groundTileNum[entityCenterX][entityTopRow];  // controlliamo il centro in alto
 
-                if(gp.tileM.tile[tileNum1].collision && gp.tileM.tile[tileNum2].collision || (entityTopWorldY - entity.speed) < boundaryY){  // sta colpendo un blocco o esco dal boundary
-                    entity.collisionOn = true;
-
-                }if(gp.tileM.tile[tileNum1].collision && !gp.tileM.tile[tileNum2].collision){  // se la spalla sinistra urta un blocco ma la destra no
-                    if(!gp.tileM.tile[tileCenter].collision){  // se il centro in alto non urta un blocco
-                        entity.x += entity.speed;  // lo sposta un po a destra
-                    }else{
-                        entity.collisionOn = true;  // altrimenti non passa
-                    }
-                }else if(!gp.tileM.tile[tileNum1].collision && gp.tileM.tile[tileNum2].collision){  // se la spalla sinistra urta un blocco ma la destra no
-                    if(!gp.tileM.tile[tileCenter].collision){  // se il centro in alto non urta un blocco
-                        entity.x -= entity.speed;  // lo sposta un po a sinistra
-                    }else{
+                    if(gp.tileM.tile[tileNum1].collision && gp.tileM.tile[tileNum2].collision || (entityTopWorldY - entity.speed) < boundaryY){  // sta colpendo un blocco o esco dal boundary
                         entity.collisionOn = true;
+
+                    }if(gp.tileM.tile[tileNum1].collision && !gp.tileM.tile[tileNum2].collision){  // se la spalla sinistra urta un blocco ma la destra no
+                        if(!gp.tileM.tile[tileCenter].collision){  // se il centro in alto non urta un blocco
+                            entity.x += entity.speed;  // lo sposta un po a destra
+                        }else{
+                            entity.collisionOn = true;  // altrimenti non passa
+                        }
+                    }else if(!gp.tileM.tile[tileNum1].collision && gp.tileM.tile[tileNum2].collision){  // se la spalla sinistra urta un blocco ma la destra no
+                        if(!gp.tileM.tile[tileCenter].collision){  // se il centro in alto non urta un blocco
+                            entity.x -= entity.speed;  // lo sposta un po a sinistra
+                        }else{
+                            entity.collisionOn = true;
+                        }
                     }
+                }
+                else{
+                    entity.collisionOn = true;
                 }
             break;
             case "down":
                 entityBottomRow = (int)(entityBottomWorldY + entity.speed) / gp.tileSize;  // calcoliamo dove si trovera il player quando si va su
-                tileNum1 = gp.tileM.groundTileNum[entityLeftCol][entityBottomRow];  // controlliamo l'angolo basso a destra e basso a sinistra della hitbox sul terreno
-                tileNum2 = gp.tileM.groundTileNum[entityRightCol][entityBottomRow];
-                tileCenter = gp.tileM.groundTileNum[entityCenterX][entityBottomRow];  // controlliamo il centro in basso
+                if(entityBottomRow >= 0 && entityBottomRow < 17){
+                    tileNum1 = gp.tileM.groundTileNum[entityLeftCol][entityBottomRow];  // controlliamo l'angolo basso a destra e basso a sinistra della hitbox sul terreno
+                    tileNum2 = gp.tileM.groundTileNum[entityRightCol][entityBottomRow];
+                    tileCenter = gp.tileM.groundTileNum[entityCenterX][entityBottomRow];  // controlliamo il centro in basso
 
-                if(gp.tileM.tile[tileNum1].collision && gp.tileM.tile[tileNum2].collision || (entityBottomWorldY + entity.speed) > boundaryY+boundaryHeight){  // sta colpendo un blocco o esco dal boundary 
-                    entity.collisionOn = true;
-
-                }if(gp.tileM.tile[tileNum1].collision && !gp.tileM.tile[tileNum2].collision){  // se in basso a sinistra urta un blocco ma in basso a destra no
-                    if(!gp.tileM.tile[tileCenter].collision){  // se il centro in basso non urta un blocco
-                        entity.x += entity.speed;  // lo sposta un po a destra
-                    }else{
-                        entity.collisionOn = true;  // altrimenti non passa
-                    }
-                }else if(!gp.tileM.tile[tileNum1].collision && gp.tileM.tile[tileNum2].collision){  // se in basso a sinistra urta un blocco ma in basso a destra no
-                    if(!gp.tileM.tile[tileCenter].collision){  // se il centro in basso non urta un blocco
-                        entity.x -= entity.speed;
-                    }else{
+                    if(gp.tileM.tile[tileNum1].collision && gp.tileM.tile[tileNum2].collision || (entityBottomWorldY + entity.speed) > boundaryY+boundaryHeight){  // sta colpendo un blocco o esco dal boundary 
                         entity.collisionOn = true;
+
+                    }if(gp.tileM.tile[tileNum1].collision && !gp.tileM.tile[tileNum2].collision){  // se in basso a sinistra urta un blocco ma in basso a destra no
+                        if(!gp.tileM.tile[tileCenter].collision){  // se il centro in basso non urta un blocco
+                            entity.x += entity.speed;  // lo sposta un po a destra
+                        }else{
+                            entity.collisionOn = true;  // altrimenti non passa
+                        }
+                    }else if(!gp.tileM.tile[tileNum1].collision && gp.tileM.tile[tileNum2].collision){  // se in basso a sinistra urta un blocco ma in basso a destra no
+                        if(!gp.tileM.tile[tileCenter].collision){  // se il centro in basso non urta un blocco
+                            entity.x -= entity.speed;
+                        }else{
+                            entity.collisionOn = true;
+                        }
                     }
+                }
+                else{
+                    entity.collisionOn = true;
                 }
             break;
             case "left":
                 entityLeftCol = (int)(entityLeftWorldX - entity.speed) / gp.tileSize;  // calcoliamo dove si trovera il player quando si va su
-                tileNum1 = gp.tileM.groundTileNum[entityLeftCol][entityTopRow];  // controlliamo l'angolo alto a sinistra e basso a sinistra della hitbox sul terreno
-                tileNum2 = gp.tileM.groundTileNum[entityLeftCol][entityBottomRow];
-                tileCenter = gp.tileM.groundTileNum[entityLeftCol][entityCenterY];  // controlliamo il centro a sinistra
+                if(entityLeftCol >= 0 && entityLeftCol < 14){
+                    tileNum1 = gp.tileM.groundTileNum[entityLeftCol][entityTopRow];  // controlliamo l'angolo alto a sinistra e basso a sinistra della hitbox sul terreno
+                    tileNum2 = gp.tileM.groundTileNum[entityLeftCol][entityBottomRow];
+                    tileCenter = gp.tileM.groundTileNum[entityLeftCol][entityCenterY];  // controlliamo il centro a sinistra
 
-                if(gp.tileM.tile[tileNum1].collision && gp.tileM.tile[tileNum2].collision || (entityLeftWorldX - entity.speed) < boundaryX){  // sta colpendo un blocco o esco dal boundary
-                    entity.collisionOn = true;
-
-                }if(gp.tileM.tile[tileNum1].collision && !gp.tileM.tile[tileNum2].collision){  // se in alto a sinistra urta un blocco ma in basso a sinistra no
-                    if(!gp.tileM.tile[tileCenter].collision){  // se il centro a sinistra non urta un blocco
-                        entity.y += entity.speed;  // lo sposta un po sotto
-                    }else{
-                        entity.collisionOn = true;  // altrimenti non passa
-                    }
-                }else if(!gp.tileM.tile[tileNum1].collision && gp.tileM.tile[tileNum2].collision){  // se in basso sinistra urta un blocco ma in alto a destra no
-                    if(!gp.tileM.tile[tileCenter].collision){  // se il centro a sinistra non urta un blocco
-                        entity.y -= entity.speed;  // lo sposta un po sopra
-                    }else{
+                    if(gp.tileM.tile[tileNum1].collision && gp.tileM.tile[tileNum2].collision || (entityLeftWorldX - entity.speed) < boundaryX){  // sta colpendo un blocco o esco dal boundary
                         entity.collisionOn = true;
+
+                    }if(gp.tileM.tile[tileNum1].collision && !gp.tileM.tile[tileNum2].collision){  // se in alto a sinistra urta un blocco ma in basso a sinistra no
+                        if(!gp.tileM.tile[tileCenter].collision){  // se il centro a sinistra non urta un blocco
+                            entity.y += entity.speed;  // lo sposta un po sotto
+                        }else{
+                            entity.collisionOn = true;  // altrimenti non passa
+                        }
+                    }else if(!gp.tileM.tile[tileNum1].collision && gp.tileM.tile[tileNum2].collision){  // se in basso sinistra urta un blocco ma in alto a destra no
+                        if(!gp.tileM.tile[tileCenter].collision){  // se il centro a sinistra non urta un blocco
+                            entity.y -= entity.speed;  // lo sposta un po sopra
+                        }else{
+                            entity.collisionOn = true;
+                        }
                     }
+                }
+                else{
+                    entity.collisionOn = true;
                 }
             break;
             case "right":
                 entityRightCol = (int)(entityRightWorldX + entity.speed) / gp.tileSize;  // calcoliamo dove si trovera il player quando si va su
-                tileNum1 = gp.tileM.groundTileNum[entityRightCol][entityTopRow];  // controlliamo l'angolo alto a destra e basso a destra della hitbox sul terreno
-                tileNum2 = gp.tileM.groundTileNum[entityRightCol][entityBottomRow];
-                tileCenter = gp.tileM.groundTileNum[entityRightCol][entityCenterY];  // controlliamo il centro a destra
+                if(entityLeftCol >= 0 && entityLeftCol < 14){
+                    tileNum1 = gp.tileM.groundTileNum[entityRightCol][entityTopRow];  // controlliamo l'angolo alto a destra e basso a destra della hitbox sul terreno
+                    tileNum2 = gp.tileM.groundTileNum[entityRightCol][entityBottomRow];
+                    tileCenter = gp.tileM.groundTileNum[entityRightCol][entityCenterY];  // controlliamo il centro a destra
 
-                if(gp.tileM.tile[tileNum1].collision && gp.tileM.tile[tileNum2].collision || (entityRightWorldX + entity.speed) > boundaryX+boundaryWidth){  // sta colpendo un blocco o esco dal boundary
-                    entity.collisionOn = true;
-
-                }if(gp.tileM.tile[tileNum1].collision && !gp.tileM.tile[tileNum2].collision){  // se in alto a destra urta un blocco ma in basso a destra no
-                    if(!gp.tileM.tile[tileCenter].collision){  // se il centro in alto non urta un blocco
-                        entity.y += entity.speed;  // lo sposta un po sotto
-                    }else{
-                        entity.collisionOn = true;  // altrimenti non passa
-                    }
-                }else if(!gp.tileM.tile[tileNum1].collision && gp.tileM.tile[tileNum2].collision){  // se in basso a destra urta un blocco ma alto a dstra no
-                    if(!gp.tileM.tile[tileCenter].collision){  // se il centro in alto non urta un blocco
-                        entity.y -= entity.speed;  // lo sposta un po sopra
-                    }else{
+                    if(gp.tileM.tile[tileNum1].collision && gp.tileM.tile[tileNum2].collision || (entityRightWorldX + entity.speed) > boundaryX+boundaryWidth){  // sta colpendo un blocco o esco dal boundary
                         entity.collisionOn = true;
+
+                    }if(gp.tileM.tile[tileNum1].collision && !gp.tileM.tile[tileNum2].collision){  // se in alto a destra urta un blocco ma in basso a destra no
+                        if(!gp.tileM.tile[tileCenter].collision){  // se il centro in alto non urta un blocco
+                            entity.y += entity.speed;  // lo sposta un po sotto
+                        }else{
+                            entity.collisionOn = true;  // altrimenti non passa
+                        }
+                    }else if(!gp.tileM.tile[tileNum1].collision && gp.tileM.tile[tileNum2].collision){  // se in basso a destra urta un blocco ma alto a dstra no
+                        if(!gp.tileM.tile[tileCenter].collision){  // se il centro in alto non urta un blocco
+                            entity.y -= entity.speed;  // lo sposta un po sopra
+                        }else{
+                            entity.collisionOn = true;
+                        }
                     }
+                }
+                else{
+                    entity.collisionOn = true;
                 }
             break;
         }
     }
+
+    public void checkTile2(Entity entity){
+        
+    }
+    
     public void checkPlayerCollision(Entity enemy, Player player) {
         // Aggiorna la posizione dell'hitbox del nemico
         enemy.hitbox.x = enemy.x + enemy.hitbox.x;
@@ -220,5 +246,32 @@ public class CollisionChecker {
             }
         }
         return index;
+    }
+
+    public void getTileCenterX(){
+
+    }
+
+    public void getTileCenterY(){
+
+    }
+
+    public void checPlayerNearestTile(){
+    }
+    
+    public void checkBomb(Entity entity){
+        for(Bomb bomb: gp.bombH.bombs){  // iteriamo le bombe presenti
+            if(!bomb.exploded){  // se la bomba non è esplosa
+                
+                // Controlla la collisione tra la hitbox della bomba e la hitbox dell'entità
+                System.out.println("Bomb x "+bomb.hitbox.x+" y "+bomb.hitbox.y);
+                System.out.println("Player x "+entity.hitbox.x+" y "+entity.hitbox.y);
+                if (entity.hitbox.intersects(bomb.hitbox)){
+                    bomb.collision = true; // Imposta un flag di collisione sull'entità
+                    System.out.println("BOMBA");
+
+                }
+            }
+        }
     }
 }

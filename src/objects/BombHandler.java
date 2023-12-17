@@ -11,7 +11,7 @@ public class BombHandler{
     int spriteCounter = 0;
     int spriteNum = 1;
     int bombWidth, bombHeight, bombNumber, tileSize;
-    private ArrayList<Bomb> bombs = new ArrayList<>();
+    public ArrayList<Bomb> bombs = new ArrayList<>();
     private ArrayList<Fire> fires = new ArrayList<>();
     public Graphics2D g2;
     

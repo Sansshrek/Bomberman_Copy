@@ -93,6 +93,9 @@ public class Enemy extends Entity{
 
     public void update(){  // update viene chiamato 60 volte al secondo
             // Check for collisions
+            
+        hitbox.x = x + hitboxX;
+        hitbox.y = y + hitboxY;
         collisionOn = false;
         gp.cChecker.checkTile(this);
         int objIndex = gp.cChecker.checkObj(this, false);

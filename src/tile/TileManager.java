@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.awt.Rectangle;
 
 import javax.imageio.ImageIO;
 
@@ -13,6 +14,7 @@ import main.GamePanel;
 public class TileManager {
     GamePanel gp;
     public Tile[] tile;  // array di tiles che indica all'immagine 
+    public Rectangle[] wallsHitbox;
     public int blockTileNum[][];
     public int groundTileNum[][];  // dove viene salvata la mappa in stile numerico per indicare a quale tiles si riferisce
     public int wallsTileNum[][];  // dove viene salvata la mappa in stile numerico per indicare a quale tiles si riferisce
@@ -115,9 +117,13 @@ public class TileManager {
                     if(line != null){
                         String numbers[] = line.split(" "); // dividiamo la stringa della riga in un'array di numeri
                         int num = Integer.parseInt(numbers[col]);
+                        if(num == 3){
+
+                        }
                         if(type == "ground"){
                             groundTileNum[col][row] = num;  // salviamo il numero nella matrice della pavimento
                             blockTileNum[col][row] = num;
+                        
                         }
                         if(type == "walls")
                             wallsTileNum[col][row] = num;  // salviamo il numero nella matrice del muro

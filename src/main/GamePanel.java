@@ -157,7 +157,7 @@ public class GamePanel extends JPanel implements Runnable{
         player.draw();  // poi il player
         enemy.draw();
         enemy2.draw();
-        drawHUD(g2);
+        // drawHUD(g2);
 
         g2.dispose();  // rimuove il contesto grafico e rilascia ogni risorsa di sistema che sta usando
     }

@@ -138,7 +138,7 @@ public class Bomb extends SuperObject{
                     break;  // ferma il loop
                 }
                 if(gp.obj.get(positionSx) != null && gp.obj.get(positionSx).name != "exit"){   // check se quella posizione è un blocco esistente
-                    System.out.println(gp.obj.get(positionSx).name);
+                    // System.out.println(gp.obj.get(positionSx).name);
                     gp.obj.get(positionSx).destroy();  // inizia l'animazione dell'esplosione del blocco
                     // gp.obj.set(positionSx, gp.obj.get(positionSx).power);
                     stopIndexSx = i;  // salva la posizione del fuoco cosi che non vada oltre al blocco distrutto
@@ -178,7 +178,7 @@ public class Bomb extends SuperObject{
                 }
 
                 if(gp.obj.get(positionDx) != null && gp.obj.get(positionDx).name != "exit"){
-                    System.out.println(gp.obj.get(positionDx).name);
+                    // System.out.println(gp.obj.get(positionDx).name);
                     gp.obj.get(positionDx).destroy();
                     stopIndexDx = i;
                 }
@@ -213,7 +213,7 @@ public class Bomb extends SuperObject{
                 }
 
                 if(gp.obj.get(positionUp) != null && gp.obj.get(positionUp).name != "exit"){
-                    System.out.println(gp.obj.get(positionUp).name);
+                    // System.out.println(gp.obj.get(positionUp).name);
                     gp.obj.get(positionUp).destroy();
                     stopIndexUp = i;
                 }
@@ -253,7 +253,7 @@ public class Bomb extends SuperObject{
                     // System.out.println("collision");
                 }
                     if(gp.obj.get(positionDw)!= null && gp.obj.get(positionDw).name != "exit"){  // è un blocco o powerUp che non sia l'uscita
-                        System.out.println(gp.obj.get(positionDw).name);
+                        // System.out.println(gp.obj.get(positionDw).name);
                         gp.obj.get(positionDw).destroy();
                         stopIndexDw = i;
                     }

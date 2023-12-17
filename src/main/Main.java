@@ -1,6 +1,8 @@
 package main;
 
 import javax.swing.JFrame;
+import java.awt.*;
+import java.awt.event.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -8,6 +10,18 @@ public class Main {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
         window.setTitle("Super Bomberman");
+
+        window.addMouseListener(new MouseListener() {
+        public void mousePressed(MouseEvent me) { }
+        public void mouseReleased(MouseEvent me) { }
+        public void mouseEntered(MouseEvent me) { }
+        public void mouseExited(MouseEvent me) { }
+        public void mouseClicked(MouseEvent me) { 
+          int x = me.getX();
+          int y = me.getY();
+          System.out.println("mouseX: "+x+" mouseY: "+y);
+        }
+        });
 
         GamePanel gamePanel = new GamePanel();
         window.add(gamePanel);
