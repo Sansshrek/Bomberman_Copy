@@ -33,10 +33,9 @@ public class AssetSetter {
         int numBlock = (int)(Math.random()*(40-33))+33;  // 33-40 blocchi a random
         System.out.println(numBlock);
         ArrayList<Integer> avPos = availablePos();
-
-        /* for(int i=0; i<avPos.size(); i++){
+        for(int i=0; i<avPos.size(); i++){
             System.out.println(avPos.get(i));
-        } */  // per la stampa delle pos
+        }
         for(int i=0; i<140; i++){  // inizializzamo l'array vuoto cosi che dopo mettiamo 
             gp.obj.add(null);
         }
@@ -63,11 +62,10 @@ public class AssetSetter {
             tileM.blockTileNum[blockX][blockY] = -1;
             gp.obj.set(position, new Block(gp, blockX*gp.tileSize + (gp.tileSize+gp.tileSize/2), blockY*gp.tileSize + (2*gp.tileSize + (gp.tileSize/2)), powerUp, position));
         }
-        /*
         for(int i=0; i<130; i++){  // inizializzamo l'array vuoto cosi che dopo mettiamo 
             if(gp.obj.get(i) != null)
                 System.err.println(gp.obj.get(i).x+" "+gp.obj.get(i).y);
-        }  */  // per la stampa dell'array
+        }
     }
 
     public String getPowerUp(){

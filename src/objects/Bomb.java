@@ -19,8 +19,7 @@ public class Bomb extends SuperObject{
     public boolean endedAnimation = false;
     int stopIndexSx = 10, stopIndexDx = 10, stopIndexUp = 10, stopIndexDw = 10;
     BufferedImage bombImage, largeBomb, mediumBomb, smallBomb;
-    public int bombWidth;
-    public int bombHeight;
+    int bombWidth, bombHeight;
     BufferedImage[] expCenter = new BufferedImage[5];
     BufferedImage[] expEndUp = new BufferedImage[5];
     BufferedImage[] expEndBtm = new BufferedImage[5];
@@ -40,8 +39,6 @@ public class Bomb extends SuperObject{
         this.firePower = firePower;
         this.bombWidth = tileSize;
         this.bombHeight = tileSize;
-        this.hitbox.x = x;
-        this.hitbox.y = y;
         // this.g2 = g2;
         try {
             //sprite delle bombe
@@ -63,18 +60,17 @@ public class Bomb extends SuperObject{
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("bomb "+x+" "+y);  // da eliminare
+        System.out.println("bomb "+x+" "+y);
     }
 
     public void draw(Graphics2D g2){
-
         spriteCounter++;
         
         if(bombTimer == 9){  // dopo 9 animazioni / 1.5 secondi
             exploded = true;
             spriteNum = 1;  // resetta lo spriteNum prima che esplode la bomba
         }else if(spriteCounter > 10){  // ogni 10/60 volte al secondo 
-            // System.out.println(bombTimer); // da eliminare
+            System.out.println(bombTimer);
             bombTimer++;  // aumenta il contatore della bomba
             switch(spriteNum){
                 case 1:  // dalla 1(small) alla 2(medium)
@@ -142,7 +138,7 @@ public class Bomb extends SuperObject{
                     break;  // ferma il loop
                 }
                 if(gp.obj.get(positionSx) != null && gp.obj.get(positionSx).name != "exit"){   // check se quella posizione è un blocco esistente
-                    // System.out.println(gp.obj.get(positionSx).name); // da eliminare
+                    System.out.println(gp.obj.get(positionSx).name);
                     gp.obj.get(positionSx).destroy();  // inizia l'animazione dell'esplosione del blocco
                     // gp.obj.set(positionSx, gp.obj.get(positionSx).power);
                     stopIndexSx = i;  // salva la posizione del fuoco cosi che non vada oltre al blocco distrutto
@@ -182,7 +178,7 @@ public class Bomb extends SuperObject{
                 }
 
                 if(gp.obj.get(positionDx) != null && gp.obj.get(positionDx).name != "exit"){
-                    // System.out.println(gp.obj.get(positionDx).name); // da eliminare
+                    System.out.println(gp.obj.get(positionDx).name);
                     gp.obj.get(positionDx).destroy();
                     stopIndexDx = i;
                 }
@@ -217,13 +213,13 @@ public class Bomb extends SuperObject{
                 }
 
                 if(gp.obj.get(positionUp) != null && gp.obj.get(positionUp).name != "exit"){
-                    // System.out.println(gp.obj.get(positionUp).name);  // da eliminare
+                    System.out.println(gp.obj.get(positionUp).name);
                     gp.obj.get(positionUp).destroy();
                     stopIndexUp = i;
                 }
 
                 if (i < firePower){
-                    // System.out.println("y "+(y-i*bombWidth)+ " game "+gp.gameBorderUpY);  // da eliminare
+                    System.out.println("y "+(y-i*bombWidth)+ " game "+gp.gameBorderUpY);
                     if((y-i*bombWidth) > gp.gameBorderUpY-1)
                         g2.drawImage(expMidUp[fireTimer], x, y - i * bombHeight, bombWidth, bombHeight, null);
                 }
@@ -257,7 +253,7 @@ public class Bomb extends SuperObject{
                     // System.out.println("collision");
                 }
                     if(gp.obj.get(positionDw)!= null && gp.obj.get(positionDw).name != "exit"){  // è un blocco o powerUp che non sia l'uscita
-                        // System.out.println(gp.obj.get(positionDw).name); // da eliminare
+                        System.out.println(gp.obj.get(positionDw).name);
                         gp.obj.get(positionDw).destroy();
                         stopIndexDw = i;
                     }

@@ -48,6 +48,7 @@ public class Player extends Entity{
         this.hitboxWidth = 11*scale;// larghezza dell'hitbox del player
         this.hitboxHeight = 12*scale;// altezza dell'hitbox del player
         
+        hitbox = new Rectangle(hitboxX,hitboxY, hitboxWidth, hitboxHeight);
         hitboxDefaultX = hitboxX;
         hitboxDefaultY = hitboxY;
 
@@ -64,7 +65,6 @@ public class Player extends Entity{
         firePower = 1;
         lifeNumber = 5;
         score = 0;
-        hitbox = new Rectangle(hitboxX+x, hitboxY+y, hitboxWidth, hitboxHeight);
     }
 
     public void getPlayerImage(){
@@ -111,11 +111,6 @@ public class Player extends Entity{
             // CONTROLLA COLLISIONE OBJECT
             int objIndex = gp.cChecker.checkObj(this, true);
             powerUpHandler(objIndex); // controlliamo cosa fare con l'oggetto
-
-            g2.setColor(Color.MAGENTA);
-            g2.draw(hitbox);
-
-            gp.cChecker.checkBomb(this);
 
             if(!collisionOn){ // si puo muovere
                 switch(direction){
@@ -192,11 +187,9 @@ public class Player extends Entity{
     public void powerUpHandler(int index){
         if(index != 999){  // se non è il valore default
             String objName = gp.obj.get(index).name;
-            if(objName != "block"){
-                System.out.println(objName);  // da eliminare
-                gp.obj.set(index, null);
-            }
-            // gp.obj.set(index, gp.obj.get(index).power);  // permette al player di rompere i blocchi toccandoli
+            if(objName != "block") // da eliminare
+                System.out.println(objName);
+            gp.obj.set(index, gp.obj.get(index).power);
             switch(objName){
                 case "fire":
                     score += 10;
@@ -287,8 +280,7 @@ public class Player extends Entity{
         g2.drawImage(image, x, y, gp.player.width, gp.player.height, null);  // disegna lo sprite del personaggio (image) nella posizione x,y di grandezza tileSize
         //da eliminare
         g2.setColor(Color.BLUE);
-        // g2.drawRect(this.hitboxX+x, this.hitboxY+y, this.hitboxWidth, this.hitboxHeight);  
-        g2.draw(hitbox);
+        g2.drawRect(this.hitboxX+x, this.hitboxY+y, this.hitboxWidth, this.hitboxHeight);  
 
         g2.setColor(Color.GREEN);
         g2.drawRect(getPlayerTileX(), getPlayerTileY(), tileSize, tileSize);

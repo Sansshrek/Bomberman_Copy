@@ -105,7 +105,7 @@ public class GamePanel extends JPanel implements Runnable{
 
     public void drawHUD(Graphics2D g2){
         
-        // g2.drawImage(hud.image, 0, 0, 256*scale, hudHeight, null);  // poi l'HUD
+        g2.drawImage(hud.image, 0, 0, 256*scale, hudHeight, null);  // poi l'HUD
 
         // Stampa il punteggio
         hud.drawScore(g2, player.score);

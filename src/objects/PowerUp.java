@@ -38,6 +38,7 @@ public class PowerUp extends SuperObject{
         spriteCounter++;
         if(!extinguished){  // se ancora non ha finito di esplodere
             if(exploded){  // se il blocco è esploso inizia l'animazione dell'esplosione
+            System.out.println("BOOM");
                 if(spriteCounter > 10){
                     switch(spriteNum){
                         case 1:

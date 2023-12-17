@@ -2,7 +2,6 @@ package main;
 
 import entity.Entity;
 import entity.Player;
-import objects.Bomb;
 
 public class CollisionChecker {
     GamePanel gp;
@@ -222,20 +221,4 @@ public class CollisionChecker {
         }
         return index;
     }
-
-    public void checkBomb(Entity entity){
-        for(Bomb bomb: gp.bombH.bombs){  // iteriamo le bombe presenti
-            if(!bomb.exploded){  // se la bomba non è esplosa
-                
-                // Controlla la collisione tra la hitbox della bomba e la hitbox dell'entità
-                System.out.println("Bomb x "+bomb.hitbox.x+" y "+bomb.hitbox.y);
-                System.out.println("Player x "+entity.hitbox.x+" y "+entity.hitbox.y);
-                if (entity.hitbox.intersects(bomb.hitbox)){
-                    entity.collisionOn = true; // Imposta un flag di collisione sull'entità
-                    System.out.println("BOMBA");
-                }
-            }
-        }
-    }
 }
-
