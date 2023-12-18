@@ -12,7 +12,7 @@ public class Entity {
     int scale;
     int tileSize;
     public Graphics2D g2;
-    public int x, y;  // le coordinate nel mondo
+    public int imageX, imageY;  // le coordinate nel mondo
     public double speed;
     
     

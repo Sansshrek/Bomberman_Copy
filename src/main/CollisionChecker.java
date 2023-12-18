@@ -44,13 +44,13 @@ public class CollisionChecker {
 
                     }if(gp.tileM.tile[tileNum1].collision && !gp.tileM.tile[tileNum2].collision){  // se la spalla sinistra urta un blocco ma la destra no
                         if(!gp.tileM.tile[tileCenter].collision){  // se il centro in alto non urta un blocco
-                            entity.x += entity.speed;  // lo sposta un po a destra
+                            entity.imageX += entity.speed;  // lo sposta un po a destra
                         }else{
                             entity.collisionOn = true;  // altrimenti non passa
                         }
                     }else if(!gp.tileM.tile[tileNum1].collision && gp.tileM.tile[tileNum2].collision){  // se la spalla sinistra urta un blocco ma la destra no
                         if(!gp.tileM.tile[tileCenter].collision){  // se il centro in alto non urta un blocco
-                            entity.x -= entity.speed;  // lo sposta un po a sinistra
+                            entity.imageX -= entity.speed;  // lo sposta un po a sinistra
                         }else{
                             entity.collisionOn = true;
                         }
@@ -72,13 +72,13 @@ public class CollisionChecker {
 
                     }if(gp.tileM.tile[tileNum1].collision && !gp.tileM.tile[tileNum2].collision){  // se in basso a sinistra urta un blocco ma in basso a destra no
                         if(!gp.tileM.tile[tileCenter].collision){  // se il centro in basso non urta un blocco
-                            entity.x += entity.speed;  // lo sposta un po a destra
+                            entity.imageX += entity.speed;  // lo sposta un po a destra
                         }else{
                             entity.collisionOn = true;  // altrimenti non passa
                         }
                     }else if(!gp.tileM.tile[tileNum1].collision && gp.tileM.tile[tileNum2].collision){  // se in basso a sinistra urta un blocco ma in basso a destra no
                         if(!gp.tileM.tile[tileCenter].collision){  // se il centro in basso non urta un blocco
-                            entity.x -= entity.speed;
+                            entity.imageX -= entity.speed;
                         }else{
                             entity.collisionOn = true;
                         }
@@ -100,13 +100,13 @@ public class CollisionChecker {
 
                     }if(gp.tileM.tile[tileNum1].collision && !gp.tileM.tile[tileNum2].collision){  // se in alto a sinistra urta un blocco ma in basso a sinistra no
                         if(!gp.tileM.tile[tileCenter].collision){  // se il centro a sinistra non urta un blocco
-                            entity.y += entity.speed;  // lo sposta un po sotto
+                            entity.imageY += entity.speed;  // lo sposta un po sotto
                         }else{
                             entity.collisionOn = true;  // altrimenti non passa
                         }
                     }else if(!gp.tileM.tile[tileNum1].collision && gp.tileM.tile[tileNum2].collision){  // se in basso sinistra urta un blocco ma in alto a destra no
                         if(!gp.tileM.tile[tileCenter].collision){  // se il centro a sinistra non urta un blocco
-                            entity.y -= entity.speed;  // lo sposta un po sopra
+                            entity.imageY -= entity.speed;  // lo sposta un po sopra
                         }else{
                             entity.collisionOn = true;
                         }
@@ -128,13 +128,13 @@ public class CollisionChecker {
 
                     }if(gp.tileM.tile[tileNum1].collision && !gp.tileM.tile[tileNum2].collision){  // se in alto a destra urta un blocco ma in basso a destra no
                         if(!gp.tileM.tile[tileCenter].collision){  // se il centro in alto non urta un blocco
-                            entity.y += entity.speed;  // lo sposta un po sotto
+                            entity.imageY += entity.speed;  // lo sposta un po sotto
                         }else{
                             entity.collisionOn = true;  // altrimenti non passa
                         }
                     }else if(!gp.tileM.tile[tileNum1].collision && gp.tileM.tile[tileNum2].collision){  // se in basso a destra urta un blocco ma alto a dstra no
                         if(!gp.tileM.tile[tileCenter].collision){  // se il centro in alto non urta un blocco
-                            entity.y -= entity.speed;  // lo sposta un po sopra
+                            entity.imageY -= entity.speed;  // lo sposta un po sopra
                         }else{
                             entity.collisionOn = true;
                         }
@@ -153,30 +153,30 @@ public class CollisionChecker {
     
     public void checkPlayerCollision(Entity enemy, Player player) {
         // Aggiorna la posizione dell'hitbox del nemico
-        enemy.hitbox.x = enemy.x + enemy.hitbox.x;
-        enemy.hitbox.y = enemy.y + enemy.hitbox.y;
+        enemy.hitbox.x = enemy.imageX + enemy.hitbox.x;
+        enemy.hitbox.y = enemy.imageY + enemy.hitbox.y;
 
         // Aggiorna la posizione dell'hitbox del giocatore
-        player.hitbox.x = player.x + player.hitbox.x;
-        player.hitbox.y = player.y + player.hitbox.y;
+        player.hitbox.x = player.imageX + player.hitbox.x;
+        player.hitbox.y = player.imageY + player.hitbox.y;
 
         // Controlla se l'hitbox del nemico interseca l'hitbox del giocatore
         if (enemy.hitbox.intersects(player.hitbox)) {
             // Se il nemico sta andando a destra e il giocatore è alla sua destra, ferma il nemico
-            if (enemy.x < player.x) {
-                enemy.x = player.x - enemy.hitbox.width;
+            if (enemy.imageX < player.imageX) {
+                enemy.imageX = player.imageX - enemy.hitbox.width;
             }
             // Se il nemico sta andando a sinistra e il giocatore è alla sua sinistra, ferma il nemico
-            else if (enemy.x > player.x) {
-                enemy.x = player.x + player.hitbox.width;
+            else if (enemy.imageX > player.imageX) {
+                enemy.imageX = player.imageX + player.hitbox.width;
             }
             // Se il nemico sta andando in alto e il giocatore è sopra di lui, ferma il nemico
-            if (enemy.y < player.y) {
-                enemy.y = player.y - enemy.hitbox.height;
+            if (enemy.imageY < player.imageY) {
+                enemy.imageY = player.imageY - enemy.hitbox.height;
             }
             // Se il nemico sta andando in basso e il giocatore è sotto di lui, ferma il nemico
-            else if (enemy.y > player.y) {
-                enemy.y = player.y + player.hitbox.height;
+            else if (enemy.imageY > player.imageY) {
+                enemy.imageY = player.imageY + player.hitbox.height;
             }
         }
     }
@@ -186,8 +186,8 @@ public class CollisionChecker {
         for(int i=0; i<gp.obj.size(); i++){
             if(gp.obj.get(i) != null){  // se non è null
                 // prendo la posizione dell'hitbox del player
-                entity.hitbox.x = entity.x + entity.hitbox.x;
-                entity.hitbox.y = entity.y + entity.hitbox.y;
+                entity.hitbox.x = entity.imageX + entity.hitbox.x;
+                entity.hitbox.y = entity.imageY + entity.hitbox.y;
                 // prendo la posizione dell'hitbox dell'oggetto
                 gp.obj.get(i).hitbox.x = gp.obj.get(i).x + gp.obj.get(i).hitbox.x;
                 gp.obj.get(i).hitbox.y = gp.obj.get(i).y + gp.obj.get(i).hitbox.y;

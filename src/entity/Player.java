@@ -55,14 +55,12 @@ public class Player extends Entity{
         setPlayerDefaultValues();
         getPlayerImage();
 
-        this.hitbox = new Rectangle(hitboxX+x, hitboxY+y, hitboxWidth, hitboxHeight);
+        this.hitbox = new Rectangle(hitboxX+imageX, hitboxY+imageY, hitboxWidth, hitboxHeight);
     }
 
 	public void setPlayerDefaultValues(){
-        x=0;
-        y=0;
-        x = (x*tileSize) + (tileSize+tileSize/2);   // posizione x del player IN ALTO A SINISTRA
-        y = (y*tileSize) + 2*tileSize;    // posizione y del player IN ALTO A SINISTRA
+        imageX = (imageX*tileSize) + (tileSize+tileSize/2);   // posizione x del player IN ALTO A SINISTRA
+        imageY = (imageY*tileSize) + 2*tileSize;    // posizione y del player IN ALTO A SINISTRA
         speed = 2;
         direction = "down";
         firePower = 1;
@@ -110,8 +108,8 @@ public class Player extends Entity{
 
             // CONTROLLA COLLISIONE TILES
             collisionOn = false;
-            hitbox.x = x + hitboxX;
-            hitbox.y = y + hitboxY;
+            hitbox.x = imageX + hitboxX;
+            hitbox.y = imageY + hitboxY;
 
             gp.cChecker.checkTile(this);  // controlla se colpiamo qualche blocco
             gp.cChecker.checkBomb(this);
@@ -122,16 +120,16 @@ public class Player extends Entity{
             if(!collisionOn){ // si puo muovere
                 switch(direction){
                     case "up": 
-                        y -= speed; 
+                        imageY -= speed; 
                         break;  // la posizione Y diminuisce della velocita del player
                     case "down": 
-                        y += speed; 
+                        imageY += speed; 
                         break;
                     case "left": 
-                        x -= speed; 
+                        imageX -= speed; 
                         break;
                     case "right": 
-                        x += speed; 
+                        imageX += speed; 
                         break;
                 }
             }
@@ -179,26 +177,26 @@ public class Player extends Entity{
     }
 
     public int getPlayerTileX(){
-        int entityLeftWorldX = x+hitbox.x - (24 * gp.scale);  // Coordinata x dove parte la hitbox
-        int entityRightWorldX = x+hitbox.x + hitbox.width - (24 * gp.scale);  // cordinata x dove arriva la hitbox
-        int entityCenterX = ((entityLeftWorldX + entityRightWorldX) / 2 ) / gp.tileSize+1;
-        return entityCenterX*gp.tileSize + gp.tileSize/2;
+        int entityLeftWorldX = hitbox.x - (gp.tileSize+gp.tileSize/2);  // Coordinata x dove parte la hitbox
+        int entityRightWorldX = hitbox.x + hitbox.width - (gp.tileSize+gp.tileSize/2);  // cordinata x dove arriva la hitbox
+        int entityCenterX = ((entityLeftWorldX + entityRightWorldX) / 2 ) / gp.tileSize;
+        return entityCenterX*gp.tileSize + (gp.tileSize + gp.tileSize/2);
     }
     public int getPlayerCenterX(){
-        int entityLeftWorldX = hitbox.x - (24 * gp.scale);  // Coordinata x dove parte la hitbox
-        int entityRightWorldX = hitbox.x + hitbox.width - (24 * gp.scale);  // cordinata x dove arriva la hitbox
+        int entityLeftWorldX = hitbox.x - (gp.tileSize+gp.tileSize/2);  // Coordinata x dove parte la hitbox
+        int entityRightWorldX = hitbox.x + hitbox.width - (gp.tileSize+gp.tileSize/2);  // cordinata x dove arriva la hitbox
         int entityCenterX = ((entityLeftWorldX + entityRightWorldX) / 2 );
         return entityCenterX;
     }
     public int getPlayerTileY(){
-        int entityTopWorldY = y+hitbox.y - (gp.hudHeight + (8 * gp.scale));  // coordinata y dove parte la hitbox
-        int entityBottomWorldY = y+hitbox.y + hitbox.height - (gp.hudHeight + (8 * gp.scale));
-        int entityCenterY = ((entityTopWorldY + entityBottomWorldY) / 2 ) / gp.tileSize+2;
-        return entityCenterY*gp.tileSize + gp.tileSize/2;
+        int entityTopWorldY = hitbox.y - (gp.tileSize*2+gp.tileSize/2);  // coordinata y dove parte la hitbox
+        int entityBottomWorldY = hitbox.y + hitbox.height - (gp.tileSize*2+gp.tileSize/2);
+        int entityCenterY = ((entityTopWorldY + entityBottomWorldY) / 2 ) / gp.tileSize;
+        return entityCenterY*gp.tileSize + (gp.tileSize*2+gp.tileSize/2);
     }
     public int getPlayerCenterY(){
-        int entityTopWorldY = hitbox.y - (gp.hudHeight + (8 * gp.scale));  // coordinata y dove parte la hitbox
-        int entityBottomWorldY = hitbox.y + hitbox.height - (gp.hudHeight + (8 * gp.scale));
+        int entityTopWorldY = hitbox.y - (gp.tileSize*2+gp.tileSize/2);  // coordinata y dove parte la hitbox
+        int entityBottomWorldY = hitbox.y + hitbox.height - (gp.tileSize*2+gp.tileSize/2);
         int entityCenterY = ((entityTopWorldY + entityBottomWorldY) / 2 );
         return entityCenterY;
     }
@@ -296,7 +294,7 @@ public class Player extends Entity{
                 }
                 break;
         }
-        g2.drawImage(image, x, y, gp.player.width, gp.player.height, null);  // disegna lo sprite del personaggio (image) nella posizione x,y di grandezza tileSize
+        g2.drawImage(image, imageX, imageY, gp.player.width, gp.player.height, null);  // disegna lo sprite del personaggio (image) nella posizione x,y di grandezza tileSize
         //da eliminare
         g2.setColor(Color.BLUE);
         // g2.drawRect(this.hitboxX+x, this.hitboxY+y, this.hitboxWidth, this.hitboxHeight);  
@@ -310,11 +308,12 @@ public class Player extends Entity{
         g2.setColor(Color.YELLOW);
         g2.drawRect(gp.gameBorderLeftX, gp.gameBorderUpY, 13*gp.tileSize, 11*gp.tileSize);
 
+        System.out.println("x:"+getPlayerTileX()+"y:"+getPlayerTileY());
         g2.setColor(Color.RED);
         g2.drawRect(getPlayerCenterX(), getPlayerCenterY(), 15, 15);
 
         g2.setColor(Color.RED);
-        g2.drawRect(x, y, width, height);
+        g2.drawRect(imageX, imageY, width, height);
 
     }
 }

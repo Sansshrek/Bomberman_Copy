@@ -30,7 +30,7 @@ public class Enemy extends Entity{
     public int hitboxWidth;
     public int hitboxHeight;
 
-    public Enemy(GamePanel gp, int x, int y){
+    public Enemy(GamePanel gp, int imageX, int imageY){
         super(gp);
 
         this.speed = 1;
@@ -39,8 +39,8 @@ public class Enemy extends Entity{
         this.scale = gp.getScale();
         this.tileSize = gp.getTileSize();
         //coordinate nel mondo
-        this.x = x;
-        this.y = y;
+        this.imageX = imageX;  // posizione x dell'Enemy IN ALTO A SINISTRA
+        this.imageY = imageY;  // posizione y dell'Enemy IN ALTO A SINISTRA
 
         //largezza e altezza dell' immagine dell' enemy
         this.width = 16*gp.scale; // larghezza dell' enemy
@@ -64,8 +64,8 @@ public class Enemy extends Entity{
     }
 
 	public void setEnemyDefaultValues(){
-        x = (x*ogTileSize*scale) + (ogTileSize+ogTileSize/2)*gp.scale;   // posizione x dell'Enemy IN ALTO A SINISTRA
-        y = (y*ogTileSize*scale) + (2*ogTileSize)*gp.scale;    // posizione y dell'Enemy IN ALTO A SINISTRA
+        imageX = (imageX*ogTileSize*scale) + (ogTileSize+ogTileSize/2)*gp.scale;   // posizione x dell'Enemy IN ALTO A SINISTRA
+        imageY = (imageY*ogTileSize*scale) + (2*ogTileSize)*gp.scale;    // posizione y dell'Enemy IN ALTO A SINISTRA
         this.speed = 1;
         this.direction = "down";
         
@@ -94,8 +94,8 @@ public class Enemy extends Entity{
     public void update(){  // update viene chiamato 60 volte al secondo
             // Check for collisions
             
-        hitbox.x = x + hitboxX;
-        hitbox.y = y + hitboxY;
+        hitbox.x = imageX + hitboxX;
+        hitbox.y = imageY + hitboxY;
         collisionOn = false;
         gp.cChecker.checkTile(this);
         int objIndex = gp.cChecker.checkObj(this, false);
@@ -119,16 +119,16 @@ public class Enemy extends Entity{
         if(!collisionOn){ // si puo muovere
             switch(direction){
                 case "up": 
-                    y -= speed; 
+                    imageY -= speed; 
                     break;  // la posizione Y diminuisce della velocita del player
                 case "down": 
-                    y += speed; 
+                    imageY += speed; 
                     break;
                 case "left": 
-                    x -= speed; 
+                    imageX -= speed; 
                     break;
                 case "right": 
-                    x += speed; 
+                    imageX += speed; 
                     break;
             }
         }
@@ -157,14 +157,14 @@ public class Enemy extends Entity{
     }
 
     public int getEnemyTileX(){
-        int entityLeftWorldX = x + hitbox.x - (24 * gp.scale);  // Coordinata x dove parte la hitbox
-        int entityRightWorldX = x + hitbox.x + hitbox.width - (24 * gp.scale);  // cordinata x dove arriva la hitbox
+        int entityLeftWorldX = imageX + hitbox.x - (24 * gp.scale);  // Coordinata x dove parte la hitbox
+        int entityRightWorldX = imageX + hitbox.x + hitbox.width - (24 * gp.scale);  // cordinata x dove arriva la hitbox
         int entityCenterX = ((entityLeftWorldX + entityRightWorldX) / 2 ) / gp.tileSize+1;
         return entityCenterX*gp.tileSize + gp.tileSize/2;
     }
     public int getEnemyTileY(){
-        int entityTopWorldY = y + hitbox.y - (gp.hudHeight + (8 * gp.scale));  // coordinata y dove parte la hitbox
-        int entityBottomWorldY = y + hitbox.y + hitbox.height - (gp.hudHeight + (8 * gp.scale));
+        int entityTopWorldY = imageY + hitbox.y - (gp.hudHeight + (8 * gp.scale));  // coordinata y dove parte la hitbox
+        int entityBottomWorldY = imageY + hitbox.y + hitbox.height - (gp.hudHeight + (8 * gp.scale));
         int entityCenterY = ((entityTopWorldY + entityBottomWorldY) / 2 ) / gp.tileSize+2;
         return entityCenterY*gp.tileSize + gp.tileSize/2;
     }
@@ -256,10 +256,10 @@ public class Enemy extends Entity{
                 }
                 break;
         }
-        g2.drawImage(image, x, y, gp.enemy.width, gp.enemy.height, null);  // disegna lo sprite del personaggio (image) nella posizione x,y di grandezza tileSize
+        g2.drawImage(image, imageX, imageY, gp.enemy.width, gp.enemy.height, null);  // disegna lo sprite del personaggio (image) nella posizione x,y di grandezza tileSize
         //da eliminare
         g2.setColor(Color.BLUE);
-        g2.drawRect(this.hitboxX+x, this.hitboxY+y, this.hitboxWidth, this.hitboxHeight);  
+        g2.drawRect(this.hitboxX+imageX, this.hitboxY+imageY, this.hitboxWidth, this.hitboxHeight);  
 
         g2.setColor(Color.GREEN);
         g2.drawRect(getEnemyTileX(), getEnemyTileY(), tileSize, tileSize);
