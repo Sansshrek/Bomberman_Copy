@@ -10,11 +10,11 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 
-public class CollisionChecker {
+public class CollisionCheckerMod {
     GamePanel gp;
     int boundaryX, boundaryY, boundaryWidth, boundaryHeight;
     
-    public CollisionChecker(GamePanel gp){
+    public CollisionCheckerMod(GamePanel gp){
         this.gp = gp;
         boundaryX = 0;
         boundaryY = 0;
@@ -41,9 +41,9 @@ public class CollisionChecker {
             case "up":
                 entityTopRow = (int)(entityTopWorldY - entity.speed) / gp.tileSize;  // calcoliamo dove si trovera il player quando si va su
                 if(entityTopRow >= 0 && entityTopRow < 17){
-                    tileNum1 = gp.tileM.blockTileNum[entityLeftCol][entityTopRow];  // controlliamo l'angolo alto a destra e alto a sinistra della hitbox sul terreno
-                    tileNum2 = gp.tileM.blockTileNum[entityRightCol][entityTopRow];
-                    tileCenter = gp.tileM.blockTileNum[entityCenterX][entityTopRow];  // controlliamo il centro in alto
+                    tileNum1 = gp.tileM.groundTileNum[entityTopRow][entityLeftCol];  // controlliamo l'angolo alto a destra e alto a sinistra della hitbox sul terreno
+                    tileNum2 = gp.tileM.groundTileNum[entityTopRow][entityRightCol];
+                    tileCenter = gp.tileM.groundTileNum[entityTopRow][entityCenterX];  // controlliamo il centro in alto
 
                     if(gp.tileM.tile[tileNum1].collision && gp.tileM.tile[tileNum2].collision || (entityTopWorldY - entity.speed) < boundaryY){  // sta colpendo un blocco o esco dal boundary
                         entity.collisionOn = true;
@@ -71,9 +71,9 @@ public class CollisionChecker {
             case "down":
                 entityBottomRow = (int)(entityBottomWorldY + entity.speed) / gp.tileSize;  // calcoliamo dove si trovera il player quando si va su
                 if(entityBottomRow >= 0 && entityBottomRow < 17){
-                    tileNum1 = gp.tileM.blockTileNum[entityLeftCol][entityBottomRow];  // controlliamo l'angolo basso a destra e basso a sinistra della hitbox sul terreno
-                    tileNum2 = gp.tileM.blockTileNum[entityRightCol][entityBottomRow];
-                    tileCenter = gp.tileM.blockTileNum[entityCenterX][entityBottomRow];  // controlliamo il centro in basso
+                    tileNum1 = gp.tileM.groundTileNum[entityBottomRow][entityLeftCol];  // controlliamo l'angolo basso a destra e basso a sinistra della hitbox sul terreno
+                    tileNum2 = gp.tileM.groundTileNum[entityBottomRow][entityRightCol];
+                    tileCenter = gp.tileM.groundTileNum[entityBottomRow][entityCenterX];  // controlliamo il centro in basso
 
                     if(gp.tileM.tile[tileNum1].collision && gp.tileM.tile[tileNum2].collision || (entityBottomWorldY + entity.speed) > boundaryY+boundaryHeight){  // sta colpendo un blocco o esco dal boundary 
                         entity.collisionOn = true;
@@ -101,9 +101,9 @@ public class CollisionChecker {
             case "left":
                 entityLeftCol = (int)(entityLeftWorldX - entity.speed) / gp.tileSize;  // calcoliamo dove si trovera il player quando si va su
                 if(entityLeftCol >= 0 && entityLeftCol < 14){
-                    tileNum1 = gp.tileM.blockTileNum[entityLeftCol][entityTopRow];  // controlliamo l'angolo alto a sinistra e basso a sinistra della hitbox sul terreno
-                    tileNum2 = gp.tileM.blockTileNum[entityLeftCol][entityBottomRow];
-                    tileCenter = gp.tileM.blockTileNum[entityLeftCol][entityCenterY];  // controlliamo il centro a sinistra
+                    tileNum1 = gp.tileM.groundTileNum[entityLeftCol][entityTopRow];  // controlliamo l'angolo alto a sinistra e basso a sinistra della hitbox sul terreno
+                    tileNum2 = gp.tileM.groundTileNum[entityLeftCol][entityBottomRow];
+                    tileCenter = gp.tileM.groundTileNum[entityLeftCol][entityCenterY];  // controlliamo il centro a sinistra
 
                     if(gp.tileM.tile[tileNum1].collision && gp.tileM.tile[tileNum2].collision || (entityLeftWorldX - entity.speed) < boundaryX){  // sta colpendo un blocco o esco dal boundary
                         entity.collisionOn = true;
@@ -131,9 +131,9 @@ public class CollisionChecker {
             case "right":
                 entityRightCol = (int)(entityRightWorldX + entity.speed) / gp.tileSize;  // calcoliamo dove si trovera il player quando si va su
                 if(entityLeftCol >= 0 && entityLeftCol < 14){
-                    tileNum1 = gp.tileM.blockTileNum[entityRightCol][entityTopRow];  // controlliamo l'angolo alto a destra e basso a destra della hitbox sul terreno
-                    tileNum2 = gp.tileM.blockTileNum[entityRightCol][entityBottomRow];
-                    tileCenter = gp.tileM.blockTileNum[entityRightCol][entityCenterY];  // controlliamo il centro a destra
+                    tileNum1 = gp.tileM.groundTileNum[entityRightCol][entityTopRow];  // controlliamo l'angolo alto a destra e basso a destra della hitbox sul terreno
+                    tileNum2 = gp.tileM.groundTileNum[entityRightCol][entityBottomRow];
+                    tileCenter = gp.tileM.groundTileNum[entityRightCol][entityCenterY];  // controlliamo il centro a destra
 
                     if(gp.tileM.tile[tileNum1].collision && gp.tileM.tile[tileNum2].collision || (entityRightWorldX + entity.speed) > boundaryX+boundaryWidth){  // sta colpendo un blocco o esco dal boundary
                         entity.collisionOn = true;
@@ -282,6 +282,8 @@ public class CollisionChecker {
             if(!bomb.exploded){  // se la bomba non è esplosa
                 
                 // Controlla la collisione tra la hitbox della bomba e la hitbox dell'entità
+                System.out.println("Bomb x "+bomb.hitbox.x+" y "+bomb.hitbox.y);
+                System.out.println("Player x "+entity.hitbox.x+" y "+entity.hitbox.y);
                 if (entity.hitbox.intersects(bomb.hitbox)){
                     bomb.collision = true; // Imposta un flag di collisione sull'entità
                     System.out.println("BOMBA");

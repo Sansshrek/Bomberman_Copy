@@ -23,9 +23,14 @@ public class Entity {
 
     public Rectangle hitbox;
     public int hitboxDefaultX, hitboxDefaultY;
+    public int hitboxWidth;
+    public int hitboxHeight;
     public boolean collisionOn = false;
 
     public Entity(GamePanel gp){
         this.gp=gp;
+        this.tileSize = gp.tileSize;
+        this.hitboxWidth = tileSize;
+        this.hitboxHeight = tileSize;
     }
 }

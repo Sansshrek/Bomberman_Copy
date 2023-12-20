@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
@@ -62,6 +63,7 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     public void setupGame(){
+        System.out.println("Caricando i blocchi distruttibili");  // da eliminare
         aSetter.setBlocks();
     }
     public int getTileSize(){
@@ -142,6 +144,11 @@ public class GamePanel extends JPanel implements Runnable{
 
         tileM.drawMap(g2, 24*this.scale, this.hudHeight+(8*this.scale), "ground");  // prima il pavimento
         tileM.drawMap(g2, -8*this.scale, this.hudHeight-(8*this.scale), "walls");  // poi le mura
+
+        g2.setColor(Color.RED);
+        for(Rectangle hitbox: tileM.wallsHitbox){
+            g2.draw(hitbox);
+        }
         
        
         for(int i=0; i < obj.size(); i++){
@@ -151,6 +158,8 @@ public class GamePanel extends JPanel implements Runnable{
                     bomb.draw(g2, this);
                 }
                 obj.get(i).draw(g2, this);
+                g2.setColor(Color.YELLOW);
+                g2.draw(obj.get(i).hitbox);
             }
         }
         bombH.updateBomb();

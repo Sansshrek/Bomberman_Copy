@@ -24,6 +24,8 @@ public class SuperObject {
         this.gp = gp;
         this.tileSize=gp.getTileSize();
         this.hitbox = new Rectangle(0, 0, tileSize ,tileSize);
+        this.hitboxDefaultX = tileSize;
+        this.hitboxDefaultY = tileSize;
     }
 
     public void draw(Graphics2D g2, GamePanel gp){

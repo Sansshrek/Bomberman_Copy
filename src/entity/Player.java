@@ -25,8 +25,6 @@ public class Player extends Entity{
     public int hitboxY;
     
     //larghezza e altezza dell' hitbox
-    public int hitboxWidth;
-    public int hitboxHeight;
     public int firePower, bombNumber, lifeNumber, score;
 
     public Player(GamePanel gp, KeyHandler keyH){
@@ -51,6 +49,7 @@ public class Player extends Entity{
         hitboxDefaultX = hitboxX;
         hitboxDefaultY = hitboxY;
 
+        System.out.println("Caricando il player");  // da eliminare
         gp.bombH.addBombNumber();
         setPlayerDefaultValues();
         getPlayerImage();
@@ -72,6 +71,7 @@ public class Player extends Entity{
 
     public void getPlayerImage(){
         try{  // prova a caricare le immagini nelle variabili
+            /*
             up1 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/up01.png"));
             up2 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/up02.png"));
             up3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/up03.png"));
@@ -84,6 +84,8 @@ public class Player extends Entity{
             right1 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/right01.png"));
             right2 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/right02.png"));
             right3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/right03.png"));
+            */
+            up1=up2=up3=down1=down2=down3=left1=left2=left3=right1=right2=right3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Totti/up01.png")); 
             
         }catch(IOException e){
             e.printStackTrace();
@@ -110,28 +112,31 @@ public class Player extends Entity{
 
             // CONTROLLA COLLISIONE TILES
             collisionOn = false;
-            hitbox.x = x + hitboxX;
-            hitbox.y = y + hitboxY;
-
+            // hitbox.x = x + hitboxX;
+            // hitbox.y = y + hitboxY;
             gp.cChecker.checkTile(this);  // controlla se colpiamo qualche blocco
             gp.cChecker.checkBomb(this);
             // CONTROLLA COLLISIONE OBJECT
-            int objIndex = gp.cChecker.checkObj(this, true);
+            int objIndex = gp.cChecker.checkObj(this, true, g2);
             powerUpHandler(objIndex); // controlliamo cosa fare con l'oggetto
 
             if(!collisionOn){ // si puo muovere
                 switch(direction){
                     case "up": 
                         y -= speed; 
+                        hitbox.y -= speed;
                         break;  // la posizione Y diminuisce della velocita del player
                     case "down": 
                         y += speed; 
+                        hitbox.y += speed;
                         break;
                     case "left": 
                         x -= speed; 
+                        hitbox.x -= speed;
                         break;
                     case "right": 
                         x += speed; 
+                        hitbox.x += speed;
                         break;
                 }
             }
@@ -179,27 +184,27 @@ public class Player extends Entity{
     }
 
     public int getPlayerTileX(){
-        int entityLeftWorldX = x+hitbox.x - (24 * gp.scale);  // Coordinata x dove parte la hitbox
-        int entityRightWorldX = x+hitbox.x + hitbox.width - (24 * gp.scale);  // cordinata x dove arriva la hitbox
+        int entityLeftWorldX = hitbox.x - (24 * gp.scale);  // Coordinata x dove parte la hitbox
+        int entityRightWorldX = hitbox.x + hitbox.width - (24 * gp.scale);  // cordinata x dove arriva la hitbox
         int entityCenterX = ((entityLeftWorldX + entityRightWorldX) / 2 ) / gp.tileSize+1;
         return entityCenterX*gp.tileSize + gp.tileSize/2;
     }
     public int getPlayerCenterX(){
         int entityLeftWorldX = hitbox.x - (24 * gp.scale);  // Coordinata x dove parte la hitbox
         int entityRightWorldX = hitbox.x + hitbox.width - (24 * gp.scale);  // cordinata x dove arriva la hitbox
-        int entityCenterX = ((entityLeftWorldX + entityRightWorldX) / 2 );
+        int entityCenterX = (entityLeftWorldX + entityRightWorldX) / 2;
         return entityCenterX;
     }
     public int getPlayerTileY(){
-        int entityTopWorldY = y+hitbox.y - (gp.hudHeight + (8 * gp.scale));  // coordinata y dove parte la hitbox
-        int entityBottomWorldY = y+hitbox.y + hitbox.height - (gp.hudHeight + (8 * gp.scale));
+        int entityTopWorldY = hitbox.y - (gp.hudHeight + (8 * gp.scale));  // coordinata y dove parte la hitbox
+        int entityBottomWorldY = hitbox.y + hitbox.height - (gp.hudHeight + (8 * gp.scale));
         int entityCenterY = ((entityTopWorldY + entityBottomWorldY) / 2 ) / gp.tileSize+2;
         return entityCenterY*gp.tileSize + gp.tileSize/2;
     }
     public int getPlayerCenterY(){
         int entityTopWorldY = hitbox.y - (gp.hudHeight + (8 * gp.scale));  // coordinata y dove parte la hitbox
         int entityBottomWorldY = hitbox.y + hitbox.height - (gp.hudHeight + (8 * gp.scale));
-        int entityCenterY = ((entityTopWorldY + entityBottomWorldY) / 2 );
+        int entityCenterY = (entityTopWorldY + entityBottomWorldY) / 2;
         return entityCenterY;
     }
 
@@ -207,8 +212,7 @@ public class Player extends Entity{
         if(index != 999){  // se non è il valore default
             String objName = gp.obj.get(index).name;
             if(objName != "block") // da eliminare
-                System.out.println(objName);
-            gp.obj.set(index, gp.obj.get(index).power);
+                gp.obj.set(index, gp.obj.get(index).power);
             switch(objName){
                 case "fire":
                     score += 10;
@@ -314,7 +318,7 @@ public class Player extends Entity{
         g2.drawRect(getPlayerCenterX(), getPlayerCenterY(), 15, 15);
 
         g2.setColor(Color.RED);
-        g2.drawRect(x, y, width, height);
+        // g2.drawRect(x, y, width, height);
 
     }
 }

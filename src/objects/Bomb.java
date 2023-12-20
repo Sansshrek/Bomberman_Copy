@@ -39,6 +39,8 @@ public class Bomb extends SuperObject{
         this.firePower = firePower;
         this.bombWidth = tileSize;
         this.bombHeight = tileSize;
+        this.hitbox.x = x;
+        this.hitbox.y = y;
         // this.g2 = g2;
         try {
             //sprite delle bombe
@@ -119,7 +121,6 @@ public class Bomb extends SuperObject{
         // Draw the horizontal line of the explosion
  
         for (int i = 1; i <= firePower; i++) {
-            int positionSx = (((x - i*bombWidth - (gp.tileSize+gp.tileSize/2)))/gp.tileSize)  * 10 + ((y - (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize );
             
             // System.out.println("PosSX "+positionSx+" PosDX "+positionDx+" PosUP "+positionUp+" PosDW "+positionDw);
 
@@ -130,6 +131,7 @@ public class Bomb extends SuperObject{
                 break;
             }
 
+            int positionSx = (((x - i*bombWidth - (gp.tileSize+gp.tileSize/2)))/gp.tileSize)  * 10 + ((y - (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize );
             if(positionSx >= 0 && positionSx < 140) {  // check se la posizione è nell'array
 
                 // System.out.print("SX ");  // da eliminare

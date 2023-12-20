@@ -47,7 +47,7 @@ public class Enemy extends Entity{
         this.height = 29*gp.scale; // altezza dell' enemy 
 
         //codinate top left dell' hitbox
-        this.hitboxX = 0*gp.scale;// dove parte hitbox dell' enemy (2 pixel a destra rispetto a dove parte l'immagine)
+        this.hitboxX = 0*gp.scale;// dove parte hitbox dell' enemy (0 pixel a destra rispetto a dove parte l'immagine)
         this.hitboxY = 8*gp.scale; // dove parte hitbox dell' enemy (12 pixel sotto rispetto a dove parte l'immagine)
         
         //larghezza e altezza dell' hitbox
@@ -58,6 +58,7 @@ public class Enemy extends Entity{
         hitboxDefaultX = hitboxX;
         hitboxDefaultY = hitboxY;
 
+        System.out.println("Caricando l'enemy");  // da eliminare
         setEnemyDefaultValues();
         getEnemyImage();
         
@@ -98,7 +99,7 @@ public class Enemy extends Entity{
         hitbox.y = y + hitboxY;
         collisionOn = false;
         gp.cChecker.checkTile(this);
-        int objIndex = gp.cChecker.checkObj(this, false);
+        int objIndex = gp.cChecker.checkObj(this, false, g2);
         powerUpHandler(objIndex); // controlliamo cosa fare con l'oggetto
         // If a collision occurs, check for collisions in all directions and choose a new direction
         if (collisionOn) {
@@ -120,15 +121,19 @@ public class Enemy extends Entity{
             switch(direction){
                 case "up": 
                     y -= speed; 
+                    hitbox.y -= speed;
                     break;  // la posizione Y diminuisce della velocita del player
                 case "down": 
                     y += speed; 
+                    hitbox.y += speed;
                     break;
                 case "left": 
                     x -= speed; 
+                    hitbox.x -= speed;
                     break;
                 case "right": 
                     x += speed; 
+                    hitbox.x += speed;
                     break;
             }
         }
@@ -157,14 +162,14 @@ public class Enemy extends Entity{
     }
 
     public int getEnemyTileX(){
-        int entityLeftWorldX = x + hitbox.x - (24 * gp.scale);  // Coordinata x dove parte la hitbox
-        int entityRightWorldX = x + hitbox.x + hitbox.width - (24 * gp.scale);  // cordinata x dove arriva la hitbox
+        int entityLeftWorldX = hitbox.x - (24 * gp.scale);  // Coordinata x dove parte la hitbox
+        int entityRightWorldX = hitbox.x + hitbox.width - (24 * gp.scale);  // cordinata x dove arriva la hitbox
         int entityCenterX = ((entityLeftWorldX + entityRightWorldX) / 2 ) / gp.tileSize+1;
         return entityCenterX*gp.tileSize + gp.tileSize/2;
     }
     public int getEnemyTileY(){
-        int entityTopWorldY = y + hitbox.y - (gp.hudHeight + (8 * gp.scale));  // coordinata y dove parte la hitbox
-        int entityBottomWorldY = y + hitbox.y + hitbox.height - (gp.hudHeight + (8 * gp.scale));
+        int entityTopWorldY = hitbox.y - (gp.hudHeight + (8 * gp.scale));  // coordinata y dove parte la hitbox
+        int entityBottomWorldY = hitbox.y + hitbox.height - (gp.hudHeight + (8 * gp.scale));
         int entityCenterY = ((entityTopWorldY + entityBottomWorldY) / 2 ) / gp.tileSize+2;
         return entityCenterY*gp.tileSize + gp.tileSize/2;
     }
@@ -174,37 +179,6 @@ public class Enemy extends Entity{
             if(objName != "block") // da eliminare
                 System.out.println(objName);
             gp.obj.set(index, gp.obj.get(index).power);
-            switch(objName){
-                case "fire":
-                
-                break;
-                case "bomb":
-                
-                break;
-                case "skate":
-                
-                break;
-                case "life":
-                
-                break;
-                case "death":
-                    
-                break;
-                case "onigiri":
-                    
-                break;
-                case "apple":
-                    
-                break;
-                case "ice_cream":
-                    
-                break;
-                case "cake":
-                    ;
-                break;
-                case "nothing":
-                break;
-            }
         }
     }
     public void draw(){
@@ -259,7 +233,7 @@ public class Enemy extends Entity{
         g2.drawImage(image, x, y, gp.enemy.width, gp.enemy.height, null);  // disegna lo sprite del personaggio (image) nella posizione x,y di grandezza tileSize
         //da eliminare
         g2.setColor(Color.BLUE);
-        g2.drawRect(this.hitboxX+x, this.hitboxY+y, this.hitboxWidth, this.hitboxHeight);  
+        g2.draw(this.hitbox);  
 
         g2.setColor(Color.GREEN);
         g2.drawRect(getEnemyTileX(), getEnemyTileY(), tileSize, tileSize);
