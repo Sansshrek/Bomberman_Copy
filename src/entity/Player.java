@@ -43,7 +43,7 @@ public class Player extends Entity{
         this.hitboxY = 12*scale; // dove parte hitbox del player (12 pixel sotto rispetto a dove parte l'immagine)
         
         //larghezza e altezza dell' hitbox
-        this.hitboxWidth = 11*scale;// larghezza dell'hitbox del player
+        this.hitboxWidth = 12*scale;// larghezza dell'hitbox del player
         this.hitboxHeight = 12*scale;// altezza dell'hitbox del player
         
         hitboxDefaultX = hitboxX;
@@ -184,28 +184,28 @@ public class Player extends Entity{
     }
 
     public int getPlayerTileX(){
-        int entityLeftWorldX = hitbox.x - (24 * gp.scale);  // Coordinata x dove parte la hitbox
-        int entityRightWorldX = hitbox.x + hitbox.width - (24 * gp.scale);  // cordinata x dove arriva la hitbox
-        int entityCenterX = ((entityLeftWorldX + entityRightWorldX) / 2 ) / gp.tileSize+1;
-        return entityCenterX*gp.tileSize + gp.tileSize/2;
+        int entityLeftWorldX = hitbox.x - (gp.tileSize+gp.tileSize/2);  // Coordinata x dove parte la hitbox
+        int entityRightWorldX = hitbox.x + hitbox.width - (gp.tileSize+gp.tileSize/2);  // cordinata x dove arriva la hitbox
+        int entityCenterX = ((entityLeftWorldX + entityRightWorldX) / 2 ) / gp.tileSize;
+        return entityCenterX*gp.tileSize + (gp.tileSize + gp.tileSize/2);
     }
     public int getPlayerCenterX(){
-        int entityLeftWorldX = hitbox.x - (24 * gp.scale);  // Coordinata x dove parte la hitbox
-        int entityRightWorldX = hitbox.x + hitbox.width - (24 * gp.scale);  // cordinata x dove arriva la hitbox
-        int entityCenterX = (entityLeftWorldX + entityRightWorldX) / 2;
-        return entityCenterX;
+        int entityLeftWorldX = hitbox.x - (gp.tileSize+gp.tileSize/2);  // Coordinata x dove parte la hitbox
+        int entityRightWorldX = hitbox.x + hitbox.width - (gp.tileSize+gp.tileSize/2);  // cordinata x dove arriva la hitbox
+        int entityCenterX = ((entityLeftWorldX + entityRightWorldX) / 2 );
+        return entityCenterX + (gp.tileSize + gp.tileSize/2) - 1*scale;
     }
     public int getPlayerTileY(){
-        int entityTopWorldY = hitbox.y - (gp.hudHeight + (8 * gp.scale));  // coordinata y dove parte la hitbox
-        int entityBottomWorldY = hitbox.y + hitbox.height - (gp.hudHeight + (8 * gp.scale));
-        int entityCenterY = ((entityTopWorldY + entityBottomWorldY) / 2 ) / gp.tileSize+2;
-        return entityCenterY*gp.tileSize + gp.tileSize/2;
+        int entityTopWorldY = hitbox.y - (gp.tileSize*2+gp.tileSize/2);  // coordinata y dove parte la hitbox
+        int entityBottomWorldY = hitbox.y + hitbox.height - (gp.tileSize*2+gp.tileSize/2);
+        int entityCenterY = ((entityTopWorldY + entityBottomWorldY) / 2 ) / gp.tileSize;
+        return entityCenterY*gp.tileSize + (gp.tileSize*2+gp.tileSize/2);
     }
     public int getPlayerCenterY(){
-        int entityTopWorldY = hitbox.y - (gp.hudHeight + (8 * gp.scale));  // coordinata y dove parte la hitbox
-        int entityBottomWorldY = hitbox.y + hitbox.height - (gp.hudHeight + (8 * gp.scale));
-        int entityCenterY = (entityTopWorldY + entityBottomWorldY) / 2;
-        return entityCenterY;
+        int entityTopWorldY = hitbox.y - (gp.tileSize*2+gp.tileSize/2);  // coordinata y dove parte la hitbox
+        int entityBottomWorldY = hitbox.y + hitbox.height - (gp.tileSize*2+gp.tileSize/2);
+        int entityCenterY = ((entityTopWorldY + entityBottomWorldY) / 2 );
+        return entityCenterY + (gp.tileSize*2+gp.tileSize/2) - 1*scale;
     }
 
     public void powerUpHandler(int index){
@@ -315,7 +315,8 @@ public class Player extends Entity{
         g2.drawRect(gp.gameBorderLeftX, gp.gameBorderUpY, 13*gp.tileSize, 11*gp.tileSize);
 
         g2.setColor(Color.RED);
-        g2.drawRect(getPlayerCenterX(), getPlayerCenterY(), 15, 15);
+        System.out.println( "x: "+getPlayerCenterX()+" y: "+getPlayerCenterY());
+        g2.drawRect(getPlayerCenterX(), getPlayerCenterY(), 2*scale, 2*scale);
 
         g2.setColor(Color.RED);
         // g2.drawRect(x, y, width, height);

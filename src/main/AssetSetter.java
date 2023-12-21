@@ -53,7 +53,7 @@ public class AssetSetter {
         int tileY = position % 10;
         gp.obj.set(1, new Block(gp, tileX*gp.tileSize + (gp.tileSize+gp.tileSize/2), tileY*gp.tileSize + (2*gp.tileSize + (gp.tileSize/2)), tileX, tileY, "exit", position));
         for(int i = 1; i< numBlock; i++){
-            System.out.println("Caricando blocchi nell'array oggetti");
+            //System.out.println("Caricando blocchi nell'array oggetti");
             position = avPos.get(i);
             tileX = position / 10;  // ci permette di prendere da un numero soltanto sia la X che la Y
             tileY = position % 10;  // ad esempio se x=3, y=6 -> 3*10+6 = 36 -> 36/10 = 3 | 36%10 = 6
