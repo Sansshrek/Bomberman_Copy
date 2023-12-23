@@ -20,7 +20,7 @@ public class AssetSetter {
         ArrayList<Integer> avPos = new ArrayList<>();
         for(int x=0; x<13; x++){  // 13 è il massimo dei tiles della mappa per la x
             for(int y=0; y<10; y++){  // 10 è il massimo dei tiles della mappa per la y
-                if(tileM.blockTileNum[x][y] != 3 && tileM.blockTileNum[x][y] != -1 && x+y != 0 && x+y != 1){  // se non è un palazzo o non è gia preso
+                if(tileM.blockTileNum[x][y] != 3 && tileM.blockTileNum[x][y] != -1 && x+y != 0 && x+y != 1 && x-y !=0){  // se non è un palazzo o non è gia preso
                     if(true)  // pos vicino alla partenza del player 
                         avPos.add( x * 10 + y); // calcola l'indice unico per la posizione
                 }
@@ -28,6 +28,43 @@ public class AssetSetter {
         }
         return avPos;
     }
+    public boolean[][] availablePosMatrix(){
+       boolean[][] avPos = new boolean[10][13];
+        for(int x=0; x<10; x++){  // 13 è il massimo dei tiles della mappa per la x
+            for(int y=0; y<13; y++){  // 10 è il massimo dei tiles della mappa per la y
+                if(tileM.blockTileNum[y][x] != 3 && tileM.blockTileNum[y][x] != -1 && x+y != 0 && x+y != 1){  // se non è un palazzo o non è gia preso
+                    avPos[x][y] = true;
+                }
+                System.out.print(avPos[x][y]+" ");
+            }
+            System.out.println();
+        }
+        return avPos;
+    }
+    public void setMatrixBlocks(){
+        // ...
+        boolean[][] avPos = availablePosMatrix();
+        // ...
+    
+        Random rand = new Random();
+    
+        // Scegli un indice casuale per le righe e le colonne
+        int randomRow = rand.nextInt(avPos.length);
+        int randomCol = rand.nextInt(avPos[randomRow].length);
+    
+        // Verifica se la posizione è disponibile
+        if (avPos[randomRow][randomCol]) {
+            // La posizione è disponibile, puoi usarla
+            int tileX = randomRow;
+            int tileY = randomCol;
+            
+        } else {
+            // La posizione non è disponibile, scegli un'altra posizione
+        }
+        // ...
+    }
+
+    //avaliable position with distinguished x and y saved ina 
 
     public void setBlocks(){
         int numBlock = (int)(Math.random()*(40-33))+33;  // 33-40 blocchi a random

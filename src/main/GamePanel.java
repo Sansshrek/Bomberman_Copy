@@ -113,9 +113,6 @@ public class GamePanel extends JPanel implements Runnable{
         hud.drawScore(g2, player.score);
         hud.drawLife(g2, player.lifeNumber);
 
-        g2.setColor(Color.GREEN);  // da eliminare
-        g2.drawRect(72, 27, 24, 42);
-
     }
 
     public void update(){
@@ -150,7 +147,7 @@ public class GamePanel extends JPanel implements Runnable{
             g2.draw(hitbox);
         }
         
-       
+        
         for(int i=0; i < obj.size(); i++){
             if(obj.get(i) != null){
                 if(obj.get(i) instanceof Bomb){

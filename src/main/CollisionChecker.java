@@ -277,16 +277,64 @@ public class CollisionChecker {
     public void checPlayerNearestTile(){
     }
     
-    public void checkBomb(Entity entity){
+    public void checkBomb(Player player){
         for(Bomb bomb: gp.bombH.bombs){  // iteriamo le bombe presenti
             if(!bomb.exploded){  // se la bomba non è esplosa
-                
-                // Controlla la collisione tra la hitbox della bomba e la hitbox dell'entità
-                if (entity.hitbox.intersects(bomb.hitbox)){
-                    bomb.collision = true; // Imposta un flag di collisione sull'entità
-                    System.out.println("BOMBA");
+                int bombLeftBorder = bomb.x;
+                int bombRightBorder = bomb.x + bomb.hitbox.width;
+                int bombTopBorder = bomb.y;
+                int bombBottomBorder = bomb.y + bomb.hitbox.height;
+                //Controlla le 4 posizioni adiacenti alla bomba a croce
+                int bombPosSx = (((bomb.x - gp.tileSize - (gp.tileSize+gp.tileSize/2)))/gp.tileSize)  * 10 + ((bomb.y - (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize );
+                if(((bomb.x - gp.tileSize - (gp.tileSize+gp.tileSize/2)))/gp.tileSize>=0 && bombPosSx >= 0 && bombPosSx < 140) {  // check se la posizione è nell'array
 
+                    // System.out.print("SX ");  // da eliminare
+                    if(gp.tileM.isHouse(bomb.x-gp.tileSize, bomb.y)){  // se in quella pos. del fuoco c'è una casa 
+                        if(gp.obj.get(bombPosSx) == null ){   // check se quella posizione è un blocco esistente
+                            int playerDistanceSx = Math.abs(player.getPlayerCenterX() - bombLeftBorder);
+                            System.out.println("Player Distance SX: "+playerDistanceSx);
+                        }
+                    }
+                    
                 }
+                int bombPosDx = (((bomb.x + gp.tileSize - (gp.tileSize+gp.tileSize/2)))/gp.tileSize)  * 10 + ((bomb.y - (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize );
+                if(((bomb.x + gp.tileSize - (gp.tileSize+gp.tileSize/2)))/gp.tileSize>=0 && bombPosDx >= 0 && bombPosDx < 140) {  // check se la posizione è nell'array
+
+                    // System.out.print("DX ");  // da eliminare
+                    if(!gp.tileM.isHouse(bomb.x+gp.tileSize, bomb.y)){  // se in quella pos. c'è una casa 
+                        if(gp.obj.get(bombPosDx) == null ){   // check se quella posizione è un blocco esistente
+                            int playerDistanceDx = Math.abs(player.getPlayerCenterX() - bombRightBorder);
+                            System.out.println("Player Distance DX: "+playerDistanceDx);
+                        }
+                    }
+                }
+                int bombPosUp = ((bomb.x-(gp.tileSize+gp.tileSize/2))/gp.tileSize ) * 10 + ((bomb.y - gp.tileSize- (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize );
+                if(((bomb.y - gp.tileSize- (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize )>=0 && bombPosUp >= 0 && bombPosUp < 140) {  // check se la posizione è nell'array
+
+                    // System.out.print("UP ");  // da eliminare
+                    if(!gp.tileM.isHouse(bomb.x, bomb.y-gp.tileSize)){  // se in quella pos. del c'è una casa 
+                        if(gp.obj.get(bombPosUp) == null ){   // check se quella posizione è un blocco esistente
+                            int playerDistanceUp = Math.abs(player.getPlayerCenterY() - bombTopBorder);
+                            System.out.println("Player Distance UP: "+playerDistanceUp);
+                        }
+                    }
+                    
+                }
+                int bombPosDown = ((bomb.x-(gp.tileSize+gp.tileSize/2))/gp.tileSize ) * 10 + ((bomb.y + gp.tileSize- (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize );
+                System.out.println(((bomb.y + gp.tileSize- (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize ));
+                if(((bomb.y + gp.tileSize- (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize )>=0 && bombPosDown >= 0 && bombPosDown < 140) {  // check se la posizione è nell'array
+
+                    // System.out.print("DOWN ");  // da eliminare
+                    if(!gp.tileM.isHouse(bomb.x, bomb.y+gp.tileSize)){  // se in quella pos. del fuoco c'è una casa 
+                        if(gp.obj.get(bombPosDown) == null ){   // check se quella posizione è un blocco esistente
+                            int playerDistanceDown = Math.abs(player.getPlayerCenterY() - bombBottomBorder);
+                            System.out.println("Player Distance DOWN: "+playerDistanceDown);
+                        }
+                    }
+                    
+                }
+                bomb.collision = true; // Imposta un flag di collisione sull'entità
+                System.out.println("BOMBA");
             }
         }
     }

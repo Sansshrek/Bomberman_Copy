@@ -71,7 +71,7 @@ public class Player extends Entity{
 
     public void getPlayerImage(){
         try{  // prova a caricare le immagini nelle variabili
-            /*
+            
             up1 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/up01.png"));
             up2 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/up02.png"));
             up3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/up03.png"));
@@ -84,8 +84,8 @@ public class Player extends Entity{
             right1 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/right01.png"));
             right2 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/right02.png"));
             right3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/right03.png"));
-            */
-            up1=up2=up3=down1=down2=down3=left1=left2=left3=right1=right2=right3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Totti/up01.png")); 
+            
+            //up1=up2=up3=down1=down2=down3=left1=left2=left3=right1=right2=right3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Totti/up01.png")); 
             
         }catch(IOException e){
             e.printStackTrace();
@@ -115,7 +115,6 @@ public class Player extends Entity{
             // hitbox.x = x + hitboxX;
             // hitbox.y = y + hitboxY;
             gp.cChecker.checkTile(this);  // controlla se colpiamo qualche blocco
-            gp.cChecker.checkBomb(this);
             // CONTROLLA COLLISIONE OBJECT
             int objIndex = gp.cChecker.checkObj(this, true, g2);
             powerUpHandler(objIndex); // controlliamo cosa fare con l'oggetto
@@ -165,6 +164,7 @@ public class Player extends Entity{
         if(keyH.bombPressed){ // se preme il tasto P (bomba)
             // BombHandler bomb = new BombHandler(getPlayerCenterCol()*gp.tileSize+(gp.tileSize/2), getPlayerCenterRow()*gp.tileSize+(24 * gp.scale), firePower, g2, gp.tileSize);
             gp.bombH.createBomb(gp ,getPlayerTileX(), getPlayerTileY(), firePower);
+            gp.cChecker.checkBomb(this);
             // BombHandler bomb = new BombHandler(x, y, firePower, g2, gp.tileSize);
             // gp.bombs.add(bomb);
             // gp.obj.add(bomb);
@@ -193,7 +193,7 @@ public class Player extends Entity{
         int entityLeftWorldX = hitbox.x - (gp.tileSize+gp.tileSize/2);  // Coordinata x dove parte la hitbox
         int entityRightWorldX = hitbox.x + hitbox.width - (gp.tileSize+gp.tileSize/2);  // cordinata x dove arriva la hitbox
         int entityCenterX = ((entityLeftWorldX + entityRightWorldX) / 2 );
-        return entityCenterX + (gp.tileSize + gp.tileSize/2) - 1*scale;
+        return entityCenterX + (gp.tileSize + gp.tileSize/2);
     }
     public int getPlayerTileY(){
         int entityTopWorldY = hitbox.y - (gp.tileSize*2+gp.tileSize/2);  // coordinata y dove parte la hitbox
@@ -205,7 +205,7 @@ public class Player extends Entity{
         int entityTopWorldY = hitbox.y - (gp.tileSize*2+gp.tileSize/2);  // coordinata y dove parte la hitbox
         int entityBottomWorldY = hitbox.y + hitbox.height - (gp.tileSize*2+gp.tileSize/2);
         int entityCenterY = ((entityTopWorldY + entityBottomWorldY) / 2 );
-        return entityCenterY + (gp.tileSize*2+gp.tileSize/2) - 1*scale;
+        return entityCenterY + (gp.tileSize*2+gp.tileSize/2);
     }
 
     public void powerUpHandler(int index){
@@ -315,8 +315,7 @@ public class Player extends Entity{
         g2.drawRect(gp.gameBorderLeftX, gp.gameBorderUpY, 13*gp.tileSize, 11*gp.tileSize);
 
         g2.setColor(Color.RED);
-        System.out.println( "x: "+getPlayerCenterX()+" y: "+getPlayerCenterY());
-        g2.drawRect(getPlayerCenterX(), getPlayerCenterY(), 2*scale, 2*scale);
+        g2.drawRect(getPlayerCenterX(), getPlayerCenterY(), 6*scale, 6*scale);
 
         g2.setColor(Color.RED);
         // g2.drawRect(x, y, width, height);
