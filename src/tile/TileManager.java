@@ -17,7 +17,7 @@ import objects.Bomb;
 public class TileManager {
     GamePanel gp;
     public Tile[] tile;  // array di tiles che indica all'immagine 
-    public ArrayList <Rectangle> wallsHitbox = new ArrayList<>();
+    public ArrayList <Rectangle> houseHitbox = new ArrayList<>();
     int wallsNum = 43;
     int cont = 0;
     public int blockTileNum[][];
@@ -27,9 +27,9 @@ public class TileManager {
     public TileManager(GamePanel gp){ 
         this.gp = gp;
         tile = new Tile[20]; // array di 10 tile 
-        wallsTileNum = new int[gp.maxScreenCol][gp.maxScreenRow];  // mapTileNum salva la matrice di numeri della txt della mappa 
-        groundTileNum = new int[gp.maxScreenCol][gp.maxScreenRow];  // mapTileNum salva la matrice di numeri della txt della mappa 
-        blockTileNum = new int[gp.maxScreenCol][gp.maxScreenRow];
+        wallsTileNum = new int[gp.maxScreenRow][gp.maxScreenCol];  // mapTileNum salva la matrice di numeri della txt della mappa 
+        groundTileNum = new int[gp.maxScreenRow][gp.maxScreenCol];  // mapTileNum salva la matrice di numeri della txt della mappa 
+        blockTileNum = new int[gp.maxScreenRow][gp.maxScreenCol];
 
         System.out.println("Prendendo l'immagine dei Tiles");  // da eliminare
         getTileImage();
@@ -127,16 +127,16 @@ public class TileManager {
                 String line = br.readLine();  // leggiamo una singola riga
 
                 while(col < gp.maxScreenCol){
-                    if(blockTileNum[col][row] == 0 && line != null){  // è uno spazio disponibile (no casa/nemico/spazio player)
+                    if(blockTileNum[row][col] == 0 && line != null){  // è uno spazio disponibile (no casa/nemico/spazio player)
                         String numbers[] = line.split(" "); // dividiamo la stringa della riga in un'array di numeri
                         int num = Integer.parseInt(numbers[col]);
                         if(type == "ground"){
-                            groundTileNum[col][row] = num;  // salviamo il numero nella matrice della pavimento
-                            blockTileNum[col][row] = num;
+                            groundTileNum[row][col] = num;  // salviamo il numero nella matrice della pavimento
+                            blockTileNum[row][col] = num;
                         
                         }
                         if(type == "walls")
-                            wallsTileNum[col][row] = num;  // salviamo il numero nella matrice del muro
+                            wallsTileNum[row][col] = num;  // salviamo il numero nella matrice del muro
                     }
                     col++;
                 }
@@ -162,7 +162,7 @@ public class TileManager {
         // System.out.print("x: "+xBlock+" y: "+yBlock); // da eliminare
         if (xBlock >= 0 && xBlock < gp.maxScreenCol && yBlock >= 0 && yBlock < gp.maxScreenRow) {
             // System.out.println(" block "+blockTileNum[xBlock][yBlock]);  // da eliminare
-            if(blockTileNum[xBlock][yBlock] == 3){
+            if(blockTileNum[yBlock][xBlock] == 3){
                 return true; // Restituisci true se il tile corrispondente alla posizione (x, y) è un palazzo
             }
         } 
@@ -180,14 +180,14 @@ public class TileManager {
             int tileNum = 0;
 
             if(type == "ground"){
-                tileNum = groundTileNum[col][row];  // salviamo il numero della matrice del pavimento
+                tileNum = groundTileNum[row][col];  // salviamo il numero della matrice del pavimento
             }
             if(type == "walls")
-                tileNum = wallsTileNum[col][row];  // salviamo il numero della matrice del muro
+                tileNum = wallsTileNum[row][col];  // salviamo il numero della matrice del muro
 
             g2.drawImage(tile[tileNum].image, x, y, gp.tileSize, gp.tileSize, null);
             if(tileNum == 3 && cont <= wallsNum){  // se è un palazzo
-                wallsHitbox.add(new Rectangle(x, y, gp.tileSize, gp.tileSize));  // aggiungo la sua hitbox
+                houseHitbox.add(new Rectangle(x, y, gp.tileSize, gp.tileSize));  // aggiungo la sua hitbox
                 // System.out.println("Cont "+cont);
                 cont++;
             }

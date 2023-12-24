@@ -2,6 +2,7 @@ package entity;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -21,6 +22,7 @@ public class Player extends Entity{
     public final int height; 
     
     //codinate top left dell' hitbox
+    public Point hitboxP;
     public int hitboxX; 
     public int hitboxY;
     
@@ -54,14 +56,15 @@ public class Player extends Entity{
         setPlayerDefaultValues();
         getPlayerImage();
 
-        this.hitbox = new Rectangle(hitboxX+x, hitboxY+y, hitboxWidth, hitboxHeight);
+        this.hitbox = new Rectangle(hitboxX+imageP.x, hitboxY+imageP.y, hitboxWidth, hitboxHeight);
     }
 
 	public void setPlayerDefaultValues(){
-        x=0;
-        y=0;
+        int x=0;
+        int y=0;
         x = (x*tileSize) + (tileSize+tileSize/2);   // posizione x del player IN ALTO A SINISTRA
         y = (y*tileSize) + 2*tileSize;    // posizione y del player IN ALTO A SINISTRA
+        this.imageP = new Point(x, y);
         speed = 2;
         direction = "down";
         firePower = 1;
@@ -116,25 +119,25 @@ public class Player extends Entity{
             // hitbox.y = y + hitboxY;
             gp.cChecker.checkTile(this);  // controlla se colpiamo qualche blocco
             // CONTROLLA COLLISIONE OBJECT
-            int objIndex = gp.cChecker.checkObj(this, true, g2);
-            powerUpHandler(objIndex); // controlliamo cosa fare con l'oggetto
+            Point objPoint = gp.cChecker.checkObj(this, true, g2);
+            powerUpHandler(objPoint); // controlliamo cosa fare con l'oggetto
 
             if(!collisionOn){ // si puo muovere
                 switch(direction){
                     case "up": 
-                        y -= speed; 
+                        imageP.y -= speed; 
                         hitbox.y -= speed;
                         break;  // la posizione Y diminuisce della velocita del player
                     case "down": 
-                        y += speed; 
+                        imageP.y += speed; 
                         hitbox.y += speed;
                         break;
                     case "left": 
-                        x -= speed; 
+                        imageP.x -= speed; 
                         hitbox.x -= speed;
                         break;
                     case "right": 
-                        x += speed; 
+                        imageP.x += speed; 
                         hitbox.x += speed;
                         break;
                 }
@@ -208,11 +211,9 @@ public class Player extends Entity{
         return entityCenterY + (gp.tileSize*2+gp.tileSize/2);
     }
 
-    public void powerUpHandler(int index){
-        if(index != 999){  // se non è il valore default
-            String objName = gp.obj.get(index).name;
-            if(objName != "block") // da eliminare
-                gp.obj.set(index, gp.obj.get(index).power);
+    public void powerUpHandler(Point index){
+        if(index.equals(new Point(999,999))){  // se non è il valore default
+            String objName = gp.obj[index.y][index.x].name;
             switch(objName){
                 case "fire":
                     score += 10;
@@ -300,7 +301,7 @@ public class Player extends Entity{
                 }
                 break;
         }
-        g2.drawImage(image, x, y, gp.player.width, gp.player.height, null);  // disegna lo sprite del personaggio (image) nella posizione x,y di grandezza tileSize
+        g2.drawImage(image, imageP.x, imageP.y, gp.player.width, gp.player.height, null);  // disegna lo sprite del personaggio (image) nella posizione x,y di grandezza tileSize
         //da eliminare
         g2.setColor(Color.BLUE);
         // g2.drawRect(this.hitboxX+x, this.hitboxY+y, this.hitboxWidth, this.hitboxHeight);  

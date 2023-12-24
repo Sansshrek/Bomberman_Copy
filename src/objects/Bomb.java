@@ -36,6 +36,9 @@ public class Bomb extends SuperObject{
         super(gp);
         this.x = x;
         this.y = y;
+        this.tileX = (x - (gp.tileSize+gp.tileSize/2))/gp.tileSize;
+        this.tileY = (y - (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize;
+        this.blockP.setLocation(x, y);
         this.firePower = firePower;
         this.bombWidth = tileSize;
         this.bombHeight = tileSize;
@@ -131,17 +134,17 @@ public class Bomb extends SuperObject{
                 break;
             }
 
-            int positionSx = (((x - i*bombWidth - (gp.tileSize+gp.tileSize/2)))/gp.tileSize)  * 10 + ((y - (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize );
-            if(positionSx >= 0 && positionSx < 140) {  // check se la posizione è nell'array
+            // per le pos a SX dobbiamo fare tileX-i
+            if(tileX-i >= 0) {  // check se la posizione è nell'array
 
                 // System.out.print("SX ");  // da eliminare
                 if(gp.tileM.isHouse(x-i*bombWidth, y)){  // se in quella pos. del fuoco c'è una casa 
                     // System.out.println("X "+(x-i*bombWidth)+" Y "+y+" Collision SX true");
                     break;  // ferma il loop
                 }
-                if(gp.obj.get(positionSx) != null && gp.obj.get(positionSx).name != "exit"){   // check se quella posizione è un blocco esistente
+                if(gp.obj[tileY][tileX-i] != null && gp.obj[tileY][tileX-i].name != "exit"){   // check se quella posizione è un blocco esistente
                     // System.out.println(gp.obj.get(positionSx).name);
-                    gp.obj.get(positionSx).destroy();  // inizia l'animazione dell'esplosione del blocco
+                    gp.obj[tileY][tileX-i].destroy();  // inizia l'animazione dell'esplosione del blocco
                     // gp.obj.set(positionSx, gp.obj.get(positionSx).power);
                     stopIndexSx = i;  // salva la posizione del fuoco cosi che non vada oltre al blocco distrutto
                 }
@@ -168,8 +171,8 @@ public class Bomb extends SuperObject{
                 break;
             }
 
-            int positionDx = (((x + i*bombWidth- (gp.tileSize+gp.tileSize/2)))/gp.tileSize)  * 10 + ((y - (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize);
-            if(positionDx >= 0 && positionDx <140){
+            // per le pos a DX dobbiamo fare tileX+i
+            if(tileX+i <140){
 
                 
                 // System.out.print("DX ");  // da eliminare
@@ -179,9 +182,9 @@ public class Bomb extends SuperObject{
                     // System.out.println("collision");
                 }
 
-                if(gp.obj.get(positionDx) != null && gp.obj.get(positionDx).name != "exit"){
-                    // System.out.println(gp.obj.get(positionDx).name);
-                    gp.obj.get(positionDx).destroy();
+                if(gp.obj[tileY][tileX+i] != null && gp.obj[tileY][tileX+i].name != "exit"){
+                    // System.out.println(gp.obj[tileY][tileX+i].name);
+                    gp.obj[tileY][tileX+i].destroy();
                     stopIndexDx = i;
                 }
 
@@ -204,8 +207,8 @@ public class Bomb extends SuperObject{
                 break;
             }
 
-            int positionUp = ((x-(gp.tileSize+gp.tileSize/2))/gp.tileSize ) * 10 + ((y- i*bombWidth- (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize );
-            if(positionUp >= 0 && positionUp <140){
+            // per le pos a UP dobbiamo fare tileY-i
+            if(tileY-i >= 0){
                 
                 // System.out.print("UP ");  // da eliminare
                 if(gp.tileM.isHouse(x, y-i*bombWidth)){
@@ -214,9 +217,9 @@ public class Bomb extends SuperObject{
                     // System.out.println("collision");
                 }
 
-                if(gp.obj.get(positionUp) != null && gp.obj.get(positionUp).name != "exit"){
-                    // System.out.println(gp.obj.get(positionUp).name);
-                    gp.obj.get(positionUp).destroy();
+                if(gp.obj[tileY-i][tileX] != null && gp.obj[tileY-i][tileX].name != "exit"){
+                    // System.out.println(gp.obj[tileY-i][tileX].name);
+                    gp.obj[tileY-i][tileX].destroy();
                     stopIndexUp = i;
                 }
 
@@ -242,8 +245,8 @@ public class Bomb extends SuperObject{
                 break;
             }
 
-            int positionDw = ((x-(gp.tileSize+gp.tileSize/2))/gp.tileSize ) * 10 + ((y+ i*bombWidth- (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize );
-            if(positionDw >= 0 && positionDw <140){
+            // per le pos a DW dobbiamo fare tileY+i
+            if(tileY+i <140){
                 
                 // System.out.println("X "+x+" Y "+(y+i*bombWidth)+ " calc x:"+ (((x - (gp.tileSize+gp.tileSize/2)))/gp.tileSize)+ " y:"+(((y+i*bombWidth) - (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize ));
                 
@@ -254,12 +257,12 @@ public class Bomb extends SuperObject{
                     break;
                     // System.out.println("collision");
                 }
-                    if(gp.obj.get(positionDw)!= null && gp.obj.get(positionDw).name != "exit"){  // è un blocco o powerUp che non sia l'uscita
-                        // System.out.println(gp.obj.get(positionDw).name);
-                        gp.obj.get(positionDw).destroy();
+                    if(gp.obj[tileY+i][tileX]!= null && gp.obj[tileY+i][tileX].name != "exit"){  // è un blocco o powerUp che non sia l'uscita
+                        // System.out.println(gp.obj[tileY+i][tileX].name);
+                        gp.obj[tileY+i][tileX].destroy();
                         stopIndexDw = i;
                     }
-                // else if(gp.obj.get(positionDw) != null && gp.obj.ge){  // è un powerUp
+                // else if(gp.obj[tileY+i][tileX] != null && gp.obj.ge){  // è un powerUp
                 //     gp.obj.set(positionDw, null);
                 // }
 

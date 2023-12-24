@@ -3,6 +3,7 @@ package main;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
+import java.awt.Point;
 
 import objects.Block;
 import tile.TileManager;
@@ -18,8 +19,8 @@ public class AssetSetter {
 
     public ArrayList<Integer> availablePos(){
         ArrayList<Integer> avPos = new ArrayList<>();
-        for(int x=0; x<13; x++){  // 13 è il massimo dei tiles della mappa per la x
-            for(int y=0; y<10; y++){  // 10 è il massimo dei tiles della mappa per la y
+        for(int x=0; x<10; x++){  // 13 è il massimo dei tiles della mappa per la x
+            for(int y=0; y<13; y++){  // 10 è il massimo dei tiles della mappa per la y
                 if(tileM.blockTileNum[x][y] != 3 && tileM.blockTileNum[x][y] != -1 && x+y != 0 && x+y != 1 && x-y !=0){  // se non è un palazzo o non è gia preso
                     if(true)  // pos vicino alla partenza del player 
                         avPos.add( x * 10 + y); // calcola l'indice unico per la posizione
@@ -28,44 +29,39 @@ public class AssetSetter {
         }
         return avPos;
     }
-    public boolean[][] availablePosMatrix(){
-       boolean[][] avPos = new boolean[10][13];
-        for(int x=0; x<10; x++){  // 13 è il massimo dei tiles della mappa per la x
-            for(int y=0; y<13; y++){  // 10 è il massimo dei tiles della mappa per la y
-                if(tileM.blockTileNum[y][x] != 3 && tileM.blockTileNum[y][x] != -1 && x+y != 0 && x+y != 1){  // se non è un palazzo o non è gia preso
-                    avPos[x][y] = true;
+    public ArrayList<Point> availablePosMatrix(){
+        ArrayList<Point> avPos = new ArrayList<>();
+        for(int row=0; row<gp.maxGameRow; row++){  // 13 è il massimo dei tiles della mappa per la x
+            for(int col=0; col<gp.maxGameCol; col++){  // 10 è il massimo dei tiles della mappa per la y
+                if(tileM.blockTileNum[row][col] != 3 && tileM.blockTileNum[row][col] != -1 && row+col != 0 && row+col != 1){  // se non è un palazzo o non è gia preso
+                    avPos.add(new Point(col, row));
                 }
-                System.out.print(avPos[x][y]+" ");
             }
             System.out.println();
         }
         return avPos;
     }
     public void setMatrixBlocks(){
-        // ...
-        boolean[][] avPos = availablePosMatrix();
-        // ...
-    
-        Random rand = new Random();
-    
-        // Scegli un indice casuale per le righe e le colonne
-        int randomRow = rand.nextInt(avPos.length);
-        int randomCol = rand.nextInt(avPos[randomRow].length);
-    
-        // Verifica se la posizione è disponibile
-        if (avPos[randomRow][randomCol]) {
-            // La posizione è disponibile, puoi usarla
-            int tileX = randomRow;
-            int tileY = randomCol;
+        int numBlock = 45;
+        ArrayList<Point> avPos = availablePosMatrix();  // prendiamo le posizioni disponibili
+        ArrayList<String> avPowerUp = getPowerUp(numBlock);  // prendiamo i powerUp disponibili
+        Collections.shuffle(avPos);  // randomizziamo l'ordine delle pos disponibili
+        Collections.shuffle(avPowerUp); // randomizziamo l'ordine dei powerUp
+
+        Point exit = avPos.get(0);
+        gp.obj[exit.y][exit.x] = new Block(gp, exit.x*gp.tileSize + (gp.tileSize+gp.tileSize/2), exit.y*gp.tileSize + (2*gp.tileSize + (gp.tileSize/2)), exit.x, exit.y, "exit");
+        for(int i=1; i<numBlock; i++){  // inizializzamo l'array vuoto cosi che dopo mettiamo 
+            Point position = avPos.get(i);
+            int tileX = position.x;
+            int tileY = position.y;
+
+            gp.obj[tileY][tileX] = new Block(gp, tileX*gp.tileSize + (gp.tileSize+gp.tileSize/2), tileY*gp.tileSize + (2*gp.tileSize + (gp.tileSize/2)), tileX, tileY, avPowerUp.get(i));
             
-        } else {
-            // La posizione non è disponibile, scegli un'altra posizione
         }
-        // ...
     }
 
     //avaliable position with distinguished x and y saved ina 
-
+    /*
     public void setBlocks(){
         int numBlock = (int)(Math.random()*(40-33))+33;  // 33-40 blocchi a random
         System.out.println(numBlock);  // da eliminare
@@ -73,13 +69,15 @@ public class AssetSetter {
         System.out.println("Prendendo posizioni disponibili");
         ArrayList<Integer> avPos = availablePos();
         ArrayList<String> avPowerUp = getPowerUp(numBlock);
-        /*
+        
         for(int i=0; i<avPos.size(); i++){
             System.out.println(avPos.get(i));
-        } */
+        } 
         System.out.println("Inizializzando Array oggetti");
-        for(int i=0; i<140; i++){  // inizializzamo l'array vuoto cosi che dopo mettiamo 
-            gp.obj.add(null);
+        for(int row=0; row < gp.maxGameRow; row++){
+            for(int col=0; col < gp.maxGameCol; col++){
+                gp.obj[row][col] = null;
+            }
         }
         Collections.shuffle(avPos);  // randomizza le posizioni disponibili
         Collections.shuffle(avPowerUp);
@@ -88,13 +86,14 @@ public class AssetSetter {
         int position = avPos.get(0);
         int tileX = position / 10;
         int tileY = position % 10;
+        gp.obj[]
         gp.obj.set(1, new Block(gp, tileX*gp.tileSize + (gp.tileSize+gp.tileSize/2), tileY*gp.tileSize + (2*gp.tileSize + (gp.tileSize/2)), tileX, tileY, "exit", position));
         for(int i = 1; i< numBlock; i++){
             //System.out.println("Caricando blocchi nell'array oggetti");
             position = avPos.get(i);
             tileX = position / 10;  // ci permette di prendere da un numero soltanto sia la X che la Y
             tileY = position % 10;  // ad esempio se x=3, y=6 -> 3*10+6 = 36 -> 36/10 = 3 | 36%10 = 6
-            /*
+            
             while(true){  // controllo della posizione se non è gia stata presa
                 tileX = (int)(Math.random()*(13)); // 0-12
                 tileY = (int)(Math.random()*(10)); // 0-9
@@ -102,15 +101,15 @@ public class AssetSetter {
                     if(tileX == 0 && tileY == 0)  // pos vicino alla partenza del player 
                         break; // esci dal loop
                 }
-            }*/
+            }
             tileM.blockTileNum[tileX][tileY] = 16;  // lo imposta come blocco oggetto dei tile
             gp.obj.set(position, new Block(gp, tileX*gp.tileSize + (gp.tileSize+gp.tileSize/2), tileY*gp.tileSize + (2*gp.tileSize + (gp.tileSize/2)), tileX, tileY, avPowerUp.get(position), position));
-        }/* da eliminare
+        }
         for(int i=0; i<130; i++){  // inizializzamo l'array vuoto cosi che dopo mettiamo 
             if(gp.obj.get(i) != null)
                 System.err.println(gp.obj.get(i).x+" "+gp.obj.get(i).y);
-        } */
-    }
+        } 
+    } */
 
     public ArrayList<String> getPowerUp(int max){
         ArrayList<String> powerUpList = new ArrayList<>();
