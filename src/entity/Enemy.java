@@ -3,6 +3,7 @@ package entity;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -39,8 +40,8 @@ public class Enemy extends Entity{
         this.scale = gp.getScale();
         this.tileSize = gp.getTileSize();
         //coordinate nel mondo
-        this.x = x;
-        this.y = y;
+        // this.x = x;
+        // this.y = y;
 
         //largezza e altezza dell' immagine dell' enemy
         this.width = 16*gp.scale; // larghezza dell' enemy
@@ -59,14 +60,15 @@ public class Enemy extends Entity{
         hitboxDefaultY = hitboxY;
 
         System.out.println("Caricando l'enemy");  // da eliminare
-        setEnemyDefaultValues();
+        setEnemyDefaultValues(x,y);
         getEnemyImage();
         
     }
 
-	public void setEnemyDefaultValues(){
+	public void setEnemyDefaultValues(int x, int y){
         x = (x*ogTileSize*scale) + (ogTileSize+ogTileSize/2)*gp.scale;   // posizione x dell'Enemy IN ALTO A SINISTRA
         y = (y*ogTileSize*scale) + (2*ogTileSize)*gp.scale;    // posizione y dell'Enemy IN ALTO A SINISTRA
+        this.imageP = new Point(x, y);
         this.speed = 1;
         this.direction = "down";
         
@@ -95,12 +97,11 @@ public class Enemy extends Entity{
     public void update(){  // update viene chiamato 60 volte al secondo
             // Check for collisions
             
-        hitbox.x = x + hitboxX;
-        hitbox.y = y + hitboxY;
+        hitbox.x = imageP.x + hitboxX;
+        hitbox.y = imageP.y + hitboxY;
         collisionOn = false;
         gp.cChecker.checkTile(this);
-        int objIndex = gp.cChecker.checkObj(this, false, g2);
-        powerUpHandler(objIndex); // controlliamo cosa fare con l'oggetto
+        Point objIndex = gp.cChecker.checkObj(this, false, g2);
         // If a collision occurs, check for collisions in all directions and choose a new direction
         if (collisionOn) {
             List<String> directions = Arrays.asList("up", "down", "left", "right");
@@ -120,19 +121,19 @@ public class Enemy extends Entity{
         if(!collisionOn){ // si puo muovere
             switch(direction){
                 case "up": 
-                    y -= speed; 
+                    imageP.y -= speed; 
                     hitbox.y -= speed;
                     break;  // la posizione Y diminuisce della velocita del player
                 case "down": 
-                    y += speed; 
+                    imageP.y += speed; 
                     hitbox.y += speed;
                     break;
                 case "left": 
-                    x -= speed; 
+                    imageP.x -= speed; 
                     hitbox.x -= speed;
                     break;
                 case "right": 
-                    x += speed; 
+                    imageP.x += speed; 
                     hitbox.x += speed;
                     break;
             }
@@ -172,14 +173,6 @@ public class Enemy extends Entity{
         int entityBottomWorldY = hitbox.y + hitbox.height - (gp.hudHeight + (8 * gp.scale));
         int entityCenterY = ((entityTopWorldY + entityBottomWorldY) / 2 ) / gp.tileSize+2;
         return entityCenterY*gp.tileSize + gp.tileSize/2;
-    }
-    public void powerUpHandler(int index){
-        if(index != 999){  // se non è il valore default
-            String objName = gp.obj.get(index).name;
-            if(objName != "block") // da eliminare
-                System.out.println(objName);
-            gp.obj.set(index, gp.obj.get(index).power);
-        }
     }
     public void draw(){
         BufferedImage image = null;
@@ -230,7 +223,7 @@ public class Enemy extends Entity{
                 }
                 break;
         }
-        g2.drawImage(image, x, y, gp.enemy.width, gp.enemy.height, null);  // disegna lo sprite del personaggio (image) nella posizione x,y di grandezza tileSize
+        g2.drawImage(image, imageP.x, imageP.y, gp.enemy.width, gp.enemy.height, null);  // disegna lo sprite del personaggio (image) nella posizione x,y di grandezza tileSize
         //da eliminare
         g2.setColor(Color.BLUE);
         g2.draw(this.hitbox);  

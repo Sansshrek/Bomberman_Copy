@@ -20,14 +20,17 @@ import tile.TileManager;
 public class GamePanel extends JPanel implements Runnable{
     // Screen Settings
     final int originalTileSize = 16;  //16x16 tile
-    public final int scale = 3;
+    public final int scale = 5;
+    
 
     public final int tileSize = originalTileSize * scale;  // 48x48 tile (è public cosi la classe Player puo accedere al valore)
+    public final int maxScreenCol = 16;
     public final int maxScreenRow = 14;
-    public final int maxScreenCol = 17;
     public final int screenWidth = tileSize * maxScreenCol-16*this.scale;  // 768 pixels
     public final int screenHeight = tileSize * maxScreenRow;  // 672 pixels
     public final int hudHeight = 32*scale;
+    public final int maxGameCol = 13;
+    public final int maxGameRow = 11;
     public final int gameBorderLeftX = (tileSize/2)+tileSize;
     public final int gameBorderRightX = gameBorderLeftX + 13*tileSize;
     public final int gameBorderUpY = (tileSize/2)+hudHeight;
@@ -48,7 +51,8 @@ public class GamePanel extends JPanel implements Runnable{
     public Enemy enemy = new Enemy(this, 10,0);
     public Enemy enemy2 = new Enemy(this, 10,3);
     public AssetSetter aSetter = new AssetSetter(this, tileM);
-    public ArrayList<SuperObject> obj = new ArrayList<>();
+    // public ArrayList<SuperObject> obj = new ArrayList<>();
+    public SuperObject obj[][];
     public ArrayList<Entity> entity = new ArrayList<>();
 
     // Stato di Gioco
@@ -59,12 +63,13 @@ public class GamePanel extends JPanel implements Runnable{
         this.setBackground(Color.black);
         this.setDoubleBuffered(true);  // tutti i disegni di questo componente vengono fatti in un buffer di disegno (per migliorare le performance)
         this.addKeyListener(keyH);
-        this.setFocusable(true);  // cosi il GamePanel è "concentrato" a ricevere input di tastiera 
+        this.setFocusable(true);  // cosi il GamePanel è "concentrato" a ricevere input di tastiera
+        this.obj = new SuperObject[maxGameRow][maxGameCol]; 
     }
 
     public void setupGame(){
         System.out.println("Caricando i blocchi distruttibili");  // da eliminare
-        aSetter.setBlocks();
+        aSetter.setMatrixBlocks();
     }
     public int getTileSize(){
         return tileSize;
@@ -121,9 +126,11 @@ public class GamePanel extends JPanel implements Runnable{
         enemy2.update();
         
         
-        for(int i=0; i < obj.size(); i++){
-            if(obj.get(i) != null){
-                obj.get(i).update();
+        for(int row=0; row < maxGameRow; row++){
+            for(int col=0; col < maxGameCol; col++){
+                if(obj[row][col] != null){
+                    obj[row][col].update();
+                }
             }
         }
     }
@@ -137,28 +144,30 @@ public class GamePanel extends JPanel implements Runnable{
         bombH.g2 = g2;
 
         g2.setColor(Color.black);
-        g2.fillRect(0, 0, this.maxScreenCol, this.maxScreenRow);  // disegna il background
+        g2.fillRect(0, 0, this.maxScreenRow, this.maxScreenCol);  // disegna il background
 
         tileM.drawMap(g2, 24*this.scale, this.hudHeight+(8*this.scale), "ground");  // prima il pavimento
         tileM.drawMap(g2, -8*this.scale, this.hudHeight-(8*this.scale), "walls");  // poi le mura
 
         g2.setColor(Color.RED);
-        for(Rectangle hitbox: tileM.wallsHitbox){
+        for(Rectangle hitbox: tileM.houseHitbox){
             g2.draw(hitbox);
         }
-        
-        
-        for(int i=0; i < obj.size(); i++){
-            if(obj.get(i) != null){
-                if(obj.get(i) instanceof Bomb){
-                    Bomb bomb = (Bomb) obj.get(i);
-                    bomb.draw(g2, this);
+
+        for(int row=0; row < maxGameRow; row++){
+            for(int col=0; col < maxGameCol; col++){
+                if(obj[row][col] != null){
+                    if(obj[row][col] instanceof Bomb){
+                        Bomb bomb = (Bomb) obj[row][col];
+                        obj[row][col].draw(g2, this);
+                    }
+                    obj[row][col].draw(g2, this);
+                    g2.setColor(Color.YELLOW);
+                    g2.draw(obj[row][col].hitbox);
                 }
-                obj.get(i).draw(g2, this);
-                g2.setColor(Color.YELLOW);
-                g2.draw(obj.get(i).hitbox);
             }
         }
+
         bombH.updateBomb();
         player.draw();  // poi il player
         enemy.draw();

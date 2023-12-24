@@ -3,6 +3,7 @@ package objects;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.awt.Point;
 
 import main.GamePanel;
 
@@ -11,7 +12,8 @@ public class SuperObject {
     public BufferedImage image;
     public String name;
     public int x, y;
-    public int indexObj;
+    public Point blockP, indexObj;
+    public int tileX, tileY;
     public boolean collision = false;
     public Rectangle hitbox;
     public int hitboxDefaultX = 0;

@@ -12,16 +12,16 @@ public class Block extends SuperObject {
     int tileX, tileY;
     BufferedImage img1, img2, img3, img4, destroyimg1, destroyimg2, destroyimg3, destroyimg4, destroyimg5, destroyimg6;
     boolean eploded = false, extinguished = false;
-    public Block(GamePanel gp, int x, int y, int tileX, int tileY, String powerUp, int position){
+    public Block(GamePanel gp, int x, int y, int tileX, int tileY, String powerUp){
         super(gp);
         this.x = x;
         this.y = y;
+        this.blockP.setLocation(x, y);
         this.tileX = tileX;
         this.tileY = tileY;
         this.hitbox.x = x;
         this.hitbox.y = y;
-        this.indexObj = position;
-        power = new PowerUp(gp, x, y, powerUp);
+        power = new PowerUp(gp, x, y, tileX, tileY, powerUp);
         name = "block";
         collision = true;
         try {  // apro le 4 sprites del blocco
@@ -115,9 +115,9 @@ public class Block extends SuperObject {
         }else{  // altrimenti se ha finito di esplodere
             gp.tileM.blockTileNum[tileX][tileY] = 0;  // resetta il tile sulla mappa
             if(power.name != "nothing")  // se il blocco ha un powerUp
-                gp.obj.set(indexObj, power);  // allora il blocco viene cambiato in powerUp nella lista degli oggetti
+                gp.obj[tileY][tileX] = power;  // allora il blocco viene cambiato in powerUp nella lista degli oggetti
             else
-                gp.obj.set(indexObj, null);  // altrimenti viene rimosso dalla lista se non ha powerUp
+                gp.obj[tileY][tileX] = power;  // altrimenti viene rimosso dalla lista se non ha powerUp
         }
     }
 }
