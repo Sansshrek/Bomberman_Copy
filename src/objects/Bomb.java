@@ -2,6 +2,7 @@ package objects;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -38,7 +39,7 @@ public class Bomb extends SuperObject{
         this.y = y;
         this.tileX = (x - (gp.tileSize+gp.tileSize/2))/gp.tileSize;
         this.tileY = (y - (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize;
-        this.blockP.setLocation(x, y);
+        this.blockP = new Point(x, y);
         this.firePower = firePower;
         this.bombWidth = tileSize;
         this.bombHeight = tileSize;

@@ -212,7 +212,8 @@ public class Player extends Entity{
     }
 
     public void powerUpHandler(Point index){
-        if(index.equals(new Point(999,999))){  // se non è il valore default
+        Point defPoint = new Point(999,999);
+        if(!index.equals(defPoint)){  // se non è il valore default
             String objName = gp.obj[index.y][index.x].name;
             switch(objName){
                 case "fire":

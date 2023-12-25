@@ -112,27 +112,30 @@ public class AssetSetter {
     } */
 
     public ArrayList<String> getPowerUp(int max){
-        ArrayList<String> powerUpList = new ArrayList<>();
-        System.out.println("Generando Powerup");
-        for(int i=0; i<max; i++){
-        // Probabilita         10%     15%     15%      5%       5%       25%       20%        15%        10%     25%
-            String[] powerUps = {"fire", "bomb", "skate", "life", "death", "onigiri", "apple", "ice_cream", "cake", "nothing"};
-            int[] probabilities = {10, 15, 15, 5, 5, 25, 20, 15, 10, 60};
-            Random random = new Random();
-            int total = 0;
-            for (int probability : probabilities) {
-                total += probability;
-            }
-            int randomNumber = random.nextInt(total) + 1; // genera un numero da 1 al totale delle probabilità
+    ArrayList<String> powerUpList = new ArrayList<>();
+    System.out.println("Generando Powerup");
 
-            int cumulativeProbability = 0;
-            for (int j = 0; j < powerUps.length; j++) {
-                cumulativeProbability += probabilities[j];
-                if (randomNumber <= cumulativeProbability) {
-                    powerUpList.add(powerUps[j]); // ritorna il powerUp all'indice i
-                }
+    String[] powerUps = {"fire", "bomb", "skate", "life", "death", "onigiri", "apple", "ice_cream", "cake", "nothing"};
+    int[] probabilities = {10, 15, 15, 5, 5, 25, 20, 15, 10, 60};
+    Random random = new Random();
+
+    int total = 0;
+    for (int probability : probabilities) {
+        total += probability;
+    }
+
+    for(int i=0; i<max; i++){
+        int randomNumber = random.nextInt(total) + 1; // genera un numero da 1 al totale delle probabilità
+
+        int cumulativeProbability = 0;
+        for (int j = 0; j < powerUps.length; j++) {
+            cumulativeProbability += probabilities[j];
+            if (randomNumber <= cumulativeProbability) {
+                powerUpList.add(powerUps[j]); // ritorna il powerUp all'indice i
+                break; // interrompe il ciclo una volta trovato il power-up
             }
         }
-        return powerUpList;
     }
+    return powerUpList;
+}
 }
