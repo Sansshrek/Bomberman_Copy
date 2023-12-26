@@ -20,7 +20,7 @@ import tile.TileManager;
 public class GamePanel extends JPanel implements Runnable{
     // Screen Settings
     final int originalTileSize = 16;  //16x16 tile
-    public final int scale = 5;
+    public final int scale = 3;
     
 
     public final int tileSize = originalTileSize * scale;  // 48x48 tile (è public cosi la classe Player puo accedere al valore)
@@ -172,7 +172,7 @@ public class GamePanel extends JPanel implements Runnable{
         player.draw();  // poi il player
         enemy.draw();
         enemy2.draw();
-        // drawHUD(g2);
+        drawHUD(g2);
 
         g2.dispose();  // rimuove il contesto grafico e rilascia ogni risorsa di sistema che sta usando
     }

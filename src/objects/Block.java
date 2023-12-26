@@ -23,7 +23,6 @@ public class Block extends SuperObject {
         this.hitbox.y = y;
         power = new PowerUp(gp, x, y, tileX, tileY, powerUp);
         name = "block";
-        collision = true;
         try {  // apro le 4 sprites del blocco
             
            
@@ -113,11 +112,11 @@ public class Block extends SuperObject {
                 }
             }
         }else{  // altrimenti se ha finito di esplodere
-            gp.tileM.blockTileNum[tileX][tileY] = 0;  // resetta il tile sulla mappa
+            gp.tileM.blockTileNum[tileY][tileX] = 0;  // resetta il tile sulla mappa
             if(power.name != "nothing")  // se il blocco ha un powerUp
                 gp.obj[tileY][tileX] = power;  // allora il blocco viene cambiato in powerUp nella lista degli oggetti
             else
-                gp.obj[tileY][tileX] = power;  // altrimenti viene rimosso dalla lista se non ha powerUp
+                gp.obj[tileY][tileX] = null;  // altrimenti viene rimosso dalla lista se non ha powerUp
         }
     }
 }

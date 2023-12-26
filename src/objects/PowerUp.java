@@ -17,6 +17,9 @@ public class PowerUp extends SuperObject{
         this.y = y;
         this.tileX = tileX;
         this.tileY = tileY;
+        this.hitbox.x = x;
+        this.hitbox.y = y;
+        this.collision = false;
         try {
             img = ImageIO.read(getClass().getResourceAsStream("../res/powerup/"+powerUp+".png"));
             

@@ -35,4 +35,11 @@ public class Entity {
         this.hitboxWidth = tileSize;
         this.hitboxHeight = tileSize;
     }
+
+    public int getCenterX(){
+        return (hitbox.x + hitbox.x + hitbox.width) / 2;
+    }
+    public int getCenterY(){
+        return (hitbox.y + hitbox.y + hitbox.height) / 2;
+    }
 }

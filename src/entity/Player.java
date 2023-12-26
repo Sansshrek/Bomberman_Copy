@@ -185,18 +185,15 @@ public class Player extends Entity{
             keyH.firePressed = false;
         }
     }
-
+    
     public int getPlayerTileX(){
+        return getCenterX();
+    }
+    public int getPlayerTileXX(){
         int entityLeftWorldX = hitbox.x - (gp.tileSize+gp.tileSize/2);  // Coordinata x dove parte la hitbox
         int entityRightWorldX = hitbox.x + hitbox.width - (gp.tileSize+gp.tileSize/2);  // cordinata x dove arriva la hitbox
         int entityCenterX = ((entityLeftWorldX + entityRightWorldX) / 2 ) / gp.tileSize;
         return entityCenterX*gp.tileSize + (gp.tileSize + gp.tileSize/2);
-    }
-    public int getPlayerCenterX(){
-        int entityLeftWorldX = hitbox.x - (gp.tileSize+gp.tileSize/2);  // Coordinata x dove parte la hitbox
-        int entityRightWorldX = hitbox.x + hitbox.width - (gp.tileSize+gp.tileSize/2);  // cordinata x dove arriva la hitbox
-        int entityCenterX = ((entityLeftWorldX + entityRightWorldX) / 2 );
-        return entityCenterX + (gp.tileSize + gp.tileSize/2);
     }
     public int getPlayerTileY(){
         int entityTopWorldY = hitbox.y - (gp.tileSize*2+gp.tileSize/2);  // coordinata y dove parte la hitbox
@@ -204,15 +201,16 @@ public class Player extends Entity{
         int entityCenterY = ((entityTopWorldY + entityBottomWorldY) / 2 ) / gp.tileSize;
         return entityCenterY*gp.tileSize + (gp.tileSize*2+gp.tileSize/2);
     }
-    public int getPlayerCenterY(){
-        int entityTopWorldY = hitbox.y - (gp.tileSize*2+gp.tileSize/2);  // coordinata y dove parte la hitbox
-        int entityBottomWorldY = hitbox.y + hitbox.height - (gp.tileSize*2+gp.tileSize/2);
-        int entityCenterY = ((entityTopWorldY + entityBottomWorldY) / 2 );
-        return entityCenterY + (gp.tileSize*2+gp.tileSize/2);
+    public int getPlayerTileNumCol(){
+        return (getPlayerTileX()/gp.tileSize);
+    }
+    public int getPlayerTileNumRow(){
+        return (getCenterY()/gp.tileSize)-2;
     }
 
     public void powerUpHandler(Point index){
-        if(index.equals(new Point(999,999))){  // se non è il valore default
+        if(index.x != 999 && gp.obj[index.y][index.x] != null){  // se non è il valore default
+                System.out.println("Te");
             String objName = gp.obj[index.y][index.x].name;
             switch(objName){
                 case "fire":
@@ -249,6 +247,7 @@ public class Player extends Entity{
                 case "nothing":
                 break;
             }
+            gp.obj[index.y][index.x] = null;
         }
     }
 
@@ -309,14 +308,15 @@ public class Player extends Entity{
         // System.out.println("x: "+hitbox.x+ " y: "+hitbox.y);
 
         g2.setColor(Color.GREEN);
+        System.out.println("Tilex: "+getPlayerTileNumCol()+ " TileY: "+getPlayerTileNumRow());
         g2.drawRect(getPlayerTileX(), getPlayerTileY(), tileSize, tileSize);
 
-         //da eliminare
+        //da eliminare
         g2.setColor(Color.YELLOW);
         g2.drawRect(gp.gameBorderLeftX, gp.gameBorderUpY, 13*gp.tileSize, 11*gp.tileSize);
 
         g2.setColor(Color.RED);
-        g2.drawRect(getPlayerCenterX(), getPlayerCenterY(), 6*scale, 6*scale);
+        g2.drawRect(getCenterX(), getCenterY(), hitboxWidth/2, hitboxHeight/2);
 
         g2.setColor(Color.RED);
         // g2.drawRect(x, y, width, height);

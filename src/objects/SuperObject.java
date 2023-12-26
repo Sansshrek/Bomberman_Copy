@@ -12,9 +12,9 @@ public class SuperObject {
     public BufferedImage image;
     public String name;
     public int x, y;
-    public Point blockP, indexObj;
+    public Point blockP = new Point(0,0), indexObj = new Point(0,0);
     public int tileX, tileY;
-    public boolean collision = false;
+    public boolean collision = true;
     public Rectangle hitbox;
     public int hitboxDefaultX = 0;
     public int hitboxDefaultY = 0;

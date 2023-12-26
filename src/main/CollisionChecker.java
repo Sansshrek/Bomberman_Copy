@@ -23,6 +23,28 @@ public class CollisionChecker {
         boundaryHeight = 11*gp.tileSize;
     }
 
+    public void checkTile2(Entity entity){
+        int hitboxX = entity.hitbox.x;
+        int hitboxY = entity.hitbox.y;
+        int hitboxCenterX = entity.getCenterX();
+        int hitboxCenterY = entity.getCenterY();
+        int hitboxWidthHalf = entity.hitboxWidth/2;
+        int hitboxHeightHalf = entity.hitboxHeight/2;
+        Rectangle hitboxUpSx = new Rectangle(entity.hitbox.x, entity.hitbox.y, hitboxWidthHalf, hitboxHeightHalf);
+        Rectangle hitboxUpDx = new Rectangle(hitboxCenterX, entity.hitbox.y, hitboxWidthHalf, hitboxHeightHalf);
+        Rectangle hitboxDwSx = new Rectangle(entity.hitbox.x, hitboxCenterY, hitboxWidthHalf, hitboxHeightHalf);
+        Rectangle hitboxDwDx = new Rectangle(hitboxCenterX, hitboxCenterY, hitboxWidthHalf, hitboxHeightHalf);
+
+        // controllo hitbox entity con le case
+        switch(entity.direction){
+            case "up":  // controllo solo UpSx e UpDx
+                hitboxUpSx.x -= entity.speed;
+                hitboxUpDx.x -= entity.speed;
+                
+            break;
+        }
+    }
+
     public void checkTile(Entity entity){
         int entityLeftWorldX = entity.hitbox.x - (24 * gp.scale);  // Coordinata x dove parte la hitbox
         int entityRightWorldX = entity.hitbox.x + entity.hitbox.width - (24 * gp.scale);  // cordinata x dove arriva la hitbox
@@ -162,9 +184,6 @@ public class CollisionChecker {
         }
     }
 
-    public void checkTile2(Entity entity){
-        
-    }
     
     public void checkPlayerCollision(Entity enemy, Player player) {
         // Aggiorna la posizione dell'hitbox del nemico
@@ -195,74 +214,71 @@ public class CollisionChecker {
             }
         }
     }
-
+ 
     public Point checkObj(Entity entity, boolean player, Graphics2D g2){
         int index = 999; // default index
-        Point objPoint = new Point(999, 999);  // punto default
         for(int row=0; row<gp.maxGameRow; row++){
             for(int col=0; col<gp.maxGameCol; col++){
                 if(gp.obj[row][col] != null){  //se non è null
                     Rectangle entityHitboxCheck = new Rectangle(entity.hitbox.x, entity.hitbox.y, entity.hitboxWidth, entity.hitboxHeight);
-                    Rectangle objHitboxCheck = new Rectangle(row, col, gp.tileSize, gp.tileSize);
+                    Rectangle objHitboxCheck = new Rectangle(gp.obj[row][col].hitbox.x, gp.obj[row][col].hitbox.y, gp.tileSize, gp.tileSize);
+                    
                     switch(entity.direction){
-                    case "up":
-                        entityHitboxCheck.y -= entity.speed;
-                        if(entityHitboxCheck.intersects(objHitboxCheck)){  // controlla se l'hitbox del player interseca l'hitbox dell'oggetto
-                            if(gp.obj[row][col].collision){  // se puo essere scontrato setta la collisione del player a true
-                                entity.collisionOn = true;
-                            }
-                            if(player){ // se è il player a toccare l'oggetto allora ritorna l'indice
-                                objPoint.setLocation(row, col);
-                            }
-                        }
-                    break;
-                    case "down":
-                        entityHitboxCheck.y += entity.speed;
-                        if(entityHitboxCheck.intersects(objHitboxCheck)){  // controlla se l'hitbox del player interseca l'hitbox dell'oggetto
-                            if(gp.obj[row][col].collision){  // se puo essere scontrato setta la collisione del player a true
-                                entity.collisionOn = true;
-                            }
-                            if(player){ // se è il player a toccare l'oggetto allora ritorna l'indice
-                                objPoint.setLocation(row, col);
-                            }
-                        }
-                    break;
-                    case "left":
-                        entityHitboxCheck.x -= entity.speed;
-                        if(entityHitboxCheck.intersects(objHitboxCheck)){
+                        case "up":
+                            entityHitboxCheck.y -= entity.speed;
                             if(entityHitboxCheck.intersects(objHitboxCheck)){  // controlla se l'hitbox del player interseca l'hitbox dell'oggetto
                                 if(gp.obj[row][col].collision){  // se puo essere scontrato setta la collisione del player a true
                                     entity.collisionOn = true;
                                 }
                                 if(player){ // se è il player a toccare l'oggetto allora ritorna l'indice
-                                    objPoint.setLocation(row, col);
+                                    return new Point(col, row);
                                 }
                             }
-                        }
-                    break;
-                    case "right":
-                        entityHitboxCheck.x += entity.speed;
-                        if(entityHitboxCheck.intersects(objHitboxCheck)){
+                        break;
+                        case "down":
+                            entityHitboxCheck.y += entity.speed;
                             if(entityHitboxCheck.intersects(objHitboxCheck)){  // controlla se l'hitbox del player interseca l'hitbox dell'oggetto
                                 if(gp.obj[row][col].collision){  // se puo essere scontrato setta la collisione del player a true
                                     entity.collisionOn = true;
                                 }
                                 if(player){ // se è il player a toccare l'oggetto allora ritorna l'indice
-                                    objPoint.setLocation(row, col);
+                                    return new Point(col, row);
                                 }
                             }
-                        }
-                    break;
+                        break;
+                        case "left":
+                            entityHitboxCheck.x -= entity.speed;
+                            if(entityHitboxCheck.intersects(objHitboxCheck)){  // controlla se l'hitbox del player interseca l'hitbox dell'oggetto
+                                if(gp.obj[row][col].collision){  // se puo essere scontrato setta la collisione del player a true
+                                    entity.collisionOn = true;
+                                }
+                                if(player){ // se è il player a toccare l'oggetto allora ritorna l'indice
+                                    return new Point(col, row);
+                                }
+                            }
+                        break;
+                        case "right":
+                            entityHitboxCheck.x += entity.speed;
+                            if(entityHitboxCheck.intersects(objHitboxCheck)){  // controlla se l'hitbox del player interseca l'hitbox dell'oggetto
+                                if(gp.obj[row][col].collision){  // se puo essere scontrato setta la collisione del player a true
+                                    entity.collisionOn = true;
+                                }
+                                if(player){ // se è il player a toccare l'oggetto allora ritorna l'indice
+                                    return new Point(col, row);
+                                }
+                            }
+                        break;
                     }
                     // entity.hitbox.x = entity.hitboxDefaultX;
                     // entity.hitbox.y = entity.hitboxDefaultY;
+                    objHitboxCheck = null; // viene eliminato per lasciare spazio alla memoria
                     entityHitboxCheck = null; // viene eliminato per lasciare spazio alla memoria
                     // gp.obj.get(i).hitbox.x = gp.obj.get(i).hitboxDefaultX;
                     // gp.obj.get(i).hitbox.y = gp.obj.get(i).hitboxDefaultY;
                 }
             }
         }
-        return objPoint;  // punto default
+        return new Point(999, 999);  // punto default
     }
 
 /*
@@ -339,14 +355,6 @@ public class CollisionChecker {
         return index;
     } */
 
-    public void getTileCenterX(){
-
-    }
-
-    public void getTileCenterY(){
-
-    }
-
     public void checPlayerNearestTile(){
     }
     
@@ -364,7 +372,7 @@ public class CollisionChecker {
                     // System.out.print("SX ");  // da eliminare
                     if(gp.tileM.isHouse(bomb.x-gp.tileSize, bomb.y)){  // se in quella pos. del fuoco c'è una casa 
                         if(gp.obj[bomb.tileY][bomb.tileX-1] == null ){   // check se quella posizione è un blocco esistente
-                            playerDistanceSx = Math.abs(player.getPlayerCenterX() - bombLeftBorder);  // modifico la distanza dal centro del player al bordo a sinistra della bomba
+                            playerDistanceSx = Math.abs(player.getCenterX() - bombLeftBorder);  // modifico la distanza dal centro del player al bordo a sinistra della bomba
                             System.out.println("Player Distance SX: "+playerDistanceSx);
                         }
                     }
@@ -375,7 +383,7 @@ public class CollisionChecker {
                     // System.out.print("DX ");  // da eliminare
                     if(!gp.tileM.isHouse(bomb.x+gp.tileSize, bomb.y)){  // se in quella pos. c'è una casa 
                         if(gp.obj[bomb.tileY][bomb.tileX+1] == null ){   // check se quella posizione è un blocco esistente
-                            playerDistanceDx = Math.abs(player.getPlayerCenterX() - bombRightBorder);
+                            playerDistanceDx = Math.abs(player.getCenterX() - bombRightBorder);
                             System.out.println("Player Distance DX: "+playerDistanceDx);
                         }
                     }
@@ -386,7 +394,7 @@ public class CollisionChecker {
                     // System.out.print("UP ");  // da eliminare
                     if(!gp.tileM.isHouse(bomb.x, bomb.y-gp.tileSize)){  // se in quella pos. non c'è una casa 
                         if(gp.obj[bomb.tileY-1][bomb.tileX] == null ){   // check se quella posizione non c'è un blocco esistente
-                            playerDistanceUp = Math.abs(player.getPlayerCenterY() - bombTopBorder);
+                            playerDistanceUp = Math.abs(player.getCenterY() - bombTopBorder);
                             System.out.println("Player Distance UP: "+playerDistanceUp);
                         }
                     }
@@ -399,7 +407,7 @@ public class CollisionChecker {
                     // System.out.print("DOWN ");  // da eliminare
                     if(!gp.tileM.isHouse(bomb.x, bomb.y+gp.tileSize)){  // se in quella pos. del fuoco c'è una casa 
                         if(gp.obj[bomb.tileY+1][bomb.tileX] == null ){   // check se quella posizione è un blocco esistente
-                            playerDistanceDown = Math.abs(player.getPlayerCenterY() - bombBottomBorder);
+                            playerDistanceDown = Math.abs(player.getCenterY() - bombBottomBorder);
                             System.out.println("Player Distance DOWN: "+playerDistanceDown);
                         }
                     }
