@@ -36,7 +36,6 @@ public class CollisionChecker {
         Rectangle hitboxUpDx = new Rectangle(hitboxCenterX, entity.hitbox.y, hitboxWidthHalf, hitboxHeightHalf);
         Rectangle hitboxDwSx = new Rectangle(entity.hitbox.x, hitboxCenterY, hitboxWidthHalf, hitboxHeightHalf);
         Rectangle hitboxDwDx = new Rectangle(hitboxCenterX, hitboxCenterY, hitboxWidthHalf, hitboxHeightHalf);
-
         // controllo hitbox entity con le case
         switch(entity.direction){
             case "up":  // controllo solo UpSx e UpDx
@@ -53,7 +52,7 @@ public class CollisionChecker {
                             wallUpDx = gp.tileM.houseHitbox[tileRow-1][tileCol+1];
                         Rectangle wallUpCx = gp.tileM.houseHitbox[tileRow-1][tileCol];
 
-                        if(wallUpCx != null && hitboxUpSx.intersects(wallUpCx) && hitboxUpDx.intersects(wallUpCx)){  // se entrambe le hitbox sopra intercettano il blocco al centro
+                        if(wallUpCx != null && (hitboxUpSx.intersects(wallUpCx) || hitboxUpDx.intersects(wallUpCx))){  // se entrambe le hitbox sopra intercettano il blocco al centro
                             entity.collisionOn = true;  // allora l'hitbox dell'entity è completamente sotto al blocco e lo colpisce
                         }
                         else if(wallUpSx != null && hitboxUpSx.intersects(wallUpSx)){  // se solo l'hitbox in alto a sinistra intercetta il blocco a sinistra
@@ -87,7 +86,7 @@ public class CollisionChecker {
                             wallDwDx = gp.tileM.houseHitbox[tileRow+1][tileCol+1];
                         Rectangle wallDwCx = gp.tileM.houseHitbox[tileRow+1][tileCol];
 
-                        if(wallDwCx != null && hitboxDwSx.intersects(wallDwCx) && hitboxDwDx.intersects(wallDwCx)){  // se entrambe le hitbox sopra intercettano il blocco al centro
+                        if(wallDwCx != null && (hitboxDwSx.intersects(wallDwCx) || hitboxDwDx.intersects(wallDwCx))){  // se entrambe le hitbox sopra intercettano il blocco al centro
                             entity.collisionOn = true;  // allora l'hitbox dell'entity è completamente sotto al blocco e lo colpisce
                         }
                         else if(wallDwSx != null && hitboxDwSx.intersects(wallDwSx)){  // se solo l'hitbox in alto a sinistra intercetta il blocco a sinistra
@@ -121,7 +120,7 @@ public class CollisionChecker {
                             wallSwDw = gp.tileM.houseHitbox[tileRow+1][tileCol-1];
                         Rectangle wallUpCx = gp.tileM.houseHitbox[tileRow][tileCol-1];
 
-                        if(wallUpCx != null && hitboxUpSx.intersects(wallUpCx) && hitboxDwSx.intersects(wallUpCx)){  // se entrambe le hitbox sopra intercettano il blocco al centro
+                        if(wallUpCx != null && (hitboxUpSx.intersects(wallUpCx) || hitboxDwSx.intersects(wallUpCx))){  // se entrambe le hitbox sopra intercettano il blocco al centro
                             entity.collisionOn = true;  // allora l'hitbox dell'entity è completamente a destra del blocco e lo colpisce
                         }
                         else if(wallSxUp != null && hitboxUpSx.intersects(wallSxUp)){  // se solo l'hitbox in alto a sinistra intercetta il blocco in alto
@@ -155,7 +154,7 @@ public class CollisionChecker {
                             wallDxDw = gp.tileM.houseHitbox[tileRow+1][tileCol+1];
                         Rectangle wallDxCx = gp.tileM.houseHitbox[tileRow][tileCol+1];
 
-                        if(wallDxCx != null && hitboxUpDx.intersects(wallDxCx) && hitboxDwDx.intersects(wallDxCx)){  // se entrambe le hitbox sopra intercettano il blocco al centro
+                        if(wallDxCx != null && (hitboxUpDx.intersects(wallDxCx) || hitboxDwDx.intersects(wallDxCx))){  // se entrambe le hitbox sopra intercettano il blocco al centro
                             entity.collisionOn = true;  // allora l'hitbox dell'entity è completamente a sinistra del blocco e lo colpisce
                         }
                         else if(wallDxUp != null && hitboxUpDx.intersects(wallDxUp)){  // se solo l'hitbox in alto a destra intercetta il blocco in alto

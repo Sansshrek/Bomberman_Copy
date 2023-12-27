@@ -24,8 +24,6 @@ public class Enemy extends Entity{
     public final int height; 
     
     //codinate top left dell' hitbox
-    public int hitboxX; 
-    public int hitboxY;
     
     //larghezza e altezza dell' hitbox
     public int hitboxWidth;
@@ -55,14 +53,14 @@ public class Enemy extends Entity{
         this.hitboxWidth = 15*gp.scale;// larghezza dell'hitbox dell' enemy
         this.hitboxHeight = 15*gp.scale;// altezza dell'hitbox dell' enemy
         
-        hitbox = new Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
+        
         hitboxDefaultX = hitboxX;
         hitboxDefaultY = hitboxY;
 
         System.out.println("Caricando l'enemy");  // da eliminare
         setEnemyDefaultValues(x,y);
         getEnemyImage();
-        
+        hitbox = new Rectangle(hitboxX + imageP.x, hitboxY + imageP.y, hitboxWidth, hitboxHeight);
     }
 
 	public void setEnemyDefaultValues(int x, int y){
@@ -71,7 +69,6 @@ public class Enemy extends Entity{
         this.imageP = new Point(x, y);
         this.speed = 1;
         this.direction = "down";
-        
     }
 
     public void getEnemyImage(){
@@ -96,12 +93,10 @@ public class Enemy extends Entity{
 
     public void update(){  // update viene chiamato 60 volte al secondo
             // Check for collisions
-            
-        hitbox.x = imageP.x + hitboxX;
-        hitbox.y = imageP.y + hitboxY;
         collisionOn = false;
         gp.cChecker.checkTile(this);
-        Point objIndex = gp.cChecker.checkObj(this, false, g2);
+        Point objPoint = gp.cChecker.checkObj(this, false, g2);
+         // controlliamo cosa fare con l'oggetto
         // If a collision occurs, check for collisions in all directions and choose a new direction
         if (collisionOn) {
             List<String> directions = Arrays.asList("up", "down", "left", "right");

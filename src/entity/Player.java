@@ -23,8 +23,6 @@ public class Player extends Entity{
     
     //codinate top left dell' hitbox
     public Point hitboxP;
-    public int hitboxX; 
-    public int hitboxY;
     
     //larghezza e altezza dell' hitbox
     public int firePower, bombNumber, lifeNumber, score;

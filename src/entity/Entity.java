@@ -16,6 +16,8 @@ public class Entity {
     // public int x, y;  // le coordinate nel mondo
     public Point imageP;  // le coordinate dell'immagine
     public double speed;
+
+    public int hitboxX, hitboxY;
     
     
     public String direction;

@@ -142,6 +142,7 @@ public class GamePanel extends JPanel implements Runnable{
         enemy.g2 = g2;
         enemy2.g2 = g2;
         bombH.g2 = g2;
+        
 
         g2.setColor(Color.black);
         g2.fillRect(0, 0, this.maxScreenRow, this.maxScreenCol);  // disegna il background
