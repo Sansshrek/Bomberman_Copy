@@ -166,7 +166,7 @@ public class Player extends Entity{
         }
         if(keyH.bombPressed){ // se preme il tasto P (bomba)
             // BombHandler bomb = new BombHandler(getPlayerCenterCol()*gp.tileSize+(gp.tileSize/2), getPlayerCenterRow()*gp.tileSize+(24 * gp.scale), firePower, g2, gp.tileSize);
-            gp.bombH.createBomb(gp ,getPlayerTileX(), getPlayerTileY(), firePower);
+            gp.bombH.createBomb(gp ,getTileX(), getTileY(), firePower);
             gp.cChecker.checkBomb(this);
             // BombHandler bomb = new BombHandler(x, y, firePower, g2, gp.tileSize);
             // gp.bombs.add(bomb);
@@ -185,33 +185,12 @@ public class Player extends Entity{
             keyH.firePressed = false;
         }
     }
-    
-    public int getPlayerTileX(){
-        return getCenterX();
-    }
-    public int getPlayerTileXX(){
-        int entityLeftWorldX = hitbox.x - (gp.tileSize+gp.tileSize/2);  // Coordinata x dove parte la hitbox
-        int entityRightWorldX = hitbox.x + hitbox.width - (gp.tileSize+gp.tileSize/2);  // cordinata x dove arriva la hitbox
-        int entityCenterX = ((entityLeftWorldX + entityRightWorldX) / 2 ) / gp.tileSize;
-        return entityCenterX*gp.tileSize + (gp.tileSize + gp.tileSize/2);
-    }
-    public int getPlayerTileY(){
-        int entityTopWorldY = hitbox.y - (gp.tileSize*2+gp.tileSize/2);  // coordinata y dove parte la hitbox
-        int entityBottomWorldY = hitbox.y + hitbox.height - (gp.tileSize*2+gp.tileSize/2);
-        int entityCenterY = ((entityTopWorldY + entityBottomWorldY) / 2 ) / gp.tileSize;
-        return entityCenterY*gp.tileSize + (gp.tileSize*2+gp.tileSize/2);
-    }
-    public int getPlayerTileNumCol(){
-        return (getPlayerTileX()/gp.tileSize);
-    }
-    public int getPlayerTileNumRow(){
-        return (getCenterY()/gp.tileSize)-2;
-    }
+
 
     public void powerUpHandler(Point index){
-        if(index.x != 999 && gp.obj[index.y][index.x] != null){  // se non è il valore default
-                System.out.println("Te");
+        if(index.x != 999 && gp.obj[index.y][index.x] != null && gp.obj[index.y][index.x].name != "block"){  // se non è il valore default o un blocco
             String objName = gp.obj[index.y][index.x].name;
+            gp.obj[index.y][index.x] = null;
             switch(objName){
                 case "fire":
                     score += 10;
@@ -247,7 +226,6 @@ public class Player extends Entity{
                 case "nothing":
                 break;
             }
-            gp.obj[index.y][index.x] = null;
         }
     }
 
@@ -308,12 +286,16 @@ public class Player extends Entity{
         // System.out.println("x: "+hitbox.x+ " y: "+hitbox.y);
 
         g2.setColor(Color.GREEN);
-        System.out.println("Tilex: "+getPlayerTileNumCol()+ " TileY: "+getPlayerTileNumRow());
-        g2.drawRect(getPlayerTileX(), getPlayerTileY(), tileSize, tileSize);
+        // System.out.println("Tilex: "+getPlayerTileX()+ " TileY: "+getPlayerTileY());
+        // System.out.println("NTilex: "+getTileNumCol()+ " NTileY: "+getTileNumRow());
+        // System.out.println("x: "+hitbox.x+ " y: "+hitbox.y);
+        // System.out.println("CentX: "+(getCenterX()/gp.tileSize)+" CentY: "+(getCenterY()/gp.tileSize)+" x: "+hitbox.x+" y: "+hitbox.y);
+        g2.drawRect(getTileX(), getTileY(), tileSize, tileSize);
 
         //da eliminare
         g2.setColor(Color.YELLOW);
-        g2.drawRect(gp.gameBorderLeftX, gp.gameBorderUpY, 13*gp.tileSize, 11*gp.tileSize);
+        // g2.drawRect(gp.gameBorderLeftX, gp.gameBorderUpY, 13*gp.tileSize, 11*gp.tileSize);
+        g2.drawRect(gp.gameBorderLeftX, gp.gameBorderUpY, Math.abs(gp.gameBorderRightX - gp.gameBorderLeftX), Math.abs(gp.gameBorderDownY - gp.gameBorderUpY));
 
         g2.setColor(Color.RED);
         g2.drawRect(getCenterX(), getCenterY(), hitboxWidth/2, hitboxHeight/2);

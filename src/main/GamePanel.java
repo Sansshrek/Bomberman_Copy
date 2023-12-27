@@ -122,8 +122,8 @@ public class GamePanel extends JPanel implements Runnable{
 
     public void update(){
         player.update();
-        enemy.update();
-        enemy2.update();
+        // enemy.update();
+        // enemy2.update();
         
         
         for(int row=0; row < maxGameRow; row++){
@@ -150,8 +150,11 @@ public class GamePanel extends JPanel implements Runnable{
         tileM.drawMap(g2, -8*this.scale, this.hudHeight-(8*this.scale), "walls");  // poi le mura
 
         g2.setColor(Color.RED);
-        for(Rectangle hitbox: tileM.houseHitbox){
-            g2.draw(hitbox);
+        for(int row=0; row<maxGameRow; row++){
+            for(int col=0; col<maxGameCol; col++){
+                if(tileM.houseHitbox[row][col] != null)
+                    g2.draw(tileM.houseHitbox[row][col]);
+            }
         }
 
         for(int row=0; row < maxGameRow; row++){

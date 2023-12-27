@@ -23,14 +23,16 @@ public class CollisionChecker {
         boundaryHeight = 11*gp.tileSize;
     }
 
-    public void checkTile2(Entity entity){
+    public void checkTile(Entity entity){
         int hitboxX = entity.hitbox.x;
         int hitboxY = entity.hitbox.y;
-        int hitboxCenterX = entity.getCenterX();
+        int tileCol = entity.getTileNumCol();
+        int tileRow = entity.getTileNumRow();
+        int hitboxCenterX = entity.getCenterX();  // prendiamo il centro del player
         int hitboxCenterY = entity.getCenterY();
-        int hitboxWidthHalf = entity.hitboxWidth/2;
+        int hitboxWidthHalf = entity.hitboxWidth/2;  // i due valori di altezza e larghezza della hitbox dimezzati
         int hitboxHeightHalf = entity.hitboxHeight/2;
-        Rectangle hitboxUpSx = new Rectangle(entity.hitbox.x, entity.hitbox.y, hitboxWidthHalf, hitboxHeightHalf);
+        Rectangle hitboxUpSx = new Rectangle(entity.hitbox.x, entity.hitbox.y, hitboxWidthHalf, hitboxHeightHalf);  // dividiamo in 4 sezioni la hitbox del player
         Rectangle hitboxUpDx = new Rectangle(hitboxCenterX, entity.hitbox.y, hitboxWidthHalf, hitboxHeightHalf);
         Rectangle hitboxDwSx = new Rectangle(entity.hitbox.x, hitboxCenterY, hitboxWidthHalf, hitboxHeightHalf);
         Rectangle hitboxDwDx = new Rectangle(hitboxCenterX, hitboxCenterY, hitboxWidthHalf, hitboxHeightHalf);
@@ -38,14 +40,145 @@ public class CollisionChecker {
         // controllo hitbox entity con le case
         switch(entity.direction){
             case "up":  // controllo solo UpSx e UpDx
-                hitboxUpSx.x -= entity.speed;
-                hitboxUpDx.x -= entity.speed;
-                
+                if((entity.hitbox.y - entity.speed) >= gp.gameBorderUpY){  // se non supera il bordo di gioco
+                    if(tileRow > 0){  // nella prima riga non serve controllare se sopra c'è un blocco
+                        hitboxUpSx.y -= entity.speed;
+                        hitboxUpDx.y -= entity.speed;  // imposta la hitbox delle due hitbox da controllare (in alto a sinistra/destra) nella pos in cui si deve spostare
+                        // prendiamo i 3 muri in alto all'entity (se per esempio siamo in tile (3,5) prende le hitbox dei muri in alto a sinistra(2,4), alto in centro (2,5) e alto a destra (2,6))
+                        Rectangle wallUpSx = null;  // impostiamo i valori di default
+                        Rectangle wallUpDx = null;
+                        if(tileCol-1 >= 0)  // se la pos del blocco a sinistra non è fuori dalla mappa
+                            wallUpSx = gp.tileM.houseHitbox[tileRow-1][tileCol-1];
+                        if(tileCol+1 < 13)  // se la pos del blocco a destra non è fuori dalla mappa
+                            wallUpDx = gp.tileM.houseHitbox[tileRow-1][tileCol+1];
+                        Rectangle wallUpCx = gp.tileM.houseHitbox[tileRow-1][tileCol];
+
+                        if(wallUpCx != null && hitboxUpSx.intersects(wallUpCx) && hitboxUpDx.intersects(wallUpCx)){  // se entrambe le hitbox sopra intercettano il blocco al centro
+                            entity.collisionOn = true;  // allora l'hitbox dell'entity è completamente sotto al blocco e lo colpisce
+                        }
+                        else if(wallUpSx != null && hitboxUpSx.intersects(wallUpSx)){  // se solo l'hitbox in alto a sinistra intercetta il blocco a sinistra
+                            if(wallUpCx == null || !hitboxUpDx.intersects(wallUpCx)){  // se l'hitbox in alto a destra non intercetta il blocco al centro
+                                entity.imageP.x += entity.speed;  // allora sposta l'entity un po a destra
+                                entity.hitbox.x += entity.speed;
+                            }else
+                                entity.collisionOn = true;  // altrimenti non passa
+                        }else if(wallUpDx != null && hitboxUpDx.intersects(wallUpDx)){
+                            if(wallUpCx == null || !hitboxUpSx.intersects(wallUpCx)){
+                                entity.imageP.x -= entity.speed;
+                                entity.hitbox.x -= entity.speed;
+                            }else
+                                entity.collisionOn = true;
+                        }
+                    }
+                }else  // se supera il bordo di gioco
+                    entity.collisionOn = true;
+            break;
+            case "down":  // controllo solo DwSx e DwDx
+                if((entity.hitbox.y + entity.hitboxHeight + entity.speed) <= gp.gameBorderDownY){  // se non supera il bordo di gioco
+                    if(tileRow < 10){  // nell'ultima riga non serve controllare se sotto c'è un blocco
+                        hitboxDwSx.y += entity.speed;
+                        hitboxDwDx.y += entity.speed;  // imposta la hitbox delle due hitbox da controllare (in alto a sinistra/destra) nella pos in cui si deve spostare
+                        // prendiamo i 3 muri in basso all'entity (se per esempio siamo in tile (3,5) prende le hitbox dei muri in basso a sinistra(4,4), basso in centro (4,5) e basso a destra (4,6))
+                        Rectangle wallDwSx = null;  // impostiamo i valori di default
+                        Rectangle wallDwDx = null;
+                        if(tileCol-1 >= 0)  // se la pos del blocco a sinistra non è fuori dalla mappa
+                            wallDwSx = gp.tileM.houseHitbox[tileRow+1][tileCol-1];
+                        if(tileCol+1 < 13)  // se la pos del blocco a destra non è fuori dalla mappa
+                            wallDwDx = gp.tileM.houseHitbox[tileRow+1][tileCol+1];
+                        Rectangle wallDwCx = gp.tileM.houseHitbox[tileRow+1][tileCol];
+
+                        if(wallDwCx != null && hitboxDwSx.intersects(wallDwCx) && hitboxDwDx.intersects(wallDwCx)){  // se entrambe le hitbox sopra intercettano il blocco al centro
+                            entity.collisionOn = true;  // allora l'hitbox dell'entity è completamente sotto al blocco e lo colpisce
+                        }
+                        else if(wallDwSx != null && hitboxDwSx.intersects(wallDwSx)){  // se solo l'hitbox in alto a sinistra intercetta il blocco a sinistra
+                            if(wallDwCx == null || !hitboxDwDx.intersects(wallDwCx)){  // se l'hitbox in alto a destra non intercetta il blocco al centro
+                                entity.imageP.x += entity.speed;  // allora sposta l'entity un po a destra
+                                entity.hitbox.x += entity.speed;
+                            }else
+                                entity.collisionOn = true;  // altrimenti non passa
+                        }else if(wallDwDx != null && hitboxDwDx.intersects(wallDwDx)){
+                            if(wallDwCx == null || !hitboxDwSx.intersects(wallDwCx)){
+                                entity.imageP.x -= entity.speed;
+                                entity.hitbox.x -= entity.speed;
+                            }else
+                                entity.collisionOn = true;
+                        }
+                    }
+                }else  // se supera il bordo di gioco
+                    entity.collisionOn = true;
+            break;
+            case "left":  // controllo solo SxUp e SxDw
+                if((entity.hitbox.x - entity.speed) >= gp.gameBorderLeftX){  // se non supera il bordo di gioco
+                    if(tileCol > 0){  // nella prima colonna non serve controllare se a sinistra c'è un blocco
+                        hitboxUpSx.x -= entity.speed;
+                        hitboxDwSx.x -= entity.speed;  // imposta la hitbox delle due hitbox da controllare (in alto/basso a sinistra) nella pos in cui si deve spostare
+                        // prendiamo i 3 muri a sinistra all'entity (se per esempio siamo in tile (3,5) prende le hitbox dei muri in alto a sinistra(2,4), sinistra in centro (3,4) e basso a sinistra (4,4))
+                        Rectangle wallSxUp = null;  // impostiamo i valori di default
+                        Rectangle wallSwDw = null;
+                        if(tileRow-1 >= 0)  // se la pos del blocco sopra non è fuori dalla mappa
+                            wallSxUp = gp.tileM.houseHitbox[tileRow-1][tileCol-1];
+                        if(tileRow+1 < 11)  // se la pos del blocco sotto non è fuori dalla mappa
+                            wallSwDw = gp.tileM.houseHitbox[tileRow+1][tileCol-1];
+                        Rectangle wallUpCx = gp.tileM.houseHitbox[tileRow][tileCol-1];
+
+                        if(wallUpCx != null && hitboxUpSx.intersects(wallUpCx) && hitboxDwSx.intersects(wallUpCx)){  // se entrambe le hitbox sopra intercettano il blocco al centro
+                            entity.collisionOn = true;  // allora l'hitbox dell'entity è completamente a destra del blocco e lo colpisce
+                        }
+                        else if(wallSxUp != null && hitboxUpSx.intersects(wallSxUp)){  // se solo l'hitbox in alto a sinistra intercetta il blocco in alto
+                            if(wallUpCx == null || !hitboxDwSx.intersects(wallUpCx)){  // se l'hitbox in basso a sinistra non intercetta il blocco al centro
+                                entity.imageP.y += entity.speed;  // allora sposta l'entity un po in basso
+                                entity.hitbox.y += entity.speed;
+                            }else
+                                entity.collisionOn = true;  // altrimenti non passa
+                        }else if(wallSwDw != null && hitboxDwSx.intersects(wallSwDw)){
+                            if(wallUpCx == null || !hitboxUpSx.intersects(wallUpCx)){
+                                entity.imageP.y -= entity.speed;
+                                entity.hitbox.y -= entity.speed;
+                            }else
+                                entity.collisionOn = true;
+                        }
+                    }
+                }else  // se supera il bordo di gioco
+                    entity.collisionOn = true;
+            break;
+            case "right":  // controllo solo DxUp e DxDw
+                if((entity.hitbox.x + entity.hitbox.width + entity.speed) <= gp.gameBorderRightX){  // se non supera il bordo di gioco
+                    if(tileCol < 12){  // nella ultima colonna non serve controllare se a destra c'è un blocco
+                        hitboxUpDx.x += entity.speed;
+                        hitboxDwDx.x += entity.speed;  // imposta la hitbox delle due hitbox da controllare (in alto/basso a destra) nella pos in cui si deve spostare
+                        // prendiamo i 3 muri a destra all'entity (se per esempio siamo in tile (3,5) prende le hitbox dei muri in alto a destra(2,6), destra in centro (3,6) e basso a destra (4,6))
+                        Rectangle wallDxUp = null;  // impostiamo i valori di default
+                        Rectangle wallDxDw = null;
+                        if(tileRow-1 >= 0)  // se la pos del blocco sopra non è fuori dalla mappa
+                            wallDxUp = gp.tileM.houseHitbox[tileRow-1][tileCol+1];
+                        if(tileRow+1 < 11)  // se la pos del blocco sotto non è fuori dalla mappa
+                            wallDxDw = gp.tileM.houseHitbox[tileRow+1][tileCol+1];
+                        Rectangle wallDxCx = gp.tileM.houseHitbox[tileRow][tileCol+1];
+
+                        if(wallDxCx != null && hitboxUpDx.intersects(wallDxCx) && hitboxDwDx.intersects(wallDxCx)){  // se entrambe le hitbox sopra intercettano il blocco al centro
+                            entity.collisionOn = true;  // allora l'hitbox dell'entity è completamente a sinistra del blocco e lo colpisce
+                        }
+                        else if(wallDxUp != null && hitboxUpDx.intersects(wallDxUp)){  // se solo l'hitbox in alto a destra intercetta il blocco in alto
+                            if(wallDxCx == null || !hitboxDwDx.intersects(wallDxCx)){  // se l'hitbox in basso a destra non intercetta il blocco al centro
+                                entity.imageP.y += entity.speed;  // allora sposta l'entity un po in basso
+                                entity.hitbox.y += entity.speed;
+                            }else
+                                entity.collisionOn = true;  // altrimenti non passa
+                        }else if(wallDxDw != null && hitboxDwDx.intersects(wallDxDw)){
+                            if(wallDxCx == null || !hitboxUpDx.intersects(wallDxCx)){
+                                entity.imageP.y -= entity.speed;
+                                entity.hitbox.y -= entity.speed;
+                            }else
+                                entity.collisionOn = true;
+                        }
+                    }
+                }else  // se supera il bordo di gioco
+                    entity.collisionOn = true;
             break;
         }
     }
 
-    public void checkTile(Entity entity){
+    public void checkTile2(Entity entity){
         int entityLeftWorldX = entity.hitbox.x - (24 * gp.scale);  // Coordinata x dove parte la hitbox
         int entityRightWorldX = entity.hitbox.x + entity.hitbox.width - (24 * gp.scale);  // cordinata x dove arriva la hitbox
         int entityTopWorldY = entity.hitbox.y - (gp.hudHeight + (8 * gp.scale));  // coordinata y dove parte la hitbox

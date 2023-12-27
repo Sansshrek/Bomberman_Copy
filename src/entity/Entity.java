@@ -42,4 +42,22 @@ public class Entity {
     public int getCenterY(){
         return (hitbox.y + hitbox.y + hitbox.height) / 2;
     }
+    public int getTileNumCol() {
+        int adjustedX = getCenterX() - 72; // Spostamento a sinistra
+        // prende il centro del player meno la distanza da dove parte a sinistra la mappa (gp.gameBorderLeftX)
+        return adjustedX / gp.tileSize;
+    }
+    
+    public int getTileNumRow() {
+        int adjustedY = getCenterY() - 120; // Spostamento verso l'alto
+        // prende il centro del player meno la distanza da dove parte sopra la mappa (gp.gameBorderUpY)
+        return adjustedY / gp.tileSize;
+    }
+    public int getTileX() {
+        return getTileNumCol() * gp.tileSize + 72; // TilePlayerX*48 + lo spostamento a sinistra
+    }
+    
+    public int getTileY() {
+        return getTileNumRow() * gp.tileSize + 120; // TilePlayerY*48 + lo spostamento verso l'alto
+    }
 }

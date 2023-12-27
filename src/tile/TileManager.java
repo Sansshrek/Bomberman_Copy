@@ -17,9 +17,9 @@ import objects.Bomb;
 public class TileManager {
     GamePanel gp;
     public Tile[] tile;  // array di tiles che indica all'immagine 
-    public ArrayList <Rectangle> houseHitbox = new ArrayList<>();
     int wallsNum = 43;
     int cont = 0;
+    public Rectangle houseHitbox[][];
     public int blockTileNum[][];
     public int groundTileNum[][];  // dove viene salvata la mappa in stile numerico per indicare a quale tiles si riferisce
     public int wallsTileNum[][];  // dove viene salvata la mappa in stile numerico per indicare a quale tiles si riferisce
@@ -30,6 +30,7 @@ public class TileManager {
         wallsTileNum = new int[gp.maxScreenRow][gp.maxScreenCol];  // mapTileNum salva la matrice di numeri della txt della mappa 
         groundTileNum = new int[gp.maxScreenRow][gp.maxScreenCol];  // mapTileNum salva la matrice di numeri della txt della mappa 
         blockTileNum = new int[gp.maxScreenRow][gp.maxScreenCol];
+        houseHitbox = new Rectangle[gp.maxGameRow][gp.maxGameCol];
 
         System.out.println("Prendendo l'immagine dei Tiles");  // da eliminare
         getTileImage();
@@ -187,7 +188,7 @@ public class TileManager {
 
             g2.drawImage(tile[tileNum].image, x, y, gp.tileSize, gp.tileSize, null);
             if(tileNum == 3 && cont <= wallsNum){  // se è un palazzo
-                houseHitbox.add(new Rectangle(x, y, gp.tileSize, gp.tileSize));  // aggiungo la sua hitbox
+                houseHitbox[row][col] = new Rectangle(x, y, gp.tileSize, gp.tileSize);  // aggiungo la sua hitbox
                 // System.out.println("Cont "+cont);
                 cont++;
             }
