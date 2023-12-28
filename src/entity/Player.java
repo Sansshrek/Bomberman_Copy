@@ -30,8 +30,7 @@ public class Player extends Entity{
     public Player(GamePanel gp, KeyHandler keyH){
         super(gp);
         this.keyH = keyH;
-        this.ogTileSize = gp.getOgTileSize();
-        this.scale = gp.getScale();
+        int scale = gp.getScale();
         this.tileSize = gp.getTileSize();
 
         //largezza e altezza dell' immagine del player
@@ -54,7 +53,6 @@ public class Player extends Entity{
         setPlayerDefaultValues();
         getPlayerImage();
 
-        this.hitbox = new Rectangle(hitboxX+imageP.x, hitboxY+imageP.y, hitboxWidth, hitboxHeight);
     }
 
 	public void setPlayerDefaultValues(){
@@ -68,6 +66,7 @@ public class Player extends Entity{
         firePower = 1;
         lifeNumber = 5;
         score = 0;
+        this.hitbox = new Rectangle(hitboxX+imageP.x, hitboxY+imageP.y, hitboxWidth, hitboxHeight);
     }
 
     public void getPlayerImage(){
@@ -182,6 +181,10 @@ public class Player extends Entity{
             System.out.println("Range fuoco aumentato");
             keyH.firePressed = false;
         }
+        if(keyH.resetPressed){
+            gp.setupGame();
+            keyH.resetPressed = false;
+        }
     }
 
 
@@ -290,10 +293,11 @@ public class Player extends Entity{
         // System.out.println("CentX: "+(getCenterX()/gp.tileSize)+" CentY: "+(getCenterY()/gp.tileSize)+" x: "+hitbox.x+" y: "+hitbox.y);
         g2.drawRect(getTileX(), getTileY(), tileSize, tileSize);
 
+
         //da eliminare
         g2.setColor(Color.YELLOW);
-        // g2.drawRect(gp.gameBorderLeftX, gp.gameBorderUpY, 13*gp.tileSize, 11*gp.tileSize);
-        g2.drawRect(gp.gameBorderLeftX, gp.gameBorderUpY, Math.abs(gp.gameBorderRightX - gp.gameBorderLeftX), Math.abs(gp.gameBorderDownY - gp.gameBorderUpY));
+        g2.drawRect(gp.gameBorderLeftX, gp.gameBorderUpY, 13*gp.tileSize, 11*gp.tileSize);
+        // g2.drawRect(gp.gameBorderLeftX, gp.gameBorderUpY, Math.abs(gp.gameBorderRightX - gp.gameBorderLeftX), Math.abs(gp.gameBorderDownY - gp.gameBorderUpY));
 
         g2.setColor(Color.RED);
         g2.drawRect(getCenterX(), getCenterY(), hitboxWidth/2, hitboxHeight/2);

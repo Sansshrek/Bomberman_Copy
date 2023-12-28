@@ -48,12 +48,10 @@ public class GamePanel extends JPanel implements Runnable{
     Thread gameThread;
     public BombHandler bombH = new BombHandler(tileSize);
     public Player player = new Player(this, keyH);
-    public Enemy enemy = new Enemy(this, 10,0);
-    public Enemy enemy2 = new Enemy(this, 10,3);
     public AssetSetter aSetter = new AssetSetter(this, tileM);
     // public ArrayList<SuperObject> obj = new ArrayList<>();
     public SuperObject obj[][];
-    public ArrayList<Entity> entity = new ArrayList<>();
+    public ArrayList<Enemy> enemy = new ArrayList<>();
 
     // Stato di Gioco
     public final int menuState = 5;
@@ -65,12 +63,31 @@ public class GamePanel extends JPanel implements Runnable{
         this.addKeyListener(keyH);
         this.setFocusable(true);  // cosi il GamePanel è "concentrato" a ricevere input di tastiera
         this.obj = new SuperObject[maxGameRow][maxGameCol]; 
+        setupGame();
     }
 
-    public void setupGame(){
+    public void setupGame(){  // imposto il gioco da capo
+        player.setPlayerDefaultValues();
+        tileM.setupTile();
+
+
+        for(int row=0; row<maxGameRow; row++){  // reset obj
+            for(int col=0; col<maxGameCol; col++){
+                obj[row][col] = null;
+            }
+        }
         System.out.println("Caricando i blocchi distruttibili");  // da eliminare
         aSetter.setMatrixBlocks();
+
+        enemy.clear();  // resetto la lista dei nemici
+        enemy.add(new Enemy(this));  // aggiungo 3 nemici
+        enemy.add(new Enemy(this));
+        enemy.add(new Enemy(this));
+        for(Enemy entity: enemy){  // imposto i valori di default per i nemici
+            entity.setEnemyDefaultValues();
+        }
     }
+
     public int getTileSize(){
         return tileSize;
     }
@@ -122,9 +139,9 @@ public class GamePanel extends JPanel implements Runnable{
 
     public void update(){
         player.update();
-        // enemy.update();
-        // enemy2.update();
-        
+        for(Enemy entity: enemy){
+            entity.update();
+        }
         
         for(int row=0; row < maxGameRow; row++){
             for(int col=0; col < maxGameCol; col++){
@@ -139,8 +156,9 @@ public class GamePanel extends JPanel implements Runnable{
         super.paintComponent(g);  // utilizza il metodo della classe parente di GamePanel quindi JPanel (GamePanel extends JPanel)
         Graphics2D g2 = (Graphics2D) g;  // estende la classe Graphics per aggiungere piu controlli sulla geometria, trasformazione delle cordinate, gestione colori e layout di testo
         player.g2 = g2;
-        enemy.g2 = g2;
-        enemy2.g2 = g2;
+        for(Enemy entity: enemy){  // itero i nemici
+            entity.g2 = g2;
+        }
         bombH.g2 = g2;
         
 
@@ -148,9 +166,10 @@ public class GamePanel extends JPanel implements Runnable{
         g2.fillRect(0, 0, this.maxScreenRow, this.maxScreenCol);  // disegna il background
 
         tileM.drawMap(g2, 24*this.scale, this.hudHeight+(8*this.scale), "ground");  // prima il pavimento
+        tileM.drawMap(g2, 24*this.scale, this.hudHeight+(8*this.scale), "house");  // poi i palazzi
         tileM.drawMap(g2, -8*this.scale, this.hudHeight-(8*this.scale), "walls");  // poi le mura
 
-        g2.setColor(Color.RED);
+        g2.setColor(Color.RED);  // da eliminare
         for(int row=0; row<maxGameRow; row++){
             for(int col=0; col<maxGameCol; col++){
                 if(tileM.houseHitbox[row][col] != null)
@@ -161,10 +180,6 @@ public class GamePanel extends JPanel implements Runnable{
         for(int row=0; row < maxGameRow; row++){
             for(int col=0; col < maxGameCol; col++){
                 if(obj[row][col] != null){
-                    if(obj[row][col] instanceof Bomb){
-                        Bomb bomb = (Bomb) obj[row][col];
-                        obj[row][col].draw(g2, this);
-                    }
                     obj[row][col].draw(g2, this);
                     g2.setColor(Color.YELLOW);
                     g2.draw(obj[row][col].hitbox);
@@ -174,8 +189,9 @@ public class GamePanel extends JPanel implements Runnable{
 
         bombH.updateBomb();
         player.draw();  // poi il player
-        enemy.draw();
-        enemy2.draw();
+        for(Enemy entity: enemy){
+            entity.draw();
+        }
         drawHUD(g2);
 
         g2.dispose();  // rimuove il contesto grafico e rilascia ogni risorsa di sistema che sta usando

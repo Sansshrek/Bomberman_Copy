@@ -22,7 +22,7 @@ public class AssetSetter {
         ArrayList<Integer> avPos = new ArrayList<>();
         for(int x=0; x<10; x++){  // 13 è il massimo dei tiles della mappa per la x
             for(int y=0; y<13; y++){  // 10 è il massimo dei tiles della mappa per la y
-                if(tileM.blockTileNum[x][y] != 3 && tileM.blockTileNum[x][y] != -1 && x+y != 0 && x+y != 1 && x-y !=0){  // se non è un palazzo o non è gia preso
+                if(tileM.houseTileNum[x][y] != 3 && tileM.houseTileNum[x][y] != -1 && x+y != 0 && x+y != 1 && x-y !=0){  // se non è un palazzo o non è gia preso
                     if(true)  // pos vicino alla partenza del player 
                         avPos.add( x * 10 + y); // calcola l'indice unico per la posizione
                 }
@@ -34,7 +34,7 @@ public class AssetSetter {
         ArrayList<Point> avPos = new ArrayList<>();
         for(int row=0; row<gp.maxGameRow; row++){  // 13 è il massimo dei tiles della mappa per la x
             for(int col=0; col<gp.maxGameCol; col++){  // 10 è il massimo dei tiles della mappa per la y
-                if(tileM.blockTileNum[row][col] != 3 && tileM.blockTileNum[row][col] != -1 && row+col != 0 && row+col != 1){  // se non è un palazzo o non è gia preso
+                if(tileM.houseTileNum[row][col] != 3 && tileM.houseTileNum[row][col] != -1 && row+col != 0 && row+col != 1){  // se non è un palazzo o non è gia preso
                     avPos.add(new Point(col, row));
                 }
             }
@@ -43,7 +43,7 @@ public class AssetSetter {
         return avPos;
     }
     public void setMatrixBlocks(){
-        int numBlock = 45;
+        int numBlock = (int)(Math.random()*(45-33))+33;  // 33-45 blocchi a random
         ArrayList<Point> avPos = availablePosMatrix();  // prendiamo le posizioni disponibili
         ArrayList<String> avPowerUp = getPowerUp(numBlock);  // prendiamo i powerUp disponibili
         Collections.shuffle(avPos);  // randomizziamo l'ordine delle pos disponibili
@@ -98,12 +98,12 @@ public class AssetSetter {
             while(true){  // controllo della posizione se non è gia stata presa
                 tileX = (int)(Math.random()*(13)); // 0-12
                 tileY = (int)(Math.random()*(10)); // 0-9
-                if(tileM.blockTileNum[tileX][tileY] != 3 && tileM.blockTileNum[tileX][tileY] != -1 && tileX+tileY != 0){  // se non è un palazzo o non è gia preso
+                if(tileM.houseTileNum[tileX][tileY] != 3 && tileM.houseTileNum[tileX][tileY] != -1 && tileX+tileY != 0){  // se non è un palazzo o non è gia preso
                     if(tileX == 0 && tileY == 0)  // pos vicino alla partenza del player 
                         break; // esci dal loop
                 }
             }
-            tileM.blockTileNum[tileX][tileY] = 16;  // lo imposta come blocco oggetto dei tile
+            tileM.houseTileNum[tileX][tileY] = 16;  // lo imposta come blocco oggetto dei tile
             gp.obj.set(position, new Block(gp, tileX*gp.tileSize + (gp.tileSize+gp.tileSize/2), tileY*gp.tileSize + (2*gp.tileSize + (gp.tileSize/2)), tileX, tileY, avPowerUp.get(position), position));
         }
         for(int i=0; i<130; i++){  // inizializzamo l'array vuoto cosi che dopo mettiamo 

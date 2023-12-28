@@ -196,9 +196,9 @@ public class CollisionChecker {
             case "up":
                 entityTopRow = (int)(entityTopWorldY - entity.speed) / gp.tileSize;  // calcoliamo dove si trovera il player quando si va su
                 if(entityTopRow >= 0 && entityTopRow < 17){
-                    tileNum1 = gp.tileM.blockTileNum[entityTopRow][entityLeftCol];  // controlliamo l'angolo alto a destra e alto a sinistra della hitbox sul terreno
-                    tileNum2 = gp.tileM.blockTileNum[entityTopRow][entityRightCol];
-                    tileCenter = gp.tileM.blockTileNum[entityTopRow][entityCenterX];  // controlliamo il centro in alto
+                    tileNum1 = gp.tileM.houseTileNum[entityTopRow][entityLeftCol];  // controlliamo l'angolo alto a destra e alto a sinistra della hitbox sul terreno
+                    tileNum2 = gp.tileM.houseTileNum[entityTopRow][entityRightCol];
+                    tileCenter = gp.tileM.houseTileNum[entityTopRow][entityCenterX];  // controlliamo il centro in alto
 
                     if(gp.tileM.tile[tileNum1].collision && gp.tileM.tile[tileNum2].collision || (entityTopWorldY - entity.speed) < boundaryY){  // sta colpendo un blocco o esco dal boundary
                         entity.collisionOn = true;
@@ -226,9 +226,9 @@ public class CollisionChecker {
             case "down":
                 entityBottomRow = (int)(entityBottomWorldY + entity.speed) / gp.tileSize;  // calcoliamo dove si trovera il player quando si va su
                 if(entityBottomRow >= 0 && entityBottomRow < 17){
-                    tileNum1 = gp.tileM.blockTileNum[entityBottomRow][entityLeftCol];  // controlliamo l'angolo basso a destra e basso a sinistra della hitbox sul terreno
-                    tileNum2 = gp.tileM.blockTileNum[entityBottomRow][entityRightCol];
-                    tileCenter = gp.tileM.blockTileNum[entityBottomRow][entityCenterX];  // controlliamo il centro in basso
+                    tileNum1 = gp.tileM.houseTileNum[entityBottomRow][entityLeftCol];  // controlliamo l'angolo basso a destra e basso a sinistra della hitbox sul terreno
+                    tileNum2 = gp.tileM.houseTileNum[entityBottomRow][entityRightCol];
+                    tileCenter = gp.tileM.houseTileNum[entityBottomRow][entityCenterX];  // controlliamo il centro in basso
 
                     if(gp.tileM.tile[tileNum1].collision && gp.tileM.tile[tileNum2].collision || (entityBottomWorldY + entity.speed) > boundaryY+boundaryHeight){  // sta colpendo un blocco o esco dal boundary 
                         entity.collisionOn = true;
@@ -256,9 +256,9 @@ public class CollisionChecker {
             case "left":
                 entityLeftCol = (int)(entityLeftWorldX - entity.speed) / gp.tileSize;  // calcoliamo dove si trovera il player quando si va su
                 if(entityLeftCol >= 0 && entityLeftCol < 14){
-                    tileNum1 = gp.tileM.blockTileNum[entityTopRow][entityLeftCol];  // controlliamo l'angolo alto a sinistra e basso a sinistra della hitbox sul terreno
-                    tileNum2 = gp.tileM.blockTileNum[entityBottomRow][entityLeftCol];
-                    tileCenter = gp.tileM.blockTileNum[entityCenterY][entityLeftCol];  // controlliamo il centro a sinistra
+                    tileNum1 = gp.tileM.houseTileNum[entityTopRow][entityLeftCol];  // controlliamo l'angolo alto a sinistra e basso a sinistra della hitbox sul terreno
+                    tileNum2 = gp.tileM.houseTileNum[entityBottomRow][entityLeftCol];
+                    tileCenter = gp.tileM.houseTileNum[entityCenterY][entityLeftCol];  // controlliamo il centro a sinistra
 
                     if(gp.tileM.tile[tileNum1].collision && gp.tileM.tile[tileNum2].collision || (entityLeftWorldX - entity.speed) < boundaryX){  // sta colpendo un blocco o esco dal boundary
                         entity.collisionOn = true;
@@ -286,9 +286,9 @@ public class CollisionChecker {
             case "right":
                 entityRightCol = (int)(entityRightWorldX + entity.speed) / gp.tileSize;  // calcoliamo dove si trovera il player quando si va su
                 if(entityLeftCol >= 0 && entityLeftCol < 14){
-                    tileNum1 = gp.tileM.blockTileNum[entityTopRow][entityRightCol];  // controlliamo l'angolo alto a destra e basso a destra della hitbox sul terreno
-                    tileNum2 = gp.tileM.blockTileNum[entityBottomRow][entityRightCol];
-                    tileCenter = gp.tileM.blockTileNum[entityCenterY][entityRightCol];  // controlliamo il centro a destra
+                    tileNum1 = gp.tileM.houseTileNum[entityTopRow][entityRightCol];  // controlliamo l'angolo alto a destra e basso a destra della hitbox sul terreno
+                    tileNum2 = gp.tileM.houseTileNum[entityBottomRow][entityRightCol];
+                    tileCenter = gp.tileM.houseTileNum[entityCenterY][entityRightCol];  // controlliamo il centro a destra
 
                     if(gp.tileM.tile[tileNum1].collision && gp.tileM.tile[tileNum2].collision || (entityRightWorldX + entity.speed) > boundaryX+boundaryWidth){  // sta colpendo un blocco o esco dal boundary
                         entity.collisionOn = true;

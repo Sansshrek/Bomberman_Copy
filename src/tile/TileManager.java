@@ -2,11 +2,13 @@ package tile;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.awt.Rectangle;
 
 import javax.imageio.ImageIO;
@@ -18,9 +20,9 @@ public class TileManager {
     GamePanel gp;
     public Tile[] tile;  // array di tiles che indica all'immagine 
     int wallsNum = 43;
-    int cont = 0;
+    int contHouse = 0;
     public Rectangle houseHitbox[][];
-    public int blockTileNum[][];
+    public int houseTileNum[][];
     public int groundTileNum[][];  // dove viene salvata la mappa in stile numerico per indicare a quale tiles si riferisce
     public int wallsTileNum[][];  // dove viene salvata la mappa in stile numerico per indicare a quale tiles si riferisce
 
@@ -29,13 +31,25 @@ public class TileManager {
         tile = new Tile[20]; // array di 10 tile 
         wallsTileNum = new int[gp.maxScreenRow][gp.maxScreenCol];  // mapTileNum salva la matrice di numeri della txt della mappa 
         groundTileNum = new int[gp.maxScreenRow][gp.maxScreenCol];  // mapTileNum salva la matrice di numeri della txt della mappa 
-        blockTileNum = new int[gp.maxScreenRow][gp.maxScreenCol];
+        houseTileNum = new int[gp.maxScreenRow][gp.maxScreenCol];
         houseHitbox = new Rectangle[gp.maxGameRow][gp.maxGameCol];
 
         System.out.println("Prendendo l'immagine dei Tiles");  // da eliminare
         getTileImage();
+
+    }
+
+    public void setupTile(){
+        for(int row=0; row<gp.maxGameRow; row++){  // 13 è il massimo dei tiles della mappa per la x
+            for(int col=0; col<gp.maxGameCol; col++){  // 10 è il massimo dei tiles della mappa per la y
+                houseHitbox[row][col] = null;
+                houseTileNum[row][col] = 0;  // tile trasparente
+            }
+        }
+        contHouse = 0;  // resetto il contatore delle case
+        
         System.out.println("Generando palazzi random");
-        generateHouse();
+        generateHouse();  // genera le case random 
         System.out.println("Caricando la mappa delle mura"); // da eliminare
         loadMap("../res/map/walls01.txt", "walls");
         System.out.println("Caricando la mappa del pavimento"); // da eliminare
@@ -55,7 +69,7 @@ public class TileManager {
             tile[2].setImage(ImageIO.read(getClass().getResourceAsStream("../res/tiles/floor02.png")), gp.scale);  // pavimento con ombra
 
             tile[3] = new Tile();
-            tile[3].setImage(ImageIO.read(getClass().getResourceAsStream("../res/tiles/building.png")), gp.scale);  // blocco indistruttibile
+            tile[3].setImage(ImageIO.read(getClass().getResourceAsStream("../res/tiles/building.png")), gp.scale);  // palazzo indistruttibile
             // tile[3].setImage(ImageIO.read(getClass().getResourceAsStream("../res/tiles/test.png")), gp.scale);  // blocco indistruttibile
             tile[3].collision = true;
 
@@ -128,12 +142,11 @@ public class TileManager {
                 String line = br.readLine();  // leggiamo una singola riga
 
                 while(col < gp.maxScreenCol){
-                    if(blockTileNum[row][col] == 0 && line != null){  // è uno spazio disponibile (no casa/nemico/spazio player)
+                    if(line != null){  // è uno spazio disponibile (no casa/nemico/spazio player)
                         String numbers[] = line.split(" "); // dividiamo la stringa della riga in un'array di numeri
                         int num = Integer.parseInt(numbers[col]);
                         if(type == "ground"){
                             groundTileNum[row][col] = num;  // salviamo il numero nella matrice della pavimento
-                            blockTileNum[row][col] = num;
                         
                         }
                         if(type == "walls")
@@ -153,7 +166,23 @@ public class TileManager {
     }
 
     public void generateHouse(){
+        ArrayList <Point> randomHouse = new ArrayList<>();
+        
+        for(int row=0; row<gp.maxGameRow; row++){
+            for(int col=0; col<gp.maxGameCol; col++){
+                if((row%2) != 0 && (col%2) != 0){  // se row e col sono dispari crea una casa (grid base di bomberman)
+                    houseTileNum[row][col] = 3;  // creo la casa
+                }else if(row+col != 0 && row+col != 1){  // se non è vicino alla posizione default del player
+                    randomHouse.add(new Point(col, row));  // aggiungo la casa alle posizioni disponibili per quelle random
+                }
+            }
+        }
 
+        Collections.shuffle(randomHouse); // randomizziamo dove possono stare i palazzi
+        for(int i=0; i<8; i++){  // numero di case fuori dal grid normale
+            Point housePoint = randomHouse.get(i);  // prendo la posizione disponibile della casa
+            houseTileNum[housePoint.y][housePoint.x] = 3;  // e la creo
+        }
     }
 
     public boolean isHouse(int x, int y) {
@@ -163,7 +192,7 @@ public class TileManager {
         // System.out.print("x: "+xBlock+" y: "+yBlock); // da eliminare
         if (xBlock >= 0 && xBlock < gp.maxScreenCol && yBlock >= 0 && yBlock < gp.maxScreenRow) {
             // System.out.println(" block "+blockTileNum[xBlock][yBlock]);  // da eliminare
-            if(blockTileNum[yBlock][xBlock] == 3){
+            if(houseTileNum[yBlock][xBlock] == 3){
                 return true; // Restituisci true se il tile corrispondente alla posizione (x, y) è un palazzo
             }
         } 
@@ -180,17 +209,18 @@ public class TileManager {
         while(col < gp.maxScreenCol && row < gp.maxScreenRow){
             int tileNum = 0;
 
-            if(type == "ground"){
+            if(type == "ground")
                 tileNum = groundTileNum[row][col];  // salviamo il numero della matrice del pavimento
-            }
+            if(type == "house")
+                tileNum = houseTileNum[row][col];
             if(type == "walls")
                 tileNum = wallsTileNum[row][col];  // salviamo il numero della matrice del muro
 
             g2.drawImage(tile[tileNum].image, x, y, gp.tileSize, gp.tileSize, null);
-            if(tileNum == 3 && cont <= wallsNum){  // se è un palazzo
+            if(tileNum == 3 && contHouse <= wallsNum){  // se è un palazzo
                 houseHitbox[row][col] = new Rectangle(x, y, gp.tileSize, gp.tileSize);  // aggiungo la sua hitbox
                 // System.out.println("Cont "+cont);
-                cont++;
+                contHouse++;
             }
             x += gp.tileSize; // aumenta di 16 la posizione di partenza di dove disegna il blocco
             col++;

@@ -9,8 +9,6 @@ import main.GamePanel;
 
 public class Entity {
     GamePanel gp;
-    int ogTileSize;
-    int scale;
     int tileSize;
     public Graphics2D g2;
     // public int x, y;  // le coordinate nel mondo
@@ -49,7 +47,6 @@ public class Entity {
         // prende il centro del player meno la distanza da dove parte a sinistra la mappa (gp.gameBorderLeftX)
         return adjustedX / gp.tileSize;
     }
-    
     public int getTileNumRow() {
         int adjustedY = getCenterY() - 120; // Spostamento verso l'alto
         // prende il centro del player meno la distanza da dove parte sopra la mappa (gp.gameBorderUpY)

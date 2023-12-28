@@ -7,6 +7,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -29,13 +30,11 @@ public class Enemy extends Entity{
     public int hitboxWidth;
     public int hitboxHeight;
 
-    public Enemy(GamePanel gp, int x, int y){
+    public Enemy(GamePanel gp){
         super(gp);
 
         this.speed = 1;
         this.direction = "down";
-        this.ogTileSize = gp.getOgTileSize();
-        this.scale = gp.getScale();
         this.tileSize = gp.getTileSize();
         //coordinate nel mondo
         // this.x = x;
@@ -50,25 +49,39 @@ public class Enemy extends Entity{
         this.hitboxY = 8*gp.scale; // dove parte hitbox dell' enemy (12 pixel sotto rispetto a dove parte l'immagine)
         
         //larghezza e altezza dell' hitbox
-        this.hitboxWidth = 15*gp.scale;// larghezza dell'hitbox dell' enemy
-        this.hitboxHeight = 15*gp.scale;// altezza dell'hitbox dell' enemy
+        // this.hitboxWidth = 15*gp.scale;// larghezza dell'hitbox dell' enemy
+        // this.hitboxHeight = 15*gp.scale;// altezza dell'hitbox dell' enemy
+        this.hitboxWidth = gp.tileSize;
+        this.hitboxHeight = gp.tileSize;
         
         
         hitboxDefaultX = hitboxX;
         hitboxDefaultY = hitboxY;
 
-        System.out.println("Caricando l'enemy");  // da eliminare
-        setEnemyDefaultValues(x,y);
         getEnemyImage();
-        hitbox = new Rectangle(hitboxX + imageP.x, hitboxY + imageP.y, hitboxWidth, hitboxHeight);
     }
 
-	public void setEnemyDefaultValues(int x, int y){
-        x = (x*ogTileSize*scale) + (ogTileSize+ogTileSize/2)*gp.scale;   // posizione x dell'Enemy IN ALTO A SINISTRA
-        y = (y*ogTileSize*scale) + (2*ogTileSize)*gp.scale;    // posizione y dell'Enemy IN ALTO A SINISTRA
+	public void setEnemyDefaultValues(){
+        Point avPos = findAvStartPos();  // trova una posizione disponibile sulla mappa
+        int x = (avPos.x*tileSize) + (tileSize+tileSize/2);   // posizione x dell'enemy IN ALTO A SINISTRA
+        int y = (avPos.y*tileSize) + 2*tileSize;   // posizione y dell'enemy IN ALTO A SINISTRA
         this.imageP = new Point(x, y);
+        hitbox = new Rectangle(hitboxX + imageP.x, hitboxY + imageP.y, hitboxWidth, hitboxHeight);
         this.speed = 1;
         this.direction = "down";
+    }
+
+    public Point findAvStartPos(){
+        ArrayList<Point> avPos = new ArrayList<>();  // array di posizioni disponibili
+        for(int row=0; row<gp.maxGameRow; row++){ 
+            for(int col=0; col<gp.maxGameCol; col++){
+                if(gp.obj[row][col] == null && gp.tileM.houseTileNum[row][col] != 3 && row+col != 0 && row+col != 1 && row+col != 2 && row+col != 3){  // se non c'è una casa e non c'è un blocco o sono le pos del player
+                    avPos.add(new Point(col, row));  // ritorno x:col e y:row
+                }
+            }
+        }
+        Collections.shuffle(avPos);  // randomizzo array delle posizioni disponibili
+        return avPos.get(0);  // ritorno la prima pos disponibile
     }
 
     public void getEnemyImage(){
@@ -98,13 +111,13 @@ public class Enemy extends Entity{
         Point objPoint = gp.cChecker.checkObj(this, false, g2);
          // controlliamo cosa fare con l'oggetto
         // If a collision occurs, check for collisions in all directions and choose a new direction
-        if (collisionOn) {
+        if (collisionOn) {  // se colpisce qualcosa
             List<String> directions = Arrays.asList("up", "down", "left", "right");
             Collections.shuffle(directions);
-            for (String dir : directions) {
+            for (String dir : directions) {  // itera le posizioni disponibili in cui puo andare
                 direction = dir;
-                gp.cChecker.checkTile(this);
-                if (!collisionOn) {
+                gp.cChecker.checkTile(this);  // controlla se puo andare in quella posizione
+                if(!collisionOn) {
                     break;
                 }
             }
@@ -157,18 +170,6 @@ public class Enemy extends Entity{
         }
     }
 
-    public int getEnemyTileX(){
-        int entityLeftWorldX = hitbox.x - (24 * gp.scale);  // Coordinata x dove parte la hitbox
-        int entityRightWorldX = hitbox.x + hitbox.width - (24 * gp.scale);  // cordinata x dove arriva la hitbox
-        int entityCenterX = ((entityLeftWorldX + entityRightWorldX) / 2 ) / gp.tileSize+1;
-        return entityCenterX*gp.tileSize + gp.tileSize/2;
-    }
-    public int getEnemyTileY(){
-        int entityTopWorldY = hitbox.y - (gp.hudHeight + (8 * gp.scale));  // coordinata y dove parte la hitbox
-        int entityBottomWorldY = hitbox.y + hitbox.height - (gp.hudHeight + (8 * gp.scale));
-        int entityCenterY = ((entityTopWorldY + entityBottomWorldY) / 2 ) / gp.tileSize+2;
-        return entityCenterY*gp.tileSize + gp.tileSize/2;
-    }
     public void draw(){
         BufferedImage image = null;
         
@@ -218,12 +219,15 @@ public class Enemy extends Entity{
                 }
                 break;
         }
-        g2.drawImage(image, imageP.x, imageP.y, gp.enemy.width, gp.enemy.height, null);  // disegna lo sprite del personaggio (image) nella posizione x,y di grandezza tileSize
+        g2.drawImage(image, imageP.x, imageP.y, width, height, null);  // disegna lo sprite del personaggio (image) nella posizione x,y di grandezza tileSize
         //da eliminare
         g2.setColor(Color.BLUE);
         g2.draw(this.hitbox);  
 
         g2.setColor(Color.GREEN);
-        g2.drawRect(getEnemyTileX(), getEnemyTileY(), tileSize, tileSize);
+        g2.drawRect(getTileX(), getTileY(), tileSize, tileSize);
+
+        g2.setColor(Color.RED);
+        g2.draw(hitbox);
     }
 }

@@ -112,7 +112,7 @@ public class Block extends SuperObject {
                 }
             }
         }else{  // altrimenti se ha finito di esplodere
-            gp.tileM.blockTileNum[tileY][tileX] = 0;  // resetta il tile sulla mappa
+            gp.tileM.houseTileNum[tileY][tileX] = 0;  // resetta il tile sulla mappa
             if(power.name != "nothing")  // se il blocco ha un powerUp
                 gp.obj[tileY][tileX] = power;  // allora il blocco viene cambiato in powerUp nella lista degli oggetti
             else
