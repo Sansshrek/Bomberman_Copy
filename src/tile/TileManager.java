@@ -48,12 +48,12 @@ public class TileManager {
         }
         contHouse = 0;  // resetto il contatore delle case
         
-        System.out.println("Generando palazzi random");
-        generateHouse();  // genera le case random 
         System.out.println("Caricando la mappa delle mura"); // da eliminare
         loadMap("../res/map/walls01.txt", "walls");
         System.out.println("Caricando la mappa del pavimento"); // da eliminare
         loadMap("../res/map/ground01.txt", "ground");
+        System.out.println("Generando palazzi random");
+        generateHouse();  // genera le case random 
 
     }
 
@@ -182,6 +182,9 @@ public class TileManager {
         for(int i=0; i<8; i++){  // numero di case fuori dal grid normale
             Point housePoint = randomHouse.get(i);  // prendo la posizione disponibile della casa
             houseTileNum[housePoint.y][housePoint.x] = 3;  // e la creo
+            if(housePoint.y+1 < gp.maxGameRow){ // se la posizione sotto la casa non esce dalla mappa giocabile
+                groundTileNum[housePoint.y+1][housePoint.x] = 2;  // allora rende il blocco sulla mappa ground sotto la casa come un tile "pavimento con ombra"
+            }
         }
     }
 
