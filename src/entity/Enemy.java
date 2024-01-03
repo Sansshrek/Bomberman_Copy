@@ -20,6 +20,8 @@ public class Enemy extends Entity{
     // public ArrayList<SuperObject> bombObj = new ArrayList<>();
 
     public BufferedImage up1, up2, up3, down1, down2, down3, left1, left2, left3, right1, right2, right3;
+    public BufferedImage explosion1, explosion2, explosion3, explosion4, explosion5, explosion6, explosion7, explosion8;
+    int spriteDeathNum = 1, timer=0;
     //largezza e altezza dell' immagine del player
     public final int width;
     public final int height; 
@@ -99,6 +101,14 @@ public class Enemy extends Entity{
             right2 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Enemy/right02.png"));
             right3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Enemy/right03.png"));
             
+            explosion1 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_01.png"));
+            explosion2 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_02.png"));
+            explosion3 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_03.png"));
+            explosion4 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_04.png"));
+            explosion5 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_05.png"));
+            explosion6 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_06.png"));
+            explosion7 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_07.png"));
+            explosion8 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_08.png"));
         }catch(IOException e){
             e.printStackTrace();
         }
@@ -106,118 +116,165 @@ public class Enemy extends Entity{
 
     public void update(){  // update viene chiamato 60 volte al secondo
             // Check for collisions
-        collisionOn = false;
-        gp.cChecker.checkTile(this);
-        Point objPoint = gp.cChecker.checkObj(this, false, g2);
-         // controlliamo cosa fare con l'oggetto
-        // If a collision occurs, check for collisions in all directions and choose a new direction
-        if (collisionOn) {  // se colpisce qualcosa
-            List<String> directions = Arrays.asList("up", "down", "left", "right");
-            Collections.shuffle(directions);
-            for (String dir : directions) {  // itera le posizioni disponibili in cui puo andare
-                direction = dir;
-                gp.cChecker.checkTile(this);  // controlla se puo andare in quella posizione
-                if(!collisionOn) {
-                    break;
+
+        if(!died){  // se non è morto
+            collisionOn = false;
+            gp.cChecker.checkBomb(this);
+            gp.cChecker.checkTile(this);
+            if(timer > 100){  // da modificare e fare in modo che il timer aumenta quando colpisce il player
+                gp.cChecker.checkPlayerCollision(this, gp.player);
+                timer = 0;
+            }else{
+                timer++;
+            }
+            Point objPoint = gp.cChecker.checkObj(this, false, g2);
+            // controlliamo cosa fare con l'oggetto
+            // If a collision occurs, check for collisions in all directions and choose a new direction
+            if (collisionOn) {  // se colpisce qualcosa
+                List<String> directions = Arrays.asList("up", "down", "left", "right");
+                Collections.shuffle(directions);
+                for (String dir : directions) {  // itera le posizioni disponibili in cui puo andare
+                    direction = dir;
+                    gp.cChecker.checkTile(this);  // controlla se puo andare in quella posizione
+                    if(!collisionOn) {
+                        break;
+                    }
                 }
             }
-        }
-         // controlla se colpiamo qualche blocco
-            // CONTROLLA COLLISIONE OBJECT
-            
+            // controlla se colpiamo qualche blocco
+                // CONTROLLA COLLISIONE OBJECT
+                
 
-        if(!collisionOn){ // si puo muovere
-            switch(direction){
-                case "up": 
-                    imageP.y -= speed; 
-                    hitbox.y -= speed;
-                    break;  // la posizione Y diminuisce della velocita del player
-                case "down": 
-                    imageP.y += speed; 
-                    hitbox.y += speed;
-                    break;
-                case "left": 
-                    imageP.x -= speed; 
-                    hitbox.x -= speed;
-                    break;
-                case "right": 
-                    imageP.x += speed; 
-                    hitbox.x += speed;
-                    break;
-            }
-        }
-
-        spriteCounter++;
-        if(spriteCounter > 15){  // ogni 15/60 volte al secondo 
-            switch(spriteNum){
-                case 1:  // dalla 1 alla 2
-                    spriteNum = 2; 
-                    break;
-                case 2:  // dalla 2 alla 3(1)
-                    spriteNum = 3;
-                    break;
-                case 3:  // dalla 3(1) alla 4
-                    spriteNum = 4;
-                    break;
-                case 4: // dalla 4 alla 1
-                    spriteNum = 1;
-                    break;
+            if(!collisionOn){ // si puo muovere
+                switch(direction){
+                    case "up": 
+                        imageP.y -= speed; 
+                        hitbox.y -= speed;
+                        break;  // la posizione Y diminuisce della velocita del player
+                    case "down": 
+                        imageP.y += speed; 
+                        hitbox.y += speed;
+                        break;
+                    case "left": 
+                        imageP.x -= speed; 
+                        hitbox.x -= speed;
+                        break;
+                    case "right": 
+                        imageP.x += speed; 
+                        hitbox.x += speed;
+                        break;
                 }
+            }
+            spriteCounter++;
+            if(spriteCounter > 15){  // ogni 15/60 volte al secondo 
+                switch(spriteNum){
+                    case 1:  // dalla 1 alla 2
+                        spriteNum = 2; 
+                        break;
+                    case 2:  // dalla 2 alla 3(1)
+                        spriteNum = 3;
+                        break;
+                    case 3:  // dalla 3(1) alla 4
+                        spriteNum = 4;
+                        break;
+                    case 4: // dalla 4 alla 1
+                        spriteNum = 1;
+                        break;
+                    }
 
-            spriteCounter = 0;  // e resetta il counter
-            // System.out.println(x+" "+y);  // da eliminare
-            // System.out.println("Enemy tile:"+getEnemyTileX()+ " "+getEnemyTileY());
+                spriteCounter = 0;  // e resetta il counter
+                // System.out.println(x+" "+y);  // da eliminare
+                // System.out.println("Enemy tile:"+getEnemyTileX()+ " "+getEnemyTileY());
+            }
         }
     }
 
     public void draw(){
         BufferedImage image = null;
-        
-        switch(direction){  // in base alla direzione, la variabile image prende il valore dell'immagine inserita
-            case "up":
-                if(spriteNum == 1 || spriteNum == 3){
-                    image = up1;
-                }
-                if(spriteNum == 2){
-                    image = up2;
-                }
-                if(spriteNum == 4){
-                    image = up3;
-                }
+        if(!died){
+            switch(direction){  // in base alla direzione, la variabile image prende il valore dell'immagine inserita
+                case "up":
+                    if(spriteNum == 1 || spriteNum == 3){
+                        image = up1;
+                    }
+                    if(spriteNum == 2){
+                        image = up2;
+                    }
+                    if(spriteNum == 4){
+                        image = up3;
+                    }
+                    break;
+                case "down":
+                    if(spriteNum == 1 || spriteNum == 3){
+                        image = down1;
+                    }
+                    if(spriteNum == 2){
+                        image = down2;
+                    }
+                    if(spriteNum == 4){
+                        image = down3;
+                    }
+                    break;
+                case "left":
+                    if(spriteNum == 1 || spriteNum == 3){
+                        image = left1;
+                    }
+                    if(spriteNum == 2){
+                        image = left2;
+                    }
+                    if(spriteNum == 4){
+                        image = left3;
+                    }
+                    break;
+                case "right":
+                    if(spriteNum == 1 || spriteNum == 3){
+                        image = right1;
+                    }
+                    if(spriteNum == 2){
+                        image = right2;
+                    }
+                    if(spriteNum == 4){
+                        image = right3;
+                    }
+                    break;
+            }
+        }else{
+            spriteCounter++;
+            if(spriteCounter > 10){
+                spriteDeathNum++;
+                spriteCounter = 0;
+            }
+            switch(spriteDeathNum){
+                case 1:
+                    image = explosion1;
                 break;
-            case "down":
-                if(spriteNum == 1 || spriteNum == 3){
-                    image = down1;
-                }
-                if(spriteNum == 2){
-                    image = down2;
-                }
-                if(spriteNum == 4){
-                    image = down3;
-                }
+                case 2:
+                    image = explosion2;
                 break;
-            case "left":
-                if(spriteNum == 1 || spriteNum == 3){
-                    image = left1;
-                }
-                if(spriteNum == 2){
-                    image = left2;
-                }
-                if(spriteNum == 4){
-                    image = left3;
-                }
+                case 3:
+                    image = explosion3;
                 break;
-            case "right":
-                if(spriteNum == 1 || spriteNum == 3){
-                    image = right1;
-                }
-                if(spriteNum == 2){
-                    image = right2;
-                }
-                if(spriteNum == 4){
-                    image = right3;
-                }
+                case 4:
+                    image = explosion4;
                 break;
+                case 5:
+                    image = explosion5;
+                break;
+                case 6:
+                    image = explosion6;
+                break;
+                case 7:
+                    image = explosion7;
+                break;
+                case 8:
+                    image = explosion8;
+                break;
+                default:{
+                    int index = gp.enemy.indexOf(this);
+                    System.out.println("Enemy morto");
+                    gp.enemy.remove(index);
+                }
+            }
         }
         g2.drawImage(image, imageP.x, imageP.y, width, height, null);  // disegna lo sprite del personaggio (image) nella posizione x,y di grandezza tileSize
         //da eliminare

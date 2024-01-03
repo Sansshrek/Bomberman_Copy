@@ -13,7 +13,7 @@ public class SuperObject {
     public String name;
     public int x, y;
     public Point blockP = new Point(0,0), indexObj = new Point(0,0);
-    public int tileX, tileY;
+    public int tileRow, tileCol;
     public boolean collision = true;
     public Rectangle hitbox;
     public int hitboxDefaultX = 0;
@@ -31,7 +31,6 @@ public class SuperObject {
     }
 
     public void draw(Graphics2D g2, GamePanel gp){
-
         g2.drawImage(image, x, y, tileSize, tileSize, null);
     }
     

@@ -10,13 +10,13 @@ public class PowerUp extends SuperObject{
     int spriteCounter = 0, spriteNum = 1;
     BufferedImage img, destroyimg1, destroyimg2, destroyimg3, destroyimg4, destroyimg5, destroyimg6, destroyimg7;
     boolean exploded = false, extinguished = false;
-    public PowerUp(GamePanel gp, int x, int y, int tileX, int tileY, String powerUp){
+    public PowerUp(GamePanel gp, int x, int y, int tileRow, int tileCol, String powerUp){
         super(gp);
         name = powerUp;
         this.x = x;
         this.y = y;
-        this.tileX = tileX;
-        this.tileY = tileY;
+        this.tileRow = tileRow;
+        this.tileCol = tileCol;
         this.hitbox.x = x;
         this.hitbox.y = y;
         this.collision = false;
@@ -88,7 +88,8 @@ public class PowerUp extends SuperObject{
                 image = img;
             }
         }else{  // altrimenti se ha finito di esplodere
-            gp.obj[tileY][tileX] = null;  // viene rimosso dalla lista degli oggetti
+            gp.obj[tileRow][tileCol] = null;  // viene rimosso dalla lista degli oggetti
+            System.out.println("Esploso "+tileRow+" "+tileCol);
         }
     }
 }

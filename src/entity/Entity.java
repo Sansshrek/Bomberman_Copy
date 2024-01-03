@@ -28,6 +28,7 @@ public class Entity {
     public int hitboxWidth;
     public int hitboxHeight;
     public boolean collisionOn = false;
+    public boolean died = false, extinguished = false;
 
     public Entity(GamePanel gp){
         this.gp=gp;

@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 
 import main.GamePanel;
 import main.KeyHandler;
+import objects.Bomb;
 import objects.BombHandler;
 
 public class Player extends Entity{
@@ -94,6 +95,7 @@ public class Player extends Entity{
 
     public void update(){  // update viene chiamato 60 volte al secondo
 
+        gp.cChecker.checkBomb(this);
 
         if(keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed){
 
@@ -110,11 +112,11 @@ public class Player extends Entity{
                 direction = "right";
             }
 
-            // CONTROLLA COLLISIONE TILES
-            collisionOn = false;
             // hitbox.x = x + hitboxX;
             // hitbox.y = y + hitboxY;
-            gp.cChecker.checkTile(this);  // controlla se colpiamo qualche blocco
+        // CONTROLLA COLLISIONE TILES
+        collisionOn = false;
+        gp.cChecker.checkTile(this);  // controlla se colpiamo qualche blocco
             // CONTROLLA COLLISIONE OBJECT
             Point objPoint = gp.cChecker.checkObj(this, true, g2);
             powerUpHandler(objPoint); // controlliamo cosa fare con l'oggetto
@@ -163,7 +165,7 @@ public class Player extends Entity{
         }
         if(keyH.bombPressed){ // se preme il tasto P (bomba)
             // BombHandler bomb = new BombHandler(getPlayerCenterCol()*gp.tileSize+(gp.tileSize/2), getPlayerCenterRow()*gp.tileSize+(24 * gp.scale), firePower, g2, gp.tileSize);
-            gp.bombH.createBomb(gp ,getTileX(), getTileY(), firePower);
+            gp.bombH.createBomb(getTileX(), getTileY(), getTileNumRow(), getTileNumCol(), firePower);
             gp.cChecker.checkBomb(this);
             // BombHandler bomb = new BombHandler(x, y, firePower, g2, gp.tileSize);
             // gp.bombs.add(bomb);
@@ -189,7 +191,9 @@ public class Player extends Entity{
 
 
     public void powerUpHandler(Point index){
-        if(index.x != 999 && gp.obj[index.y][index.x] != null && gp.obj[index.y][index.x].name != "block"){  // se non è il valore default o un blocco
+        if(index.x != 999 && gp.obj[index.y][index.x].name == null)
+            System.out.println("coaoc");
+        if(index.x != 999 && gp.obj[index.y][index.x].name != "block" && gp.obj[index.y][index.x] != null && !(gp.obj[index.y][index.x] instanceof Bomb)){  // se non è il valore default o un blocco
             String objName = gp.obj[index.y][index.x].name;
             gp.obj[index.y][index.x] = null;
             switch(objName){
@@ -223,6 +227,9 @@ public class Player extends Entity{
                 break;
                 case "cake":
                     score += 1000;
+                break;
+                case "exit":
+                    gp.nextLevel();
                 break;
                 case "nothing":
                 break;

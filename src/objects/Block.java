@@ -9,19 +9,19 @@ import main.GamePanel;
 public class Block extends SuperObject {
     int spriteCounter = 0;
     int spriteNum = 1;
-    int tileX, tileY;
+    int tileCol, tileRow;
     BufferedImage img1, img2, img3, img4, destroyimg1, destroyimg2, destroyimg3, destroyimg4, destroyimg5, destroyimg6;
     boolean eploded = false, extinguished = false;
-    public Block(GamePanel gp, int x, int y, int tileX, int tileY, String powerUp){
+    public Block(GamePanel gp, int x, int y, int tileRow, int tileCol, String powerUp){
         super(gp);
         this.x = x;
         this.y = y;
         this.blockP.setLocation(x, y);
-        this.tileX = tileX;
-        this.tileY = tileY;
+        this.tileRow = tileRow;
+        this.tileCol = tileCol;
         this.hitbox.x = x;
         this.hitbox.y = y;
-        power = new PowerUp(gp, x, y, tileX, tileY, powerUp);
+        power = new PowerUp(gp, x, y, tileRow, tileCol, powerUp);
         name = "block";
         try {  // apro le 4 sprites del blocco
             
@@ -112,11 +112,11 @@ public class Block extends SuperObject {
                 }
             }
         }else{  // altrimenti se ha finito di esplodere
-            gp.tileM.houseTileNum[tileY][tileX] = 0;  // resetta il tile sulla mappa
+            gp.tileM.houseTileNum[tileRow][tileCol] = 0;  // resetta il tile sulla mappa
             if(power.name != "nothing")  // se il blocco ha un powerUp
-                gp.obj[tileY][tileX] = power;  // allora il blocco viene cambiato in powerUp nella lista degli oggetti
+                gp.obj[tileRow][tileCol] = power;  // allora il blocco viene cambiato in powerUp nella lista degli oggetti
             else
-                gp.obj[tileY][tileX] = null;  // altrimenti viene rimosso dalla lista se non ha powerUp
+                gp.obj[tileRow][tileCol] = null;  // altrimenti viene rimosso dalla lista se non ha powerUp
         }
     }
 }

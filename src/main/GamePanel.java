@@ -46,7 +46,7 @@ public class GamePanel extends JPanel implements Runnable{
     public TileManager tileM = new TileManager(this);
     KeyHandler keyH = new KeyHandler();
     Thread gameThread;
-    public BombHandler bombH = new BombHandler(tileSize);
+    public BombHandler bombH = new BombHandler(this, tileSize);
     public Player player = new Player(this, keyH);
     public AssetSetter aSetter = new AssetSetter(this, tileM);
     // public ArrayList<SuperObject> obj = new ArrayList<>();
@@ -86,6 +86,10 @@ public class GamePanel extends JPanel implements Runnable{
         for(Enemy entity: enemy){  // imposto i valori di default per i nemici
             entity.setEnemyDefaultValues();
         }
+    }
+
+    public void nextLevel(){
+        setupGame();  // per ora lascio che resetta il livello
     }
 
     public int getTileSize(){
@@ -145,7 +149,7 @@ public class GamePanel extends JPanel implements Runnable{
         
         for(int row=0; row < maxGameRow; row++){
             for(int col=0; col < maxGameCol; col++){
-                if(obj[row][col] != null){
+                if(obj[row][col] != null && !(obj[row][col] instanceof Bomb)){
                     obj[row][col].update();
                 }
             }

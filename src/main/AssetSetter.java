@@ -38,7 +38,6 @@ public class AssetSetter {
                     avPos.add(new Point(col, row));
                 }
             }
-            System.out.println();
         }
         return avPos;
     }
@@ -50,13 +49,13 @@ public class AssetSetter {
         Collections.shuffle(avPowerUp); // randomizziamo l'ordine dei powerUp
 
         Point exit = avPos.get(0);
-        gp.obj[exit.y][exit.x] = new Block(gp, exit.x*gp.tileSize + (gp.tileSize+gp.tileSize/2), exit.y*gp.tileSize + (2*gp.tileSize + (gp.tileSize/2)), exit.x, exit.y, "exit");
+        gp.obj[exit.y][exit.x] = new Block(gp, exit.x*gp.tileSize + (gp.tileSize+gp.tileSize/2), exit.y*gp.tileSize + (2*gp.tileSize + (gp.tileSize/2)), exit.y, exit.x, "exit");
         for(int i=1; i<numBlock; i++){  // inizializzamo l'array vuoto cosi che dopo mettiamo 
             Point position = avPos.get(i);
-            int tileX = position.x;
-            int tileY = position.y;
+            int tileCol = position.x;
+            int tileRow = position.y;
 
-            gp.obj[tileY][tileX] = new Block(gp, tileX*gp.tileSize + (gp.tileSize+gp.tileSize/2), tileY*gp.tileSize + (2*gp.tileSize + (gp.tileSize/2)), tileX, tileY, avPowerUp.get(i));
+            gp.obj[tileRow][tileCol] = new Block(gp, tileCol*gp.tileSize + (gp.tileSize+gp.tileSize/2), tileRow*gp.tileSize + (2*gp.tileSize + (gp.tileSize/2)), tileRow, tileCol, avPowerUp.get(i));
             
         }
     }
@@ -85,26 +84,26 @@ public class AssetSetter {
         
         // caricando l'uscita nel primo posto della lista
         int position = avPos.get(0);
-        int tileX = position / 10;
-        int tileY = position % 10;
+        int tileCol = position / 10;
+        int tileRow = position % 10;
         gp.obj[]
-        gp.obj.set(1, new Block(gp, tileX*gp.tileSize + (gp.tileSize+gp.tileSize/2), tileY*gp.tileSize + (2*gp.tileSize + (gp.tileSize/2)), tileX, tileY, "exit", position));
+        gp.obj.set(1, new Block(gp, tileCol*gp.tileSize + (gp.tileSize+gp.tileSize/2), tileRow*gp.tileSize + (2*gp.tileSize + (gp.tileSize/2)), tileCol, tileRow, "exit", position));
         for(int i = 1; i< numBlock; i++){
             //System.out.println("Caricando blocchi nell'array oggetti");
             position = avPos.get(i);
-            tileX = position / 10;  // ci permette di prendere da un numero soltanto sia la X che la Y
-            tileY = position % 10;  // ad esempio se x=3, y=6 -> 3*10+6 = 36 -> 36/10 = 3 | 36%10 = 6
+            tileCol = position / 10;  // ci permette di prendere da un numero soltanto sia la X che la Y
+            tileRow = position % 10;  // ad esempio se x=3, y=6 -> 3*10+6 = 36 -> 36/10 = 3 | 36%10 = 6
             
             while(true){  // controllo della posizione se non è gia stata presa
-                tileX = (int)(Math.random()*(13)); // 0-12
-                tileY = (int)(Math.random()*(10)); // 0-9
-                if(tileM.houseTileNum[tileX][tileY] != 3 && tileM.houseTileNum[tileX][tileY] != -1 && tileX+tileY != 0){  // se non è un palazzo o non è gia preso
-                    if(tileX == 0 && tileY == 0)  // pos vicino alla partenza del player 
+                tileCol = (int)(Math.random()*(13)); // 0-12
+                tileRow = (int)(Math.random()*(10)); // 0-9
+                if(tileM.houseTileNum[tileCol][tileRow] != 3 && tileM.houseTileNum[tileCol][tileRow] != -1 && tileCol+tileRow != 0){  // se non è un palazzo o non è gia preso
+                    if(tileCol == 0 && tileRow == 0)  // pos vicino alla partenza del player 
                         break; // esci dal loop
                 }
             }
-            tileM.houseTileNum[tileX][tileY] = 16;  // lo imposta come blocco oggetto dei tile
-            gp.obj.set(position, new Block(gp, tileX*gp.tileSize + (gp.tileSize+gp.tileSize/2), tileY*gp.tileSize + (2*gp.tileSize + (gp.tileSize/2)), tileX, tileY, avPowerUp.get(position), position));
+            tileM.houseTileNum[tileCol][tileRow] = 16;  // lo imposta come blocco oggetto dei tile
+            gp.obj.set(position, new Block(gp, tileCol*gp.tileSize + (gp.tileSize+gp.tileSize/2), tileRow*gp.tileSize + (2*gp.tileSize + (gp.tileSize/2)), tileCol, tileRow, avPowerUp.get(position), position));
         }
         for(int i=0; i<130; i++){  // inizializzamo l'array vuoto cosi che dopo mettiamo 
             if(gp.obj.get(i) != null)

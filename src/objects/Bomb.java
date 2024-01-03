@@ -2,11 +2,13 @@ package objects;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import entity.Entity;
 import main.GamePanel;
 
 public class Bomb extends SuperObject{
@@ -32,12 +34,12 @@ public class Bomb extends SuperObject{
     public Graphics2D g2;
     
 
-    public Bomb(GamePanel gp, int x, int y, int firePower, int tileSize, Graphics2D g2){
+    public Bomb(GamePanel gp, int x, int y, int tileRow, int tileCol, int firePower, int tileSize, Graphics2D g2){
         super(gp);
         this.x = x;
         this.y = y;
-        this.tileX = (x - (gp.tileSize+gp.tileSize/2))/gp.tileSize;
-        this.tileY = (y - (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize;
+        this.tileRow = tileRow;
+        this.tileCol = tileCol;
         this.blockP.setLocation(x, y);
         this.firePower = firePower;
         this.bombWidth = tileSize;
@@ -104,6 +106,7 @@ public class Bomb extends SuperObject{
             newBombAv = true;
             gp.bombH.addBombNumber();
         }
+        
         if(fireTimer == 4){  // dopo 9 animazioni / 1.5 secondi
             extinguished = true;
         }else if(spriteCounter > 10){  // ogni 10/60 volte al secondo 
@@ -112,8 +115,10 @@ public class Bomb extends SuperObject{
         }
         spriteCounter++;
     
+        // gp.obj[tileRow][tileCol] = null;  // elimina il blocco dalla mappa
+
         // If the explosion has extinguished, do not draw the fire
-        if (extinguished) {
+        if (extinguished){
             return;
         }
     
@@ -134,19 +139,27 @@ public class Bomb extends SuperObject{
                 break;
             }
 
-            // per le pos a SX dobbiamo fare tileX-i
-            if(tileX-i >= 0) {  // check se la posizione è nell'array
+            // per le pos a SX dobbiamo fare tileCol-i
+            if(tileCol-i >= 0) {  // check se la posizione è nell'array
 
                 // System.out.print("SX ");  // da eliminare
                 if(gp.tileM.isHouse(x-i*bombWidth, y)){  // se in quella pos. del fuoco c'è una casa 
                     // System.out.println("X "+(x-i*bombWidth)+" Y "+y+" Collision SX true");
                     break;  // ferma il loop
                 }
-                if(gp.obj[tileY][tileX-i] != null && gp.obj[tileY][tileX-i].name != "exit"){   // check se quella posizione è un blocco esistente
+                if(gp.obj[tileRow][tileCol-i] != null && gp.obj[tileRow][tileCol-i].name != "exit"){   // check se quella posizione è un blocco esistente
                     // System.out.println(gp.obj.get(positionSx).name);
-                    gp.obj[tileY][tileX-i].destroy();  // inizia l'animazione dell'esplosione del blocco
+                    gp.obj[tileRow][tileCol-i].destroy();  // inizia l'animazione dell'esplosione del blocco
                     // gp.obj.set(positionSx, gp.obj.get(positionSx).power);
                     stopIndexSx = i;  // salva la posizione del fuoco cosi che non vada oltre al blocco distrutto
+                }
+                //controllo se colpisce un entita
+                Rectangle hitboxFire = new Rectangle(x - i*bombWidth, y, gp.tileSize, gp.tileSize);
+                if(gp.player.hitbox.intersects(hitboxFire))
+                    System.out.println("ESPLOSO");
+                for(Entity ent: gp.enemy){
+                    if(ent.hitbox.intersects(hitboxFire))
+                        ent.died = true;
                 }
                 
                 // Draw the middle part of the explosion
@@ -171,8 +184,8 @@ public class Bomb extends SuperObject{
                 break;
             }
 
-            // per le pos a DX dobbiamo fare tileX+i
-            if(tileX+i <140){
+            // per le pos a DX dobbiamo fare tileCol+i
+            if(tileCol+i < 13){
 
                 
                 // System.out.print("DX ");  // da eliminare
@@ -182,10 +195,18 @@ public class Bomb extends SuperObject{
                     // System.out.println("collision");
                 }
 
-                if(gp.obj[tileY][tileX+i] != null && gp.obj[tileY][tileX+i].name != "exit"){
-                    // System.out.println(gp.obj[tileY][tileX+i].name);
-                    gp.obj[tileY][tileX+i].destroy();
+                if(gp.obj[tileRow][tileCol+i] != null && gp.obj[tileRow][tileCol+i].name != "exit"){
+                    // System.out.println(gp.obj[tileRow][tileCol+i].name);
+                    gp.obj[tileRow][tileCol+i].destroy();
                     stopIndexDx = i;
+                }
+                //controllo se colpisce un entita
+                Rectangle hitboxFire = new Rectangle(x + i*bombWidth, y, gp.tileSize, gp.tileSize);
+                if(gp.player.hitbox.intersects(hitboxFire))
+                    System.out.println("ESPLOSO");
+                for(Entity ent: gp.enemy){
+                    if(ent.hitbox.intersects(hitboxFire))
+                        ent.died = true;
                 }
 
                 if (i < firePower){
@@ -207,8 +228,8 @@ public class Bomb extends SuperObject{
                 break;
             }
 
-            // per le pos a UP dobbiamo fare tileY-i
-            if(tileY-i >= 0){
+            // per le pos a UP dobbiamo fare tileRow-i
+            if(tileRow-i >= 0){
                 
                 // System.out.print("UP ");  // da eliminare
                 if(gp.tileM.isHouse(x, y-i*bombWidth)){
@@ -217,10 +238,18 @@ public class Bomb extends SuperObject{
                     // System.out.println("collision");
                 }
 
-                if(gp.obj[tileY-i][tileX] != null && gp.obj[tileY-i][tileX].name != "exit"){
-                    // System.out.println(gp.obj[tileY-i][tileX].name);
-                    gp.obj[tileY-i][tileX].destroy();
+                if(gp.obj[tileRow-i][tileCol] != null && gp.obj[tileRow-i][tileCol].name != "exit"){
+                    // System.out.println(gp.obj[tileRow-i][tileCol].name);
+                    gp.obj[tileRow-i][tileCol].destroy();
                     stopIndexUp = i;
+                }
+                //controllo se colpisce un entita
+                Rectangle hitboxFire = new Rectangle(x, y - i*bombWidth, gp.tileSize, gp.tileSize);
+                if(gp.player.hitbox.intersects(hitboxFire))
+                    System.out.println("ESPLOSO");
+                for(Entity ent: gp.enemy){
+                    if(ent.hitbox.intersects(hitboxFire))
+                        ent.died = true;
                 }
 
                 if (i < firePower){
@@ -238,33 +267,40 @@ public class Bomb extends SuperObject{
         
         for (int i = 1; i <= firePower; i++) {
 
-            // g2.drawRect(x, y + i*bombWidth, gp.tileSize, gp.tileSize);
+            g2.drawRect(x, y + i*bombWidth, gp.tileSize, gp.tileSize);
             g2.setColor(Color.BLUE);
 
             if(i >= stopIndexDw){
                 break;
             }
 
-            // per le pos a DW dobbiamo fare tileY+i
-            if(tileY+i <140){
+            // per le pos a DW dobbiamo fare tileRow+i
+            if(tileRow+i < 11){
                 
                 // System.out.println("X "+x+" Y "+(y+i*bombWidth)+ " calc x:"+ (((x - (gp.tileSize+gp.tileSize/2)))/gp.tileSize)+ " y:"+(((y+i*bombWidth) - (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize ));
                 
                 // System.out.print("DW ");  // da eliminare
                 if(gp.tileM.isHouse(x, y+i*bombWidth)){
                     // System.out.println("X "+x+" Y "+(y+i*bombWidth)+" Collision DW true");
-                    g2.drawRect(x, y+i*bombWidth, bombWidth, bombWidth);
                     break;
                     // System.out.println("collision");
                 }
-                    if(gp.obj[tileY+i][tileX]!= null && gp.obj[tileY+i][tileX].name != "exit"){  // è un blocco o powerUp che non sia l'uscita
-                        // System.out.println(gp.obj[tileY+i][tileX].name);
-                        gp.obj[tileY+i][tileX].destroy();
-                        stopIndexDw = i;
-                    }
-                // else if(gp.obj[tileY+i][tileX] != null && gp.obj.ge){  // è un powerUp
+                if(gp.obj[tileRow+i][tileCol]!= null && gp.obj[tileRow+i][tileCol].name != "exit"){  // è un blocco o powerUp che non sia l'uscita
+                    // System.out.println(gp.obj[tileRow+i][tileCol].name);
+                    gp.obj[tileRow+i][tileCol].destroy();
+                    stopIndexDw = i;
+                }
+                // else if(gp.obj[tileRow+i][tileCol] != null && gp.obj.ge){  // è un powerUp
                 //     gp.obj.set(positionDw, null);
                 // }
+                //controllo se colpisce un entita
+                Rectangle hitboxFire = new Rectangle(x, y + i*bombWidth, gp.tileSize, gp.tileSize);
+                if(gp.player.hitbox.intersects(hitboxFire))
+                    System.out.println("ESPLOSO");
+                for(Entity ent: gp.enemy){
+                    if(ent.hitbox.intersects(hitboxFire))
+                        ent.died = true;
+                }
 
                 if (i < firePower){
                     if((y+i*bombWidth) < gp.gameBorderDownY)
