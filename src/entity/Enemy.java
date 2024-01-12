@@ -21,7 +21,8 @@ public class Enemy extends Entity{
 
     public BufferedImage up1, up2, up3, down1, down2, down3, left1, left2, left3, right1, right2, right3;
     public BufferedImage explosion1, explosion2, explosion3, explosion4, explosion5, explosion6, explosion7, explosion8;
-    int spriteDeathNum = 1, timer=0;
+    int spriteDeathNum = 1, checkTimer=0;
+    boolean playerCollision = false;
     //largezza e altezza dell' immagine del player
     public final int width;
     public final int height; 
@@ -121,11 +122,15 @@ public class Enemy extends Entity{
             collisionOn = false;
             gp.cChecker.checkBomb(this);
             gp.cChecker.checkTile(this);
-            if(timer > 100){  // da modificare e fare in modo che il timer aumenta quando colpisce il player
-                gp.cChecker.checkPlayerCollision(this, gp.player);
-                timer = 0;
-            }else{
-                timer++;
+            if(!playerCollision){  // se il player non è stato colpito allora controlla se viene colpito
+                playerCollision = gp.cChecker.checkPlayerCollision(this, gp.player, playerCollision);
+            }else{  // se il player è stato colpito allora fai partire il timer
+                if(checkTimer > 100){  // quando finisce il timer resetta il timer e il check della collisione del player
+                    checkTimer = 0;
+                    playerCollision = false;
+                }else{
+                    checkTimer++;
+                }
             }
             Point objPoint = gp.cChecker.checkObj(this, false, g2);
             // controlliamo cosa fare con l'oggetto
@@ -143,7 +148,6 @@ public class Enemy extends Entity{
             }
             // controlla se colpiamo qualche blocco
                 // CONTROLLA COLLISIONE OBJECT
-                
 
             if(!collisionOn){ // si puo muovere
                 switch(direction){

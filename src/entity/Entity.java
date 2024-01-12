@@ -18,7 +18,7 @@ public class Entity {
     public int hitboxX, hitboxY;
     
     
-    public String direction;
+    public String direction, goTo = "";
 
     public int spriteCounter = 0;
     public int spriteNum = 1;

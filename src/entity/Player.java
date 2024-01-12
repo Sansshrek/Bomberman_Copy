@@ -26,7 +26,8 @@ public class Player extends Entity{
     public Point hitboxP;
     
     //larghezza e altezza dell' hitbox
-    public int firePower, bombNumber, lifeNumber, score;
+    public int firePower, bombNumber, lifeNumber, score, invulnerableTimer = 0;
+    public boolean invulnerable;
 
     public Player(GamePanel gp, KeyHandler keyH){
         super(gp);
@@ -67,6 +68,20 @@ public class Player extends Entity{
         firePower = 1;
         lifeNumber = 5;
         score = 0;
+        invulnerable = true;
+        died = false;
+        this.hitbox = new Rectangle(hitboxX+imageP.x, hitboxY+imageP.y, hitboxWidth, hitboxHeight);
+    }
+
+    public void kill(){
+        int x=0;
+        int y=0;
+        x = (0*tileSize) + (tileSize+tileSize/2);   // posizione x del player IN ALTO A SINISTRA
+        y = (y*tileSize) + 2*tileSize;    // posizione y del player IN ALTO A SINISTRA
+        this.imageP = new Point(x, y);
+        direction = "down";
+        invulnerable = true;
+        died = false;
         this.hitbox = new Rectangle(hitboxX+imageP.x, hitboxY+imageP.y, hitboxWidth, hitboxHeight);
     }
 
@@ -96,6 +111,8 @@ public class Player extends Entity{
     public void update(){  // update viene chiamato 60 volte al secondo
 
         gp.cChecker.checkBomb(this);
+        if(lifeNumber == 0)
+            gp.setupGame();
 
         if(keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed){
 
@@ -124,11 +141,11 @@ public class Player extends Entity{
             if(!collisionOn){ // si puo muovere
                 switch(direction){
                     case "up": 
-                        imageP.y -= speed; 
+                        imageP.y -= speed;
                         hitbox.y -= speed;
                         break;  // la posizione Y diminuisce della velocita del player
                     case "down": 
-                        imageP.y += speed; 
+                        imageP.y += speed;
                         hitbox.y += speed;
                         break;
                     case "left": 
@@ -207,7 +224,7 @@ public class Player extends Entity{
                 break;
                 case "skate":
                     score += 10;
-                    speed += 0.25;
+                    speed += 1;
                 break;
                 case "life":
                     score += 50;
@@ -239,6 +256,16 @@ public class Player extends Entity{
 
     public void draw(){
         BufferedImage image = null;
+
+        if(invulnerable){  // se il player è invulnerabile 
+            invulnerableTimer++;  // aumenta il timer per l'invulnerabilità
+            // System.out.println(invulnerableTimer);
+            if(invulnerableTimer == 1200){  // quando finisce il timer
+                System.out.println("Finita invulnerabilita");
+                invulnerable = false;  // finisce l'invulnerabilità
+                invulnerableTimer = 0;  // resetta il timer
+            }
+        }
         
         switch(direction){  // in base alla direzione, la variabile image prende il valore dell'immagine inserita
             case "up":

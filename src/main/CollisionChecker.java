@@ -133,15 +133,22 @@ public class CollisionChecker {
         }
     }
     
-    public void checkPlayerCollision(Entity enemy, Player player) {
-        
+    public boolean checkPlayerCollision(Entity enemy, Player player, boolean checkPlayer) {
+        if(!checkPlayer){
+        // se il check del player è falso vuol dire che l'enemy non ha colpito il player
         // Controlla se l'hitbox del nemico interseca l'hitbox del giocatore
-        if (enemy.hitbox.intersects(player.hitbox)) {
-            // Se il nemico sta andando a destra e il giocatore è alla sua destra, ferma il nemico
-            enemy.collisionOn = true;
-            System.out.println("Colpito player");
-            player.lifeNumber -= 1;
+            if (enemy.hitbox.intersects(player.hitbox) && !player.invulnerable) {  // se colpisce l'hitbox del player e non è invulnerabile
+                // Se il nemico sta andando a destra e il giocatore è alla sua destra, ferma il nemico
+                enemy.collisionOn = true;
+                System.out.println("Colpito player");
+                player.lifeNumber -= 1;
+                player.kill();
+                return true;
+                // appena l'enemy colpisce il player, attiva la var. bool playerCollision nell'oggetto enemy
+                // cosi che la funzione non viene chiamata finche playerCollision non torna false dopo che finisce il timer in enemy
+            }
         }
+        return false;
     }
  
     public Point checkObj(Entity entity, boolean player, Graphics2D g2){
@@ -151,7 +158,7 @@ public class CollisionChecker {
                 if(gp.obj[row][col] != null){  //se non è null
                     Rectangle entityHitboxCheck = new Rectangle(entity.hitbox.x, entity.hitbox.y, entity.hitboxWidth, entity.hitboxHeight);
                     Rectangle objHitboxCheck = new Rectangle(gp.obj[row][col].hitbox.x, gp.obj[row][col].hitbox.y, gp.tileSize, gp.tileSize);
-                    
+
                     switch(entity.direction){
                         case "up":
                             entityHitboxCheck.y -= entity.speed;
@@ -166,7 +173,7 @@ public class CollisionChecker {
                             entityHitboxCheck.x += entity.speed;
                         break;
                     }
-                    
+
                     if(entityHitboxCheck.intersects(objHitboxCheck)){  // controlla se l'hitbox del player interseca l'hitbox dell'oggetto
                         if(gp.obj[row][col].collision){  // se puo essere scontrato setta la collisione del player a true
                             entity.collisionOn = true;
@@ -185,6 +192,10 @@ public class CollisionChecker {
 
     public void checkBomb(Entity entity){
         for(Bomb bomb: gp.bombH.bombs){
+            if(bomb.exploded){
+                entity.goTo = ""; // resetta la posizione in cui deve andare l'entity
+                break;
+            }
             String direction = "";
             int bombLeftBorder = bomb.x;
             int bombRightBorder = bomb.x + bomb.hitbox.width;
@@ -193,37 +204,40 @@ public class CollisionChecker {
             int tileCol = bomb.tileCol;
             int tileRow = bomb.tileRow;
             int playerDistance = 999;
-            
-            if(tileCol-1 >= 0 && gp.obj[tileRow][tileCol-1] == null && gp.tileM.houseTileNum[tileRow][tileCol-1] == 0){  // se Sx libera
-                direction = "Sx";
-                playerDistance = Math.abs(entity.getCenterX() - bombLeftBorder);  // modifico la distanza dal centro del player al bordo a sinistra della bomba
-            }
-            if(tileCol+1 < 13 && gp.obj[tileRow][tileCol+1] == null && gp.tileM.houseTileNum[tileRow][tileCol+1] == 0){  // se Dx libera
-                int distanceCheck = Math.abs(entity.getCenterX() - bombRightBorder);
-                if(distanceCheck < playerDistance){  // se una delle due distanze è minore di una gia controllata
-                    direction = "Dx";  // cambio la direzione
-                    playerDistance = distanceCheck;  // reimposto la distanza a quella piu piccola
+            if(entity.goTo == ""){  // se la posizione in cui deve andare l'entity è vuota
+                // allora trova la posizione piu vicina
+                if(tileCol-1 >= 0 && gp.obj[tileRow][tileCol-1] == null && gp.tileM.houseTileNum[tileRow][tileCol-1] == 0){  // se Sx libera
+                    direction = "Sx";
+                    playerDistance = Math.abs(entity.getCenterX() - bombLeftBorder);  // modifico la distanza dal centro del player al bordo a sinistra della bomba
                 }
-            }
-            if(tileRow-1 >= 0 && gp.obj[tileRow-1][tileCol] == null && gp.tileM.houseTileNum[tileRow-1][tileCol] == 0){  // se Up libera
-                int distanceCheck = Math.abs(entity.getCenterY() - bombTopBorder);
-                if(distanceCheck < playerDistance){  // se una delle due distanze è minore di una gia controllata
-                    direction = "Up";  // cambio la direzione
-                    playerDistance = distanceCheck;  // reimposto la distanza a quella piu piccola
+                if(tileCol+1 < 13 && gp.obj[tileRow][tileCol+1] == null && gp.tileM.houseTileNum[tileRow][tileCol+1] == 0){  // se Dx libera
+                    int distanceCheck = Math.abs(entity.getCenterX() - bombRightBorder);
+                    if(distanceCheck < playerDistance){  // se una delle due distanze è minore di una gia controllata
+                        direction = "Dx";  // cambio la direzione
+                        playerDistance = distanceCheck;  // reimposto la distanza a quella piu piccola
+                    }
                 }
-            }
-            if(tileRow+1 < 11 && gp.obj[tileRow+1][tileCol] == null && gp.tileM.houseTileNum[tileRow+1][tileCol] == 0){  // se Up libera
-                int distanceCheck = Math.abs(entity.getCenterY() - bombBottomBorder);
-                if(distanceCheck < playerDistance){  // se una delle due distanze è minore di una gia controllata
-                    direction = "Dw";  // cambio la direzione
-                    playerDistance = distanceCheck;  // reimposto la distanza a quella piu piccola
+                if(tileRow-1 >= 0 && gp.obj[tileRow-1][tileCol] == null && gp.tileM.houseTileNum[tileRow-1][tileCol] == 0){  // se Up libera
+                    int distanceCheck = Math.abs(entity.getCenterY() - bombTopBorder);
+                    if(distanceCheck < playerDistance){  // se una delle due distanze è minore di una gia controllata
+                        direction = "Up";  // cambio la direzione
+                        playerDistance = distanceCheck;  // reimposto la distanza a quella piu piccola
+                    }
                 }
+                if(tileRow+1 < 11 && gp.obj[tileRow+1][tileCol] == null && gp.tileM.houseTileNum[tileRow+1][tileCol] == 0){  // se Up libera
+                    int distanceCheck = Math.abs(entity.getCenterY() - bombBottomBorder);
+                    if(distanceCheck < playerDistance){  // se una delle due distanze è minore di una gia controllata
+                        direction = "Dw";  // cambio la direzione
+                        playerDistance = distanceCheck;  // reimposto la distanza a quella piu piccola
+                    }
+                }
+                entity.goTo = direction;
             }
             // System.out.println("Direzione libera: "+direction); // da eliminare
             // controllo hitbox con bomba
             if(!bomb.exploded && entity.hitbox.intersects(bomb.hitbox)){  // se il player colpisce una bomba
                 // direction = getPlayerNearestAvTile(entity, bomb);
-                switch (direction){
+                switch (entity.goTo){
                     case "Sx":
                         entity.imageP.x -= entity.speed;  // sposto l'entity verso sinistra
                         entity.hitbox.x -= entity.speed;

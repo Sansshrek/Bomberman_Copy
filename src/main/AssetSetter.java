@@ -6,10 +6,9 @@ import java.util.Random;
 import java.awt.Point;
 
 import objects.Block;
-import objects.SuperObject;
 import tile.TileManager;
 
-public class AssetSetter {
+public class AssetSetter{
     GamePanel gp;
     TileManager tileM;
 

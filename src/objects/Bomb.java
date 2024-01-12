@@ -155,8 +155,10 @@ public class Bomb extends SuperObject{
                 }
                 //controllo se colpisce un entita
                 Rectangle hitboxFire = new Rectangle(x - i*bombWidth, y, gp.tileSize, gp.tileSize);
-                if(gp.player.hitbox.intersects(hitboxFire))
+                if(gp.player.hitbox.intersects(hitboxFire) && !gp.player.invulnerable){  // se il player non è invulnerabile
                     System.out.println("ESPLOSO");
+                    gp.player.kill();
+                }
                 for(Entity ent: gp.enemy){
                     if(ent.hitbox.intersects(hitboxFire))
                         ent.died = true;
@@ -202,8 +204,10 @@ public class Bomb extends SuperObject{
                 }
                 //controllo se colpisce un entita
                 Rectangle hitboxFire = new Rectangle(x + i*bombWidth, y, gp.tileSize, gp.tileSize);
-                if(gp.player.hitbox.intersects(hitboxFire))
+                if(gp.player.hitbox.intersects(hitboxFire) && !gp.player.invulnerable){
                     System.out.println("ESPLOSO");
+                    gp.player.kill();
+                }
                 for(Entity ent: gp.enemy){
                     if(ent.hitbox.intersects(hitboxFire))
                         ent.died = true;
@@ -245,8 +249,10 @@ public class Bomb extends SuperObject{
                 }
                 //controllo se colpisce un entita
                 Rectangle hitboxFire = new Rectangle(x, y - i*bombWidth, gp.tileSize, gp.tileSize);
-                if(gp.player.hitbox.intersects(hitboxFire))
+                if(gp.player.hitbox.intersects(hitboxFire) && !gp.player.invulnerable){
                     System.out.println("ESPLOSO");
+                    gp.player.kill();
+                }
                 for(Entity ent: gp.enemy){
                     if(ent.hitbox.intersects(hitboxFire))
                         ent.died = true;
@@ -295,8 +301,10 @@ public class Bomb extends SuperObject{
                 // }
                 //controllo se colpisce un entita
                 Rectangle hitboxFire = new Rectangle(x, y + i*bombWidth, gp.tileSize, gp.tileSize);
-                if(gp.player.hitbox.intersects(hitboxFire))
+                if(gp.player.hitbox.intersects(hitboxFire) && !gp.player.invulnerable){
                     System.out.println("ESPLOSO");
+                    gp.player.kill();
+                }
                 for(Entity ent: gp.enemy){
                     if(ent.hitbox.intersects(hitboxFire))
                         ent.died = true;
