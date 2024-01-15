@@ -55,6 +55,9 @@ public class GamePanel extends JPanel implements Runnable{
 
     // Stato di Gioco
     public final int menuState = 5;
+
+    // test da eliminare
+    int cont = 0;
     
     public GamePanel(){
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -70,12 +73,15 @@ public class GamePanel extends JPanel implements Runnable{
         player.setPlayerDefaultValues();
         tileM.setupTile();
 
-
         for(int row=0; row<maxGameRow; row++){  // reset obj
             for(int col=0; col<maxGameCol; col++){
                 obj[row][col] = null;
             }
         }
+        // da eliminare
+        cont++;
+        System.out.println("Numero setupGame: "+cont);
+
         System.out.println("Caricando i blocchi distruttibili");  // da eliminare
         aSetter.setMatrixBlocks();
 
@@ -89,7 +95,7 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     public void nextLevel(){
-        setupGame();  // per ora lascio che resetta il livello
+        // setupGame();  // per ora lascio che resetta il livello
     }
 
     public int getTileSize(){
@@ -138,6 +144,10 @@ public class GamePanel extends JPanel implements Runnable{
         // Stampa il punteggio
         hud.drawScore(g2, player.score);
         hud.drawLife(g2, player.lifeNumber);
+        hud.drawTime(g2);
+        if(hud.clockLeft == 1)  // se finisce il tempo
+            System.out.println("---Finito il tempo---\n\n");
+            setupGame();  // resetta il gioco
 
     }
 

@@ -31,7 +31,7 @@ public class Main {
         window.setLocationRelativeTo(null); // non specifica la posizione della finestra (verra mostrata al centro dello schermo)
         window.setVisible(true);
 
-        gamePanel.setupGame();
+        // gamePanel.setupGame();  // inizia il gioco
         gamePanel.startGameThread();
     }
 }
