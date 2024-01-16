@@ -115,6 +115,11 @@ public class Enemy extends Entity{
         }
     }
 
+    public void kill(){
+        System.out.println("Enemy morto");
+        extinguished = true;
+    }
+
     public void update(){  // update viene chiamato 60 volte al secondo
             // Check for collisions
 
@@ -195,7 +200,7 @@ public class Enemy extends Entity{
 
     public void draw(){
         BufferedImage image = null;
-        if(!died){
+        if(!died){  // se ancora non è stato colpito dalla bomba allora disegna l'enemy normale
             switch(direction){  // in base alla direzione, la variabile image prende il valore dell'immagine inserita
                 case "up":
                     if(spriteNum == 1 || spriteNum == 3){
@@ -242,7 +247,7 @@ public class Enemy extends Entity{
                     }
                     break;
             }
-        }else{
+        }else{  // altrimenti se l'enemy è stato colpito dalla bomba allora disegna l'esplosione
             spriteCounter++;
             if(spriteCounter > 10){
                 spriteDeathNum++;
@@ -274,22 +279,21 @@ public class Enemy extends Entity{
                     image = explosion8;
                 break;
                 default:{
-                    int index = gp.enemy.indexOf(this);
-                    System.out.println("Enemy morto");
-                    extinguished = true;
-                    gp.enemy.remove(index);
+                    kill();  // altrimenti uccidi l'enemy
                 }
             }
         }
-        g2.drawImage(image, imageP.x, imageP.y, width, height, null);  // disegna lo sprite del personaggio (image) nella posizione x,y di grandezza tileSize
-        //da eliminare
-        g2.setColor(Color.BLUE);
-        g2.draw(this.hitbox);  
+        if(!extinguished){  // se l'enemy non è esploso totalmente disegna l'immagine
+            g2.drawImage(image, imageP.x, imageP.y, width, height, null);  // disegna lo sprite del personaggio (image) nella posizione x,y di grandezza tileSize
+            //da eliminare
+            g2.setColor(Color.BLUE);
+            g2.draw(this.hitbox);  
 
-        g2.setColor(Color.GREEN);
-        g2.drawRect(getTileX(), getTileY(), tileSize, tileSize);
+            g2.setColor(Color.GREEN);
+            g2.drawRect(getTileX(), getTileY(), tileSize, tileSize);
 
-        g2.setColor(Color.RED);
-        g2.draw(hitbox);
+            g2.setColor(Color.RED);
+            g2.draw(hitbox);
+        }
     }
 }

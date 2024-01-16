@@ -34,8 +34,7 @@ public class Bomb extends SuperObject{
     public Graphics2D g2;
 
     //test
-    public boolean entityExitHitbox = false;
-    ArrayList<Entity> entityHit = new ArrayList<>();
+    public ArrayList<Entity> entityExitHitbox = new ArrayList<>();
 
     public Bomb(GamePanel gp, int x, int y, int tileRow, int tileCol, int firePower, int tileSize, Graphics2D g2){
         super(gp);

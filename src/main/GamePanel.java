@@ -193,7 +193,6 @@ public class GamePanel extends JPanel implements Runnable{
             }
             bombH.g2 = g2;
             
-
             g2.setColor(Color.black);
             g2.fillRect(0, 0, this.maxScreenRow, this.maxScreenCol);  // disegna il background
 
@@ -222,8 +221,10 @@ public class GamePanel extends JPanel implements Runnable{
             bombH.updateBomb();
             player.draw();  // poi il player
             for(Enemy entity: enemy){
-                if(!entity.extinguished){
-                    entity.draw();
+                if(!entity.extinguished){  // se ancora non è esploso del tutto
+                    entity.draw();  // disegna l'enemy
+                }else{
+                    enemy.remove(entity);  // altrimenti lo rimuove dalla lista
                 }
             }
             drawHUD(g2);

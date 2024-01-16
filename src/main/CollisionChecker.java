@@ -190,26 +190,39 @@ public class CollisionChecker {
         return new Point(999, 999);  // punto default
     }
 
-    public void checkBomb(Entity entity){
+    public void checkBomb(Entity entity){  // FATTO DA FRANCESCO PAGLIACCIA™
+    
+        Rectangle entityHitboxCheck = new Rectangle(entity.hitbox.x, entity.hitbox.y, entity.hitboxWidth, entity.hitboxHeight);
+        switch(entity.direction){
+            case "up":
+                entityHitboxCheck.y -= entity.speed;
+            break;
+            case "down":
+                entityHitboxCheck.y += entity.speed;
+            break;
+            case "left":
+                entityHitboxCheck.x -= entity.speed;
+            break;
+            case "right":
+                entityHitboxCheck.x += entity.speed;
+            break;
+        }
         for(Bomb bomb: gp.bombH.bombs){
             if(!bomb.exploded){
-                if(entity.hitbox.intersects(bomb.hitbox)){  // se la bomba non è esplosa e intercetta l'hitbox del player
-                    entity.tracker = true;  // si attiva il tracker che indica che almeno una volta ha toccato la bomba
-                    if(entity.bombExitHitbox)
+                if(entityHitboxCheck.intersects(bomb.hitbox)){
+                    if(entity.bombExitHitbox){  // controlla se è gia uscito
                         entity.collisionOn = true;
-                }else{  // se la bomba non tocca piu 
-                    if(entity.tracker){
-                    // bomb.entityExitHitbox = true;
-                        entity.bombExitHitbox = true;
                     }
+                }else{
+                    entity.bombExitHitbox = true;
                 }
-                // System.out.println("Bomb: "+bomb.entityExitHitbox);
-                System.out.println("Bomb: "+bomb+" "+entity.hitbox.intersects(bomb.hitbox));
+            }else{
+                entity.bombExitHitbox = false;
             }
         }
     }
 
-    public void checkBomb2(Entity entity){
+    public void checkBomb2(Entity entity){  // sistema carino che ti sposta dove è libera la posizione piu vicina
         for(Bomb bomb: gp.bombH.bombs){
             if(bomb.exploded){
                 entity.goTo = ""; // resetta la posizione in cui deve andare l'entity
@@ -274,68 +287,6 @@ public class CollisionChecker {
                         entity.hitbox.y += entity.speed;
                     break;
                 }
-            }
-        }
-    }
-    
-    public void checkBomb1(Player player){
-        for(Bomb bomb: gp.bombH.bombs){  // iteriamo le bombe presenti
-            if(!bomb.exploded){  // se la bomba non è esplosa
-                int bombLeftBorder = bomb.x;
-                int bombRightBorder = bomb.x + bomb.hitbox.width;
-                int bombTopBorder = bomb.y;
-                int bombBottomBorder = bomb.y + bomb.hitbox.height;
-                //Controlla le 4 posizioni adiacenti alla bomba a croce
-                int playerDistanceSx = 999;  // imposto al massimo la distanza del player dalla bomba per ora
-                if(((bomb.x - gp.tileSize - (gp.tileSize+gp.tileSize/2)))/gp.tileSize>=0 && bomb.tileCol-1 >= 0) {  // check se la posizione è nell'array
-
-                    // System.out.print("SX ");  // da eliminare
-                    if(gp.tileM.isHouse(bomb.x-gp.tileSize, bomb.y)){  // se in quella pos. del fuoco c'è una casa 
-                        if(gp.obj[bomb.tileRow][bomb.tileCol-1] == null ){   // check se quella posizione è un blocco esistente
-                            playerDistanceSx = Math.abs(player.getCenterX() - bombLeftBorder);  // modifico la distanza dal centro del player al bordo a sinistra della bomba
-                            System.out.println("Player Distance SX: "+playerDistanceSx);
-                        }
-                    }
-                }
-                int playerDistanceDx = 999;  // imposto al massimo la distanza del player dalla bomba per ora
-                if(((bomb.x + gp.tileSize - (gp.tileSize+gp.tileSize/2)))/gp.tileSize>=0 && bomb.tileCol+1 < gp.maxGameCol) {  // check se la posizione è nell'array
-
-                    // System.out.print("DX ");  // da eliminare
-                    if(!gp.tileM.isHouse(bomb.x+gp.tileSize, bomb.y)){  // se in quella pos. c'è una casa 
-                        if(gp.obj[bomb.tileRow][bomb.tileCol+1] == null ){   // check se quella posizione è un blocco esistente
-                            playerDistanceDx = Math.abs(player.getCenterX() - bombRightBorder);
-                            System.out.println("Player Distance DX: "+playerDistanceDx);
-                        }
-                    }
-                }
-                int playerDistanceUp = 999;  // imposto al massimo la distanza del player dalla bomba per ora
-                if(((bomb.y - gp.tileSize- (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize )>=0 && bomb.tileRow-1 >= 0) {  // check se la posizione è nell'array
-
-                    // System.out.print("UP ");  // da eliminare
-                    if(!gp.tileM.isHouse(bomb.x, bomb.y-gp.tileSize)){  // se in quella pos. non c'è una casa 
-                        if(gp.obj[bomb.tileRow-1][bomb.tileCol] == null ){   // check se quella posizione non c'è un blocco esistente
-                            playerDistanceUp = Math.abs(player.getCenterY() - bombTopBorder);
-                            System.out.println("Player Distance UP: "+playerDistanceUp);
-                        }
-                    }
-                    
-                }
-                int playerDistanceDown = 999;  // imposto al massimo la distanza del player dalla bomba per ora
-                System.out.println(((bomb.y + gp.tileSize- (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize ));
-                if(((bomb.y + gp.tileSize- (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize )>=0 && bomb.tileRow+1 < gp.maxGameRow) {  // check se la posizione è nell'array
-
-                    // System.out.print("DOWN ");  // da eliminare
-                    if(!gp.tileM.isHouse(bomb.x, bomb.y+gp.tileSize)){  // se in quella pos. del fuoco c'è una casa 
-                        if(gp.obj[bomb.tileRow+1][bomb.tileCol] == null ){   // check se quella posizione è un blocco esistente
-                            playerDistanceDown = Math.abs(player.getCenterY() - bombBottomBorder);
-                            System.out.println("Player Distance DOWN: "+playerDistanceDown);
-                        }
-                    }
-                }
-
-                // check distanza piu piccola dalla bomba in uno spazio libero per spostare li il player
-                bomb.collision = true; // Imposta un flag di collisione sull'entità
-                System.out.println("BOMBA");
             }
         }
     }

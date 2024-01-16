@@ -110,7 +110,6 @@ public class Player extends Entity{
 
     public void update(){  // update viene chiamato 60 volte al secondo
 
-        gp.cChecker.checkBomb(this);
         if(lifeNumber == 0){
             gp.resetLevel();
         }
@@ -134,6 +133,7 @@ public class Player extends Entity{
             // hitbox.y = y + hitboxY;
         // CONTROLLA COLLISIONE TILES
         collisionOn = false;
+        gp.cChecker.checkBomb(this);
         gp.cChecker.checkTile(this);  // controlla se colpiamo qualche blocco
             // CONTROLLA COLLISIONE OBJECT
             Point objPoint = gp.cChecker.checkObj(this, true, g2);
@@ -184,7 +184,7 @@ public class Player extends Entity{
         if(keyH.bombPressed){ // se preme il tasto P (bomba)
             // BombHandler bomb = new BombHandler(getPlayerCenterCol()*gp.tileSize+(gp.tileSize/2), getPlayerCenterRow()*gp.tileSize+(24 * gp.scale), firePower, g2, gp.tileSize);
             gp.bombH.createBomb(getTileX(), getTileY(), getTileNumRow(), getTileNumCol(), firePower);
-            gp.cChecker.checkBomb(this);
+            // gp.cChecker.checkBomb(this);
             // BombHandler bomb = new BombHandler(x, y, firePower, g2, gp.tileSize);
             // gp.bombs.add(bomb);
             // gp.obj.add(bomb);

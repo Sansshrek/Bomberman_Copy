@@ -28,7 +28,7 @@ public class Entity {
     public int hitboxWidth;
     public int hitboxHeight;
     public boolean collisionOn = false;
-    public boolean died = false, extinguished = false, bombExitHitbox = false, tracker = false;
+    public boolean died = false, extinguished = false, bombExitHitbox = false;
 
     public Entity(GamePanel gp){
         this.gp=gp;
@@ -36,6 +36,8 @@ public class Entity {
         this.hitboxWidth = tileSize;
         this.hitboxHeight = tileSize;
     }
+
+    public void kill(){}
 
     public int getCenterX(){
         return (hitbox.x + hitbox.x + hitbox.width) / 2;
