@@ -111,8 +111,9 @@ public class Player extends Entity{
     public void update(){  // update viene chiamato 60 volte al secondo
 
         gp.cChecker.checkBomb(this);
-        if(lifeNumber == 0)
-            gp.setupGame();
+        if(lifeNumber == 0){
+            gp.resetLevel();
+        }
 
         if(keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed){
 
@@ -201,15 +202,13 @@ public class Player extends Entity{
             keyH.firePressed = false;
         }
         if(keyH.resetPressed){
-            gp.setupGame();
+            gp.resetLevel();
             keyH.resetPressed = false;
         }
     }
 
 
     public void powerUpHandler(Point index){
-        if(index.x != 999 && gp.obj[index.y][index.x].name == null)
-            System.out.println("coaoc");
         if(index.x != 999 && gp.obj[index.y][index.x].name != "block" && gp.obj[index.y][index.x] != null && !(gp.obj[index.y][index.x] instanceof Bomb)){  // se non è il valore default o un blocco
             String objName = gp.obj[index.y][index.x].name;
             gp.obj[index.y][index.x] = null;

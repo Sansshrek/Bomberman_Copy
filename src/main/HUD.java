@@ -10,9 +10,9 @@ public class HUD {
     public GamePanel gp;
     public int tileSize;
     public int scale;
-    public BufferedImage image, timer1, timer2, timer3, timer4, timer5, timer6, timer7, timer8;
+    public BufferedImage image;
     public int hudHeight;
-    private BufferedImage[] numberImages;
+    private BufferedImage[] numberImages, timerHandImage;
     int numberWidth, numberHeight;
     int scoreX;
     int scoreY;
@@ -20,10 +20,11 @@ public class HUD {
     int scoreHeight;
     int lifeX;
     int lifeY;
-    int timer;
+    int timerTick, timerHand;
     public int clockLeft;
     int timerX, timerY, timerWidth, timerHeight;
-    
+    int clockHandX, clockHandY, clockHandWidth, clockHandHeight;
+
     public HUD(GamePanel gp){
         this.gp = gp;
         this.tileSize = gp.getTileSize();
@@ -34,31 +35,40 @@ public class HUD {
         this.scoreHeight = 14*scale;
         this.lifeX = tileSize+tileSize/2;
         this.lifeY = 9*scale;
+        clockHandX = 125*scale;
+        clockHandY = 15*scale;
+        clockHandWidth = 7*scale;
+        clockHandHeight = 7*scale;
         try {
             image = ImageIO.read(getClass().getResourceAsStream("../res/HUD/HUD.png"));
-            timer1 = ImageIO.read(getClass().getResourceAsStream("../res/HUD/timer1.png"));
-            timer2 = ImageIO.read(getClass().getResourceAsStream("../res/HUD/timer2.png"));
-            timer3 = ImageIO.read(getClass().getResourceAsStream("../res/HUD/timer3.png"));
-            timer4 = ImageIO.read(getClass().getResourceAsStream("../res/HUD/timer4.png"));
-            timer5 = ImageIO.read(getClass().getResourceAsStream("../res/HUD/timer5.png"));
-            timer6 = ImageIO.read(getClass().getResourceAsStream("../res/HUD/timer6.png"));
-            timer7 = ImageIO.read(getClass().getResourceAsStream("../res/HUD/timer7.png"));
-            timer8 = ImageIO.read(getClass().getResourceAsStream("../res/HUD/timer8.png"));
         } catch (Exception e) {
             e.printStackTrace();
         }
         
         resetTimer();
+        loadClockImages();
         loadNumberImages();
     }
 
     public void resetTimer(){
         this.clockLeft = 28;
-        this.timer = 0;
+        this.timerTick = 0;
+        this.timerHand = 0;
         this.timerX = 10*scale;
         this.timerY = 26*scale;
         this.timerWidth = 228*scale;
         this.timerHeight = 3*scale;
+    }
+
+    public void loadClockImages(){
+        timerHandImage = new BufferedImage[8];
+        try {
+            for(int i=0; i<8; i++){
+                timerHandImage[i] = ImageIO.read(getClass().getResourceAsStream("../res/HUD/timer"+i+".png"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void loadNumberImages(){
@@ -98,11 +108,18 @@ public class HUD {
     public void drawTime(Graphics2D g2){
         // per disegnare il timer crea un rettangolo bianco al di sotto dell'HUD e ad ogni diminuzione del timer (clockLeft) cambia la x di dove parte il rettangolo aggiungendo 
         // la distanza tra l'inizio di un blocco all'inizio di quello dopo e diminuisce della stessa distanza la larghezza del rettangolo cosi che restringa il rettangolo solo da sinistra verso destra
-        timer++;  // contatore che aumenta indipendentemente a ogni update dell'orologio 
+        timerTick++;  // contatore che aumenta indipendentemente a ogni update dell'orologio 
         g2.setColor(Color.WHITE);
-        g2.drawRect(timerX, timerY, timerWidth, timerHeight);
-        if(timer == 50){  // quando il contatore raggiunge un certo limite decrementa il numero di tempo rimasto
-            timer = 0;  // resetta il contatore a 0
+        g2.fillRect(timerX, timerY, timerWidth, timerHeight);
+        if(timerTick == 50){  // per ogni tot. tick dell'update  (modificare qui per cambiare il tempo che ci mette )
+            timerHand++;  // gira la lancetta dell'orologio di 1
+            timerTick = 0;  // resetta il contatore dei tick a 0
+        }
+        // dopo timerTick * 8 (quante volte gira la lancetta) diminuisce di 1 il tempo rimasto
+        // 60 FPS. se timerTick = 30 allora 30*8 = 240 -> 240/60 = 4sec (secondi che impiega per diminuire di 1 il tempo rimasto)
+        // dovrebbe essere giusto il calcolo credo
+        if(timerHand == 8){  // quando il contatore raggiunge un certo limite decrementa il numero di tempo rimasto
+            timerHand = 0; // resetta la lancetta dell'orologio
             clockLeft--;  // e diminuisce il tempo rimasto per giocare
             timerX += 8*scale;  // larghezza di un blocco  (8 pixel)
             timerWidth -= 8*scale;
@@ -111,7 +128,10 @@ public class HUD {
                 timerWidth -= 16*scale;
             }
         }
+    }
 
-        
+    public void drawClock(Graphics2D g2){
+        // poichè 
+        g2.drawImage(timerHandImage[timerHand], clockHandX, clockHandY, clockHandWidth, clockHandHeight, null);
     }
 }

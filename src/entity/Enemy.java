@@ -276,6 +276,7 @@ public class Enemy extends Entity{
                 default:{
                     int index = gp.enemy.indexOf(this);
                     System.out.println("Enemy morto");
+                    extinguished = true;
                     gp.enemy.remove(index);
                 }
             }

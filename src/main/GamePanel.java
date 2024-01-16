@@ -57,7 +57,7 @@ public class GamePanel extends JPanel implements Runnable{
     public final int menuState = 5;
 
     // test da eliminare
-    int cont = 0;
+    boolean checkSetup = false, checkGameOn = false;
     
     public GamePanel(){
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -70,32 +70,44 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     public void setupGame(){  // imposto il gioco da capo
-        player.setPlayerDefaultValues();
-        tileM.setupTile();
+        if(!checkSetup){
+            checkSetup = true;
+            hud.resetTimer();
+            player.setPlayerDefaultValues();
+            tileM.setupTile();
 
-        for(int row=0; row<maxGameRow; row++){  // reset obj
-            for(int col=0; col<maxGameCol; col++){
-                obj[row][col] = null;
+            for(int row=0; row<maxGameRow; row++){  // reset obj
+                for(int col=0; col<maxGameCol; col++){
+                    obj[row][col] = null;
+                }
             }
-        }
-        // da eliminare
-        cont++;
-        System.out.println("Numero setupGame: "+cont);
 
-        System.out.println("Caricando i blocchi distruttibili");  // da eliminare
-        aSetter.setMatrixBlocks();
+            System.out.println("Caricando i blocchi distruttibili");  // da eliminare
+            aSetter.setMatrixBlocks();
 
-        enemy.clear();  // resetto la lista dei nemici
-        enemy.add(new Enemy(this));  // aggiungo 3 nemici
-        enemy.add(new Enemy(this));
-        enemy.add(new Enemy(this));
-        for(Enemy entity: enemy){  // imposto i valori di default per i nemici
-            entity.setEnemyDefaultValues();
+            enemy.clear();  // resetto la lista dei nemici
+            enemy.add(new Enemy(this));  // aggiungo 3 nemici
+            enemy.add(new Enemy(this));
+            enemy.add(new Enemy(this));
+            for(Enemy entity: enemy){  // imposto i valori di default per i nemici
+                entity.setEnemyDefaultValues();
+            }
+            checkGameOn = true;
         }
+    }
+    public void Test(){
+        System.out.println("---DIOCANE__--");
+    }
+
+    public void resetLevel(){
+        checkSetup = false;
+        checkGameOn = false;
+        setupGame();  // per ora lascio che resetta il livello
     }
 
     public void nextLevel(){
-        // setupGame();  // per ora lascio che resetta il livello
+        checkSetup = false;
+        setupGame();  // per ora lascio che resetta il livello
     }
 
     public int getTileSize(){
@@ -138,77 +150,86 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     public void drawHUD(Graphics2D g2){
-        
+        hud.drawTime(g2);
         g2.drawImage(hud.image, 0, 0, 256*scale, hudHeight, null);  // poi l'HUD
+        hud.drawClock(g2);
 
         // Stampa il punteggio
         hud.drawScore(g2, player.score);
         hud.drawLife(g2, player.lifeNumber);
-        hud.drawTime(g2);
-        if(hud.clockLeft == 1)  // se finisce il tempo
+        if(hud.clockLeft == 1){  // se finisce il tempo
             System.out.println("---Finito il tempo---\n\n");
-            setupGame();  // resetta il gioco
-
+            resetLevel();  // resetta il gioco
+        }
     }
 
     public void update(){
-        player.update();
-        for(Enemy entity: enemy){
-            entity.update();
-        }
-        
-        for(int row=0; row < maxGameRow; row++){
-            for(int col=0; col < maxGameCol; col++){
-                if(obj[row][col] != null && !(obj[row][col] instanceof Bomb)){
-                    obj[row][col].update();
+        if(checkGameOn){
+            player.update();
+            for(Enemy entity: enemy){
+                if(!entity.extinguished)
+                    entity.update();
+            }
+            
+            for(int row=0; row < maxGameRow; row++){
+                for(int col=0; col < maxGameCol; col++){
+                    if(obj[row][col] != null && !(obj[row][col] instanceof Bomb)){
+                        obj[row][col].update();
+                    }
                 }
             }
         }
     }
 
     public void paintComponent(Graphics g){
-        super.paintComponent(g);  // utilizza il metodo della classe parente di GamePanel quindi JPanel (GamePanel extends JPanel)
-        Graphics2D g2 = (Graphics2D) g;  // estende la classe Graphics per aggiungere piu controlli sulla geometria, trasformazione delle cordinate, gestione colori e layout di testo
-        player.g2 = g2;
-        for(Enemy entity: enemy){  // itero i nemici
-            entity.g2 = g2;
-        }
-        bombH.g2 = g2;
-        
-
-        g2.setColor(Color.black);
-        g2.fillRect(0, 0, this.maxScreenRow, this.maxScreenCol);  // disegna il background
-
-        tileM.drawMap(g2, 24*this.scale, this.hudHeight+(8*this.scale), "ground");  // prima il pavimento
-        tileM.drawMap(g2, 24*this.scale, this.hudHeight+(8*this.scale), "house");  // poi i palazzi
-        tileM.drawMap(g2, -8*this.scale, this.hudHeight-(8*this.scale), "walls");  // poi le mura
-
-        g2.setColor(Color.RED);  // da eliminare
-        for(int row=0; row<maxGameRow; row++){
-            for(int col=0; col<maxGameCol; col++){
-                if(tileM.houseHitbox[row][col] != null)
-                    g2.draw(tileM.houseHitbox[row][col]);
-            }
-        }
-
-        for(int row=0; row < maxGameRow; row++){
-            for(int col=0; col < maxGameCol; col++){
-                if(obj[row][col] != null){
-                    obj[row][col].draw(g2, this);
-                    g2.setColor(Color.YELLOW);
-                    g2.draw(obj[row][col].hitbox);
+        if(checkGameOn){
+            super.paintComponent(g);  // utilizza il metodo della classe parente di GamePanel quindi JPanel (GamePanel extends JPanel)
+            Graphics2D g2 = (Graphics2D) g;  // estende la classe Graphics per aggiungere piu controlli sulla geometria, trasformazione delle cordinate, gestione colori e layout di testo
+            player.g2 = g2;
+            for(Enemy entity: enemy){  // itero i nemici
+                if(!entity.extinguished){
+                    entity.g2 = g2;
                 }
             }
-        }
+            bombH.g2 = g2;
+            
 
-        bombH.updateBomb();
-        player.draw();  // poi il player
-        for(Enemy entity: enemy){
-            entity.draw();
-        }
-        drawHUD(g2);
+            g2.setColor(Color.black);
+            g2.fillRect(0, 0, this.maxScreenRow, this.maxScreenCol);  // disegna il background
 
-        g2.dispose();  // rimuove il contesto grafico e rilascia ogni risorsa di sistema che sta usando
+            tileM.drawMap(g2, 24*this.scale, this.hudHeight+(8*this.scale), "ground");  // prima il pavimento
+            tileM.drawMap(g2, 24*this.scale, this.hudHeight+(8*this.scale), "house");  // poi i palazzi
+            tileM.drawMap(g2, -8*this.scale, this.hudHeight-(8*this.scale), "walls");  // poi le mura
+
+            g2.setColor(Color.RED);  // da eliminare
+            for(int row=0; row<maxGameRow; row++){
+                for(int col=0; col<maxGameCol; col++){
+                    if(tileM.houseHitbox[row][col] != null)
+                        g2.draw(tileM.houseHitbox[row][col]);
+                }
+            }
+
+            for(int row=0; row < maxGameRow; row++){
+                for(int col=0; col < maxGameCol; col++){
+                    if(obj[row][col] != null){
+                        obj[row][col].draw(g2, this);
+                        g2.setColor(Color.YELLOW);
+                        g2.draw(obj[row][col].hitbox);
+                    }
+                }
+            }
+
+            bombH.updateBomb();
+            player.draw();  // poi il player
+            for(Enemy entity: enemy){
+                if(!entity.extinguished){
+                    entity.draw();
+                }
+            }
+            drawHUD(g2);
+
+            g2.dispose();  // rimuove il contesto grafico e rilascia ogni risorsa di sistema che sta usando
+        }
     }
 
 }

@@ -32,7 +32,10 @@ public class Bomb extends SuperObject{
     BufferedImage[] expMidSx = new BufferedImage[5];
     BufferedImage[] expMidDx = new BufferedImage[5];
     public Graphics2D g2;
-    
+
+    //test
+    public boolean entityExitHitbox = false;
+    ArrayList<Entity> entityHit = new ArrayList<>();
 
     public Bomb(GamePanel gp, int x, int y, int tileRow, int tileCol, int firePower, int tileSize, Graphics2D g2){
         super(gp);
@@ -101,6 +104,7 @@ public class Bomb extends SuperObject{
         }
         g2.drawImage(bombImage, x, y, bombWidth, bombHeight, null); 
     }
+
     public void generateFires(Graphics2D g2){
         if(!newBombAv){
             newBombAv = true;
@@ -121,13 +125,13 @@ public class Bomb extends SuperObject{
         if (extinguished){
             return;
         }
-    
+
         // Draw the center of the explosion
         g2.drawImage(expCenter[fireTimer], x, y, bombWidth, bombHeight, null); 
     
         g2.setColor(Color.RED);  // da eliminare
         // Draw the horizontal line of the explosion
- 
+
         for (int i = 1; i <= firePower; i++) {
             
             // System.out.println("PosSX "+positionSx+" PosDX "+positionDx+" PosUP "+positionUp+" PosDW "+positionDw);
@@ -178,7 +182,7 @@ public class Bomb extends SuperObject{
             }
             
         }
-        
+
         for (int i = 1; i <= firePower; i++) {
             g2.drawRect(x + i*bombWidth, y, gp.tileSize, gp.tileSize);
 
@@ -259,7 +263,7 @@ public class Bomb extends SuperObject{
                 }
 
                 if (i < firePower){
-                    System.out.println("y "+(y-i*bombWidth)+ " game "+gp.gameBorderUpY);
+                    // System.out.println("y "+(y-i*bombWidth)+ " game "+gp.gameBorderUpY);
                     if((y-i*bombWidth) > gp.gameBorderUpY-1)
                         g2.drawImage(expMidUp[fireTimer], x, y - i * bombHeight, bombWidth, bombHeight, null);
                 }
@@ -270,7 +274,7 @@ public class Bomb extends SuperObject{
                 }
             }
         }
-        
+
         for (int i = 1; i <= firePower; i++) {
 
             g2.drawRect(x, y + i*bombWidth, gp.tileSize, gp.tileSize);

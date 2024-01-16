@@ -175,7 +175,7 @@ public class CollisionChecker {
                     }
 
                     if(entityHitboxCheck.intersects(objHitboxCheck)){  // controlla se l'hitbox del player interseca l'hitbox dell'oggetto
-                        if(gp.obj[row][col].collision){  // se puo essere scontrato setta la collisione del player a true
+                        if(gp.obj[row][col].collision && !(gp.obj[row][col] instanceof Bomb)){  // se puo essere scontrato setta la collisione del player a true
                             entity.collisionOn = true;
                         }
                         if(player){ // se è il player a toccare l'oggetto allora ritorna l'indice
@@ -191,6 +191,25 @@ public class CollisionChecker {
     }
 
     public void checkBomb(Entity entity){
+        for(Bomb bomb: gp.bombH.bombs){
+            if(!bomb.exploded){
+                if(entity.hitbox.intersects(bomb.hitbox)){  // se la bomba non è esplosa e intercetta l'hitbox del player
+                    entity.tracker = true;  // si attiva il tracker che indica che almeno una volta ha toccato la bomba
+                    if(entity.bombExitHitbox)
+                        entity.collisionOn = true;
+                }else{  // se la bomba non tocca piu 
+                    if(entity.tracker){
+                    // bomb.entityExitHitbox = true;
+                        entity.bombExitHitbox = true;
+                    }
+                }
+                // System.out.println("Bomb: "+bomb.entityExitHitbox);
+                System.out.println("Bomb: "+bomb+" "+entity.hitbox.intersects(bomb.hitbox));
+            }
+        }
+    }
+
+    public void checkBomb2(Entity entity){
         for(Bomb bomb: gp.bombH.bombs){
             if(bomb.exploded){
                 entity.goTo = ""; // resetta la posizione in cui deve andare l'entity
