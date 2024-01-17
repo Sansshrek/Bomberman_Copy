@@ -127,16 +127,7 @@ public class Enemy extends Entity{
             collisionOn = false;
             gp.cChecker.checkBomb(this);
             gp.cChecker.checkTile(this);
-            if(!playerCollision){  // se il player non è stato colpito allora controlla se viene colpito
-                playerCollision = gp.cChecker.checkPlayerCollision(this, gp.player, playerCollision);
-            }else{  // se il player è stato colpito allora fai partire il timer
-                if(checkTimer > 100){  // quando finisce il timer resetta il timer e il check della collisione del player
-                    checkTimer = 0;
-                    playerCollision = false;
-                }else{
-                    checkTimer++;
-                }
-            }
+            gp.cChecker.checkPlayerCollision(this, gp.player);
             Point objPoint = gp.cChecker.checkObj(this, false, g2);
             // controlliamo cosa fare con l'oggetto
             // If a collision occurs, check for collisions in all directions and choose a new direction

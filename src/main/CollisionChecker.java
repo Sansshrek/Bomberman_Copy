@@ -133,22 +133,17 @@ public class CollisionChecker {
         }
     }
     
-    public boolean checkPlayerCollision(Entity enemy, Player player, boolean checkPlayer) {
-        if(!checkPlayer){
+    public void checkPlayerCollision(Entity enemy, Player player) {
         // se il check del player è falso vuol dire che l'enemy non ha colpito il player
         // Controlla se l'hitbox del nemico interseca l'hitbox del giocatore
-            if (enemy.hitbox.intersects(player.hitbox) && !player.invulnerable) {  // se colpisce l'hitbox del player e non è invulnerabile
-                // Se il nemico sta andando a destra e il giocatore è alla sua destra, ferma il nemico
-                enemy.collisionOn = true;
-                System.out.println("Colpito player");
-                player.lifeNumber -= 1;
-                player.kill();
-                return true;
-                // appena l'enemy colpisce il player, attiva la var. bool playerCollision nell'oggetto enemy
-                // cosi che la funzione non viene chiamata finche playerCollision non torna false dopo che finisce il timer in enemy
-            }
+        if (enemy.hitbox.intersects(player.hitbox) && !player.invulnerable) {  // se colpisce l'hitbox del player e non è invulnerabile
+            // Se il nemico sta andando a destra e il giocatore è alla sua destra, ferma il nemico
+            enemy.collisionOn = true;
+            System.out.println("Colpito player");
+            player.kill();
+            // appena l'enemy colpisce il player, attiva la var. bool playerCollision nell'oggetto enemy
+            // cosi che la funzione non viene chiamata finche playerCollision non torna false dopo che finisce il timer in enemy
         }
-        return false;
     }
  
     public Point checkObj(Entity entity, boolean player, Graphics2D g2){
@@ -245,7 +240,8 @@ public class CollisionChecker {
                 // allora trova la posizione piu vicina
                 if(tileCol-1 >= 0 && gp.obj[tileRow][tileCol-1] == null && gp.tileM.houseTileNum[tileRow][tileCol-1] == 0){  // se Sx libera
                     direction = "Sx";
-                    playerDistance = Math.abs(entity.getCenterX() - bombLeftBorder);  // modifico la distanza dal centro del player al bordo a sinistra della bomba
+                    playerDistance = Math.abs(entity.getCenterX() - bombLeftBorder);
+                      // modifico la distanza dal centro del player al bordo a sinistra della bomba
                 }
                 if(tileCol+1 < 13 && gp.obj[tileRow][tileCol+1] == null && gp.tileM.houseTileNum[tileRow][tileCol+1] == 0){  // se Dx libera
                     int distanceCheck = Math.abs(entity.getCenterX() - bombRightBorder);

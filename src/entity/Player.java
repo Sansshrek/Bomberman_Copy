@@ -82,6 +82,7 @@ public class Player extends Entity{
         direction = "down";
         invulnerable = true;
         died = false;
+         lifeNumber -= 1;
         this.hitbox = new Rectangle(hitboxX+imageP.x, hitboxY+imageP.y, hitboxWidth, hitboxHeight);
     }
 
@@ -269,8 +270,55 @@ public class Player extends Entity{
 
         if(invulnerable){  // se il player è invulnerabile 
             invulnerableTimer++;  // aumenta il timer per l'invulnerabilità
+            System.out.println(invulnerableTimer%60);
+            if (invulnerableTimer%60==30){
+                System.out.println("Mezzo sprite");
+                try{  // prova a caricare le immagini nelle variabili
+            
+                    up1 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking/up01.png"));
+                    up2 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking/up02.png"));
+                    up3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking/up03.png"));
+                    down1 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking/down01.png"));
+                    down2 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking/down02.png"));
+                    down3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking/down03.png"));
+                    left1 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking/left01.png"));
+                    left2 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking/left02.png"));
+                    left3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking/left03.png"));
+                    right1 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking/right01.png"));
+                    right2 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking/right02.png"));
+                    right3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking/right03.png"));
+                    
+                    //up1=up2=up3=down1=down2=down3=left1=left2=left3=right1=right2=right3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Totti/up01.png")); 
+                    
+                }catch(IOException e){
+                    e.printStackTrace();
+                }
+            }
+            if (invulnerableTimer%60==0){
+                System.out.println("Mezzo sprite");
+                try{  // prova a caricare le immagini nelle variabili
+            
+                    up1 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/up01.png"));
+                    up2 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/up02.png"));
+                    up3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/up03.png"));
+                    down1 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/down01.png"));
+                    down2 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/down02.png"));
+                    down3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/down03.png"));
+                    left1 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/left01.png"));
+                    left2 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/left02.png"));
+                    left3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/left03.png"));
+                    right1 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/right01.png"));
+                    right2 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/right02.png"));
+                    right3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/right03.png"));
+                    
+                    //up1=up2=up3=down1=down2=down3=left1=left2=left3=right1=right2=right3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Totti/up01.png")); 
+                    
+                }catch(IOException e){
+                    e.printStackTrace();
+                }
+            }
             // System.out.println(invulnerableTimer);
-            if(invulnerableTimer == 1200){  // quando finisce il timer
+            if(invulnerableTimer == 360){  // quando finisce il timer
                 System.out.println("Finita invulnerabilita");
                 invulnerable = false;  // finisce l'invulnerabilità
                 invulnerableTimer = 0;  // resetta il timer
