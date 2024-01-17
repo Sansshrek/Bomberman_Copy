@@ -173,14 +173,18 @@ public class CollisionChecker {
                             entityHitboxCheck.x += entity.speed;
                         break;
                     }
-
-                    if(entityHitboxCheck.intersects(objHitboxCheck)){  // controlla se l'hitbox del player interseca l'hitbox dell'oggetto
-                        if(gp.obj[row][col].collision && !(gp.obj[row][col] instanceof Bomb)){  // se puo essere scontrato setta la collisione del player a true
-                            entity.collisionOn = true;
+                    if(!(gp.obj[row][col] instanceof Bomb)){
+                        if(entityHitboxCheck.intersects(objHitboxCheck)){  // controlla se l'hitbox del player interseca l'hitbox dell'oggetto
+                            if(gp.obj[row][col].collision){  // se puo essere scontrato setta la collisione del player a true
+                                entity.collisionOn = true;
+                                System.out.println("COLPISCE BLOCCO");
+                            }
+                            if(player){ // se è il player a toccare l'oggetto allora ritorna l'indice
+                                return new Point(col, row);
+                            }
                         }
-                        if(player){ // se è il player a toccare l'oggetto allora ritorna l'indice
-                            return new Point(col, row);
-                        }
+                    }else{
+                        checkBomb(entity);
                     }
                     objHitboxCheck = null; // viene eliminato per lasciare spazio alla memoria
                     entityHitboxCheck = null; // viene eliminato per lasciare spazio alla memoria
@@ -213,6 +217,7 @@ public class CollisionChecker {
                     if(entity.bombExitHitbox){  // controlla se è gia uscito
                         entity.collisionOn = true;
                     }
+                
                 }else{
                     entity.bombExitHitbox = true;
                 }

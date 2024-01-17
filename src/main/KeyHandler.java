@@ -5,7 +5,7 @@ import java.awt.event.KeyListener;
 
 public class KeyHandler implements KeyListener {
 
-    public boolean upPressed, downPressed, leftPressed, rightPressed, bombPressed;
+    public boolean upPressed, downPressed, leftPressed, rightPressed, bombPressed, pausePressed;
     public boolean statsPressed, firePressed, resetPressed;  // da eliminare
 
     @Override
@@ -37,6 +37,8 @@ public class KeyHandler implements KeyListener {
             firePressed = true;
         if(code == KeyEvent.VK_R)
             resetPressed = true;
+        if(code == KeyEvent.VK_ENTER)
+            pausePressed = true;
     }
 
     @Override

@@ -105,12 +105,10 @@ public class HUD {
         g2.drawImage(lifeImage, lifeX, lifeY, numberWidth, numberHeight, null);
     }
 
-    public void drawTime(Graphics2D g2){
+    public void updateTime(){
         // per disegnare il timer crea un rettangolo bianco al di sotto dell'HUD e ad ogni diminuzione del timer (clockLeft) cambia la x di dove parte il rettangolo aggiungendo 
         // la distanza tra l'inizio di un blocco all'inizio di quello dopo e diminuisce della stessa distanza la larghezza del rettangolo cosi che restringa il rettangolo solo da sinistra verso destra
         timerTick++;  // contatore che aumenta indipendentemente a ogni update dell'orologio 
-        g2.setColor(Color.WHITE);
-        g2.fillRect(timerX, timerY, timerWidth, timerHeight);
         if(timerTick == 50){  // per ogni tot. tick dell'update  (modificare qui per cambiare il tempo che ci mette )
             timerHand++;  // gira la lancetta dell'orologio di 1
             timerTick = 0;  // resetta il contatore dei tick a 0
@@ -130,8 +128,12 @@ public class HUD {
         }
     }
 
+    public void drawTime(Graphics2D g2){
+        g2.setColor(Color.WHITE);
+        g2.fillRect(timerX, timerY, timerWidth, timerHeight);
+    }
+
     public void drawClock(Graphics2D g2){
-        // poichè 
         g2.drawImage(timerHandImage[timerHand], clockHandX, clockHandY, clockHandWidth, clockHandHeight, null);
     }
 }

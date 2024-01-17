@@ -1,8 +1,11 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 import java.awt.Point;
 
 import objects.Block;
@@ -11,7 +14,16 @@ import tile.TileManager;
 public class AssetSetter{
     GamePanel gp;
     TileManager tileM;
-
+    Random rand = new Random();
+    ArrayList<String> powerUp = new ArrayList<>(Arrays.asList("fire", "fire", "fire", "fire", "fire", 
+    "bomb", "bomb", "bomb", "bomb", "bomb", 
+    "skate", "skate", "skate", "skate", "skate", 
+    "life", "life", "life", "death", "death", "death",
+    "onigiri", "onigiri", "onigiri", "onigiri", "onigiri", "onigiri", "onigiri", 
+    "apple", "apple", "apple", "apple", "apple", 
+    "ice_cream", "ice_cream", "ice_cream", "ice_cream", 
+    "cake", "cake", "cake",
+    "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing"));
     public AssetSetter(GamePanel gp, TileManager tileM) {
         this.gp = gp;
         this.tileM = tileM;
@@ -43,9 +55,10 @@ public class AssetSetter{
     public void setMatrixBlocks(){
         int numBlock = (int)(Math.random()*(45-33))+33;  // 33-45 blocchi a random
         ArrayList<Point> avPos = availablePosMatrix();  // prendiamo le posizioni disponibili
-        ArrayList<String> avPowerUp = getPowerUp(numBlock);  // prendiamo i powerUp disponibili
+        ArrayList<String> avPowerUp = getPowerUp(numBlock);
+          // prendiamo i powerUp disponibili
         Collections.shuffle(avPos);  // randomizziamo l'ordine delle pos disponibili
-        Collections.shuffle(avPowerUp); // randomizziamo l'ordine dei powerUp
+         // randomizziamo l'ordine dei powerUp
 
         Point exit = avPos.get(0);
         gp.obj[exit.y][exit.x] = new Block(gp, exit.x*gp.tileSize + (gp.tileSize+gp.tileSize/2), exit.y*gp.tileSize + (2*gp.tileSize + (gp.tileSize/2)), exit.y, exit.x, "exit");
@@ -111,27 +124,19 @@ public class AssetSetter{
     } */
 
     public ArrayList<String> getPowerUp(int max){
-        ArrayList<String> powerUpList = new ArrayList<>();
-        System.out.println("Generando Powerup");
+        ArrayList<String> powerUpTemp = new ArrayList<>();
+        // ArrayList<String> powerUpCopy = new ArrayList<>();
+        List<String> powerUpCopy = powerUp.stream()
+        .collect(Collectors.toList());
+        
         for(int i=0; i<max; i++){
-        // Probabilita         10%     15%     15%      5%       5%       25%       20%        15%        10%     25%
-            String[] powerUps = {"fire", "bomb", "skate", "life", "death", "onigiri", "apple", "ice_cream", "cake", "nothing"};
-            int[] probabilities = {10, 15, 15, 5, 5, 25, 20, 15, 10, 60};
-            Random random = new Random();
-            int total = 0;
-            for (int probability : probabilities) {
-                total += probability;
-            }
-            int randomNumber = random.nextInt(total) + 1; // genera un numero da 1 al totale delle probabilità
-
-            int cumulativeProbability = 0;
-            for (int j = 0; j < powerUps.length; j++) {
-                cumulativeProbability += probabilities[j];
-                if (randomNumber <= cumulativeProbability) {
-                    powerUpList.add(powerUps[j]); // ritorna il powerUp all'indice i
-                }
-            }
+            // Get a random index in the range of the array length
+            int randomIndex = rand.nextInt(powerUpCopy.size());
+            // Use the random index to get a random element from the array
+            powerUpTemp.add(powerUpCopy.get(randomIndex));
+            // Remove the element from the array so that it can't be chosen again
+            powerUpCopy.remove(randomIndex);
         }
-        return powerUpList;
+        return powerUpTemp;
     }
 }

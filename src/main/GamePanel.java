@@ -86,9 +86,11 @@ public class GamePanel extends JPanel implements Runnable{
             aSetter.setMatrixBlocks();
 
             enemy.clear();  // resetto la lista dei nemici
+            /*
             enemy.add(new Enemy(this));  // aggiungo 3 nemici
             enemy.add(new Enemy(this));
             enemy.add(new Enemy(this));
+            */
             for(Enemy entity: enemy){  // imposto i valori di default per i nemici
                 entity.setEnemyDefaultValues();
             }
@@ -164,7 +166,9 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     public void update(){
-        if(checkGameOn){
+        player.updateKey();
+        if(checkGameOn && !player.pauseGame){  // se il gioco puo partire e il player non ha fermato il gioco
+            hud.updateTime();
             player.update();
             for(Enemy entity: enemy){
                 if(!entity.extinguished)

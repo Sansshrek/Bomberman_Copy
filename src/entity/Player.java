@@ -27,7 +27,7 @@ public class Player extends Entity{
     
     //larghezza e altezza dell' hitbox
     public int firePower, bombNumber, lifeNumber, score, invulnerableTimer = 0;
-    public boolean invulnerable;
+    public boolean invulnerable, pauseGame;
 
     public Player(GamePanel gp, KeyHandler keyH){
         super(gp);
@@ -133,11 +133,12 @@ public class Player extends Entity{
             // hitbox.y = y + hitboxY;
         // CONTROLLA COLLISIONE TILES
         collisionOn = false;
-        gp.cChecker.checkBomb(this);
+        // gp.cChecker.checkBomb(this);
+        Point objPoint = gp.cChecker.checkObj(this, true, g2);
+        powerUpHandler(objPoint);
         gp.cChecker.checkTile(this);  // controlla se colpiamo qualche blocco
             // CONTROLLA COLLISIONE OBJECT
-            Point objPoint = gp.cChecker.checkObj(this, true, g2);
-            powerUpHandler(objPoint); // controlliamo cosa fare con l'oggetto
+             // controlliamo cosa fare con l'oggetto
 
             if(!collisionOn){ // si puo muovere
                 switch(direction){
@@ -207,6 +208,16 @@ public class Player extends Entity{
         }
     }
 
+    public void updateKey(){
+        if(keyH.pausePressed){ //se viene premuto Enter
+            if(pauseGame){  // se il gioco è gia in pausa fa ricominciare il gioco
+                pauseGame = false;
+            }else{  // se il gioco non è in pausa allora lo ferma
+                pauseGame = true;
+            }
+            keyH.pausePressed = false;
+        }
+    }
 
     public void powerUpHandler(Point index){
         if(index.x != 999 && gp.obj[index.y][index.x].name != "block" && gp.obj[index.y][index.x] != null && !(gp.obj[index.y][index.x] instanceof Bomb)){  // se non è il valore default o un blocco
