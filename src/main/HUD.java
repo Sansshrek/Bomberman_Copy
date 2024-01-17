@@ -109,7 +109,8 @@ public class HUD {
         // per disegnare il timer crea un rettangolo bianco al di sotto dell'HUD e ad ogni diminuzione del timer (clockLeft) cambia la x di dove parte il rettangolo aggiungendo 
         // la distanza tra l'inizio di un blocco all'inizio di quello dopo e diminuisce della stessa distanza la larghezza del rettangolo cosi che restringa il rettangolo solo da sinistra verso destra
         timerTick++;  // contatore che aumenta indipendentemente a ogni update dell'orologio 
-        if(timerTick == 50){  // per ogni tot. tick dell'update  (modificare qui per cambiare il tempo che ci mette )
+        if(timerTick == 90){  // per ogni tot. tick dell'update  (modificare qui per cambiare il tempo che ci mette )
+        // 90(tick) * 8 (giri lancetta) = 720 tick totali -> 720/60 (FPS) = 12 secondi (durata di un giro totale di orologio)
             timerHand++;  // gira la lancetta dell'orologio di 1
             timerTick = 0;  // resetta il contatore dei tick a 0
         }

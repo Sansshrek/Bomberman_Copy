@@ -5,6 +5,8 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -34,7 +36,8 @@ public class Bomb extends SuperObject{
     public Graphics2D g2;
 
     //test
-    public ArrayList<Entity> entityExitHitbox = new ArrayList<>();
+    public Map<Entity, Boolean> hashExitEntity = new HashMap<>();
+    public ArrayList<Entity> exitEntity = new ArrayList<>();
 
     public Bomb(GamePanel gp, int x, int y, int tileRow, int tileCol, int firePower, int tileSize, Graphics2D g2){
         super(gp);
@@ -131,6 +134,16 @@ public class Bomb extends SuperObject{
         g2.setColor(Color.RED);  // da eliminare
         // Draw the horizontal line of the explosion
 
+        Rectangle hitboxCenter = new Rectangle(x, y, gp.tileSize, gp.tileSize);
+            if(gp.player.hitbox.intersects(hitboxCenter) && !gp.player.invulnerable){  // se il player non è invulnerabile
+                System.out.println("ESPLOSO");
+                gp.player.kill();
+            }
+            for(Entity ent: gp.enemy){  // controllo se colpisce un enemy
+                if(ent.hitbox.intersects(hitboxCenter))
+                    ent.died = true;
+            }
+
         for (int i = 1; i <= firePower; i++) {
             
             // System.out.println("PosSX "+positionSx+" PosDX "+positionDx+" PosUP "+positionUp+" PosDW "+positionDw);
@@ -162,9 +175,12 @@ public class Bomb extends SuperObject{
                     System.out.println("ESPLOSO");
                     gp.player.kill();
                 }
-                for(Entity ent: gp.enemy){
+                for(Entity ent: gp.enemy){  // controllo se colpisce un enemy
                     if(ent.hitbox.intersects(hitboxFire))
                         ent.died = true;
+                }
+                if(gp.obj[tileRow][tileCol-i] instanceof Bomb){
+                    ((Bomb)gp.obj[tileRow][tileCol-i]).exploded = true;
                 }
                 
                 // Draw the middle part of the explosion
@@ -215,6 +231,9 @@ public class Bomb extends SuperObject{
                     if(ent.hitbox.intersects(hitboxFire))
                         ent.died = true;
                 }
+                if(gp.obj[tileRow][tileCol+i] instanceof Bomb){
+                    ((Bomb)gp.obj[tileRow][tileCol+i]).exploded = true;
+                }
 
                 if (i < firePower){
                     if((x+i*bombWidth) < gp.gameBorderRightX)
@@ -259,6 +278,9 @@ public class Bomb extends SuperObject{
                 for(Entity ent: gp.enemy){
                     if(ent.hitbox.intersects(hitboxFire))
                         ent.died = true;
+                }
+                if(gp.obj[tileRow-i][tileCol] instanceof Bomb){
+                    ((Bomb)gp.obj[tileRow-i][tileCol]).exploded = true;
                 }
 
                 if (i < firePower){
@@ -311,6 +333,9 @@ public class Bomb extends SuperObject{
                 for(Entity ent: gp.enemy){
                     if(ent.hitbox.intersects(hitboxFire))
                         ent.died = true;
+                }
+                if(gp.obj[tileRow+i][tileCol] instanceof Bomb){
+                    ((Bomb)gp.obj[tileRow+i][tileCol]).exploded = true;
                 }
 
                 if (i < firePower){

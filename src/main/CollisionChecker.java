@@ -1,6 +1,7 @@
 package main;
 
 import java.awt.Rectangle;
+import java.util.Map;
 
 import entity.Entity;
 import entity.Player;
@@ -88,11 +89,11 @@ public class CollisionChecker {
                     entity.collisionOn = true;
             break;
             case "right":
-                if((entity.hitbox.x + entity.hitbox.width + entity.speed) <= gp.gameBorderRightX){  // se non supera il bordo di gioco
+                if((entity.hitbox.x + entity.hitboxWidth + entity.speed) <= gp.gameBorderRightX){  // se non supera il bordo di gioco
                     if(tileCol < 12){  // nell'ultima colonna non serve controllare se sopra c'è un blocco
-                        hitboxCheck1.x = (int)(hitboxUpDx.x - entity.speed);  // imposta la hitbox delle due hitbox da controllare (in alto/basso a destra) nella pos in cui si deve spostare
+                        hitboxCheck1.x = (int)(hitboxUpDx.x + entity.speed);  // imposta la hitbox delle due hitbox da controllare (in alto/basso a destra) nella pos in cui si deve spostare
                         hitboxCheck1.y = hitboxUpDx.y;
-                        hitboxCheck2.x = (int)(hitboxDwDx.x - entity.speed);
+                        hitboxCheck2.x = (int)(hitboxDwDx.x + entity.speed);
                         hitboxCheck2.y = hitboxDwDx.y;
                         if(tileRow-1 >= 0)  // se la pos del blocco sopra non è fuori dalla mappa
                             wallCheck1 = gp.tileM.houseHitbox[tileRow-1][tileCol+1];  // carichiamo l'hitbox del blocco in alto a destra
@@ -172,7 +173,6 @@ public class CollisionChecker {
                         if(entityHitboxCheck.intersects(objHitboxCheck)){  // controlla se l'hitbox del player interseca l'hitbox dell'oggetto
                             if(gp.obj[row][col].collision){  // se puo essere scontrato setta la collisione del player a true
                                 entity.collisionOn = true;
-                                System.out.println("COLPISCE BLOCCO");
                             }
                             if(player){ // se è il player a toccare l'oggetto allora ritorna l'indice
                                 return new Point(col, row);
@@ -188,7 +188,7 @@ public class CollisionChecker {
         }
         return new Point(999, 999);  // punto default
     }
-
+    
     public void checkBomb(Entity entity){  // FATTO DA FRANCESCO PAGLIACCIA™
     
         Rectangle entityHitboxCheck = new Rectangle(entity.hitbox.x, entity.hitbox.y, entity.hitboxWidth, entity.hitboxHeight);
@@ -209,12 +209,45 @@ public class CollisionChecker {
         for(Bomb bomb: gp.bombH.bombs){
             if(!bomb.exploded){
                 if(entityHitboxCheck.intersects(bomb.hitbox)){
-                    if(entity.bombExitHitbox){  // controlla se è gia uscito
+                    if(bomb.exitEntity.contains(entity)){  // controlla se è gia uscito l'entita
                         entity.collisionOn = true;
                     }
-                
                 }else{
-                    entity.bombExitHitbox = true;
+                    bomb.exitEntity.add(entity);
+                }
+            }else{
+                entity.bombExitHitbox = false;
+            }
+        }
+    }
+
+    public void checkBomb3(Entity entity){  // FATTO DA FRANCESCO PAGLIACCIA™
+    
+        Rectangle entityHitboxCheck = new Rectangle(entity.hitbox.x, entity.hitbox.y, entity.hitboxWidth, entity.hitboxHeight);
+        switch(entity.direction){
+            case "up":
+                entityHitboxCheck.y -= entity.speed;
+            break;
+            case "down":
+                entityHitboxCheck.y += entity.speed;
+            break;
+            case "left":
+                entityHitboxCheck.x -= entity.speed;
+            break;
+            case "right":
+                entityHitboxCheck.x += entity.speed;
+            break;
+        }
+        for(Bomb bomb: gp.bombH.bombs){
+            if(!bomb.exploded){
+                for(Map.Entry<Entity, Boolean> EntityMap: bomb.hashExitEntity.entrySet()){
+                    if(entityHitboxCheck.intersects(bomb.hitbox)){
+                        if(EntityMap.getValue()){  // controlla se è gia uscito
+                            EntityMap.getKey().collisionOn = true;
+                        }
+                    }else{
+                        bomb.hashExitEntity.put(EntityMap.getKey(), true);
+                    }
                 }
             }else{
                 entity.bombExitHitbox = false;
