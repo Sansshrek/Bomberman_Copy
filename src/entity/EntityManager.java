@@ -1,33 +1,20 @@
 package entity;
 
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class EntityManager implements EntityObserver { //EntityManagerObservable
     
-    public Point imageP;
-    public Rectangle hitbox;
-    public double speed;
-    public boolean invulnerable, died, extinguished;
-    public int uniCode;
-    
-    private HashMap<Entity, Integer> entityMap;
+    private ConcurrentHashMap<Integer, Entity> entityMap;
     //private List<EntityObserver> observers;
 
     public EntityManager() {
-        entityMap = new HashMap<>();
-        
+        this.entityMap = new ConcurrentHashMap<>();
         //observers = new ArrayList<>();
         
     }
 
     public void updateEntity(Entity entity){
-        entityMap.put(entity, entity.uniCode);
-        if(entity instanceof Player){
-            System.out.println("hitbox.x:" + entity.hitbox.x + "hitbox.y" + entity.hitbox.y);
-        }
+        entityMap.put(entity.uniCode, entity);
+        
     }
 }

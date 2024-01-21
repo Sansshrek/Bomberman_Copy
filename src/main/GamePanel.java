@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 import java.awt.Point;
 
 import javax.swing.JPanel;
@@ -93,7 +94,7 @@ public class GamePanel extends JPanel implements Runnable{
             enemy.clear();  // resetto la lista dei nemici
             enemy.add(new Enemy(this));  // aggiungo 3 nemici
             enemy.add(new Enemy(this));
-            enemy.add(new Enemy(this));
+            //enemy.add(new Enemy(this));
             for(Enemy entity: enemy){  // imposto i valori di default per i nemici
                 entity.uniCode=entityCounter;
                 entity.registerObserver(entityManager);

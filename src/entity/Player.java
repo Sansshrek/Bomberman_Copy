@@ -17,17 +17,13 @@ public class Player extends Entity{
     KeyHandler keyH;
     // public ArrayList<SuperObject> bombObj = new ArrayList<>();
 
-    BufferedImage up1, up2, up3, down1, down2, down3, left1, left2, left3, right1, right2, right3;
-    BufferedImage ogUp1, ogUp2, ogUp3, ogDown1, ogDown2, ogDown3, ogLeft1, ogLeft2, ogLeft3, ogRight1, ogRight2, ogRight3;
-    BufferedImage whiteUp1, whiteUp2, whiteUp3, whiteDown1, whiteDown2, whiteDown3, whiteLeft1, whiteLeft2, whiteLeft3, whiteRight1, whiteRight2, whiteRight3;
-    BufferedImage death1, death2, death3, death4, death5, death6, death7;
     //largezza e altezza dell' immagine del player
     public final int width;
     public final int height; 
     
     //larghezza e altezza dell' hitbox
     public int firePower, bombNumber, lifeNumber, score, invulnerableTimer = 0, startDeathY;
-    public boolean invulnerable, pauseGame;
+    public boolean pauseGame;
     boolean checkDeathJump = false, checkDeathFall = false;
     int spriteDeathCounter = 0;
 
@@ -57,6 +53,14 @@ public class Player extends Entity{
         getPlayerImage();
 
     }
+    
+    @Override
+    public void notifyObservers(){
+        for (int i = 0; i < observers.size(); i++) {
+            EntityObserver observer = (EntityObserver)observers.get(i);
+            observer.updateEntity(this);
+        }
+    }
 /* 
     public void setEntityDefaultValues(){
         setPlayerDefaultValues();
@@ -81,6 +85,7 @@ public class Player extends Entity{
         spriteDeathCounter = 0;
         spriteNum = 1;
         this.hitbox = new Rectangle(hitboxX+imageP.x, hitboxY+imageP.y, hitboxWidth, hitboxHeight);
+        //setEntityVar(imageP, hitbox, invulnerable, died, extinguished, speed);
         notifyObservers();
     }
 
@@ -107,6 +112,7 @@ public class Player extends Entity{
             lifeNumber -= 1;  // diminuisce di 1 la vita
             this.hitbox = new Rectangle(hitboxX+imageP.x, hitboxY+imageP.y, hitboxWidth, hitboxHeight);
             gp.hud.resetTimer();
+            //setEntityVar(imageP, hitbox, invulnerable, died, extinguished, speed);
             notifyObservers();
         }
     }
@@ -208,6 +214,7 @@ public class Player extends Entity{
                             hitbox.x += speed;
                             break;
                     }
+                    //setLocation(objPoint, hitbox);
                     notifyObservers();
                 }
 
@@ -302,6 +309,7 @@ public class Player extends Entity{
                 case "skate":
                     score += 10;
                     speed += 1;
+                    //setStatus(invulnerable, died, extinguished, speed);
                 break;
                 case "life":
                     score += 50;
@@ -392,6 +400,7 @@ public class Player extends Entity{
                 right2 = ogRight2;
                 right3 = ogRight3;
                 invulnerableTimer = 0;  // resetta il timer
+                //setStatus(invulnerable, died, extinguished, speed);
                 notifyObservers();
             }
         }
@@ -465,8 +474,10 @@ public class Player extends Entity{
                     spriteNum = 1;
                 }
             }else{  // altrimenti se tocca terra er poro chicco sta a stira
-                if(spriteDeathCounter == 10)
+                if(spriteDeathCounter == 10){
                     extinguished = true;
+                }
+        
     
                 spriteCounter++;
                 if(spriteCounter > 10){  // ogni 15/60 volte al secondo 

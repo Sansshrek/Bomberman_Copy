@@ -50,8 +50,17 @@ public class Enemy extends Entity{
         // this.hitboxHeight = 15*gp.scale;// altezza dell'hitbox dell' enemy
         this.hitboxWidth = gp.tileSize;
         this.hitboxHeight = gp.tileSize;
-
+        setEnemyDefaultValues();
         getEnemyImage();
+    }
+
+
+    @Override
+    public void notifyObservers(){
+        for (int i = 0; i < observers.size(); i++) {
+            EntityObserver observer = (EntityObserver)observers.get(i);
+            observer.updateEntity(this);
+        }
     }
 
 	public void setEnemyDefaultValues(){
@@ -62,6 +71,7 @@ public class Enemy extends Entity{
         hitbox = new Rectangle(hitboxX + imageP.x, hitboxY + imageP.y, hitboxWidth, hitboxHeight);
         this.speed = 1;
         this.direction = "down";
+        notifyObservers();
     }
 
     public Point findAvStartPos(){
@@ -92,14 +102,15 @@ public class Enemy extends Entity{
             right2 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Enemy/right02.png"));
             right3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Enemy/right03.png"));
             
-            explosion1 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_01.png"));
-            explosion2 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_02.png"));
-            explosion3 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_03.png"));
-            explosion4 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_04.png"));
-            explosion5 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_05.png"));
-            explosion6 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_06.png"));
-            explosion7 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_07.png"));
-            explosion8 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_08.png"));
+            death1 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_01.png"));
+            death2 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_02.png"));
+            death3 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_03.png"));
+            death4 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_04.png"));
+            death5 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_05.png"));
+            death6 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_06.png"));
+            death7 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_07.png"));
+            //explosion8 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_08.png"));
+            notifyObservers();
         }catch(IOException e){
             e.printStackTrace();
         }
@@ -108,6 +119,7 @@ public class Enemy extends Entity{
     public void kill(){
         System.out.println("Enemy morto");
         extinguished = true;
+        notifyObservers();
     }
 
     public void update(){  // update viene chiamato 60 volte al secondo
@@ -154,6 +166,7 @@ public class Enemy extends Entity{
                         hitbox.x += speed;
                         break;
                 }
+                notifyObservers();
             }
             spriteCounter++;
             if(spriteCounter > 15){  // ogni 15/60 volte al secondo 
@@ -236,28 +249,28 @@ public class Enemy extends Entity{
             }
             switch(spriteDeathNum){
                 case 1:
-                    image = explosion1;
+                    image = death1;
                 break;
                 case 2:
-                    image = explosion2;
+                    image = death2;
                 break;
                 case 3:
-                    image = explosion3;
+                    image = death3;
                 break;
                 case 4:
-                    image = explosion4;
+                    image = death4;
                 break;
                 case 5:
-                    image = explosion5;
+                    image = death5;
                 break;
                 case 6:
-                    image = explosion6;
+                    image = death6;
                 break;
                 case 7:
-                    image = explosion7;
+                    image = death6;
                 break;
                 case 8:
-                    image = explosion8;
+                    image = death7;
                 break;
                 default:{
                     kill();  // altrimenti uccidi l'enemy
