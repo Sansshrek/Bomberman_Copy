@@ -20,7 +20,7 @@ public class Entity implements EntityObservable{
     public double speed;
     public EntityEnum name;  // definisce il comportamento dell'entita in base al tipo
     public int uniCode;  // codice univoco dell'entita per la ricerca dentro la lista delle entita
-    
+    public BufferedImage image;
     public String direction;
 
     public int spriteCounter, spriteNum, invulnerableStart, lifeNumber = 1, width, height;

@@ -4,6 +4,7 @@ import java.awt.Rectangle;
 import java.util.Map;
 
 import entity.Entity;
+import entity.EntityObserver;
 import entity.Player;
 import objects.Bomb;
 
@@ -14,17 +15,24 @@ import java.awt.Point;
 import java.util.concurrent.ConcurrentHashMap;
 
 
+import java.util.concurrent.ConcurrentHashMap;
 
-public class CollisionChecker {
+public class CollisionChecker implements EntityObserver{
     GamePanel gp;
     int boundaryX, boundaryY, boundaryWidth, boundaryHeight;
+    private ConcurrentHashMap<Integer, Entity> entityMap;
     
     public CollisionChecker(GamePanel gp){
+        this.entityMap = new ConcurrentHashMap<>();
         this.gp = gp;
         boundaryX = 0;
         boundaryY = 0;
         boundaryWidth = 13*gp.tileSize;
         boundaryHeight = 11*gp.tileSize;
+    }
+    public void updateEntity(Entity entity){
+        entityMap.put(entity.uniCode, entity);
+        
     }
 
     public void checkTile(Entity entity){
@@ -135,6 +143,7 @@ public class CollisionChecker {
             }else
                 entity.collisionOn = true;
         }
+        entity.notifyObservers();
     }
     
     public void checkPlayerCollision(Entity enemy, Player player) {

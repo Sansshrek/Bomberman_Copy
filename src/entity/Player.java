@@ -33,6 +33,8 @@ public class Player extends Entity{
         int scale = gp.getScale();
         this.tileSize = gp.getTileSize();
 
+        this.image=null;
+
         //largezza e altezza dell' immagine del player
         this.width = 16*scale; // larghezza del player
         this.height = 29*scale; // altezza del player 
@@ -51,6 +53,7 @@ public class Player extends Entity{
         gp.bombH.addBombNumber();  // aggiunge la prima bomba al player
         setPlayerDefaultValues();
         getPlayerImage();
+        notifyObservers();
 
     }
     
@@ -133,6 +136,20 @@ public class Player extends Entity{
             ogRight2 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/right02.png"));
             ogRight3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/right03.png"));
 
+            up1=ogUp1;
+            up2=ogUp2;
+            up3=ogUp3;
+            down1=ogDown1;
+            down2=ogDown2;
+            down3=ogDown3;
+            left1=ogLeft1;
+            left2=ogLeft2;
+            left3=ogLeft3;
+            right1=ogRight1;
+            right2=ogRight2;
+            right3=ogRight3;
+
+
             whiteUp1 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Invincible/up01.png"));
             whiteUp2 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Invincible/up02.png"));
             whiteUp3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Invincible/up03.png"));
@@ -159,6 +176,7 @@ public class Player extends Entity{
         }catch(IOException e){
             e.printStackTrace();
         }
+        notifyObservers();
     }
 
     public void update(){  // update viene chiamato 60 volte al secondo
@@ -215,7 +233,7 @@ public class Player extends Entity{
                             break;
                     }
                     //setLocation(objPoint, hitbox);
-                    notifyObservers();
+                    
                 }
 
                 spriteCounter++;
@@ -264,6 +282,7 @@ public class Player extends Entity{
                 keyH.resetPressed = false;
             }
         }
+        notifyObservers();
     }
 
     public void updateKey(){
@@ -408,7 +427,7 @@ public class Player extends Entity{
     }
 
     public void draw(){
-        BufferedImage image = null;
+        image = null;
         if(!died){
             invincibleCheck();
             switch(direction){  // in base alla direzione, la variabile image prende il valore dell'immagine inserita
@@ -519,6 +538,7 @@ public class Player extends Entity{
                     image = death7;
             }
         }
+        notifyObservers();
         g2.drawImage(image, imageP.x, imageP.y, gp.player.width, gp.player.height, null);  // disegna lo sprite del personaggio (image) nella posizione x,y di grandezza tileSize
         //da eliminare
         g2.setColor(Color.BLUE);

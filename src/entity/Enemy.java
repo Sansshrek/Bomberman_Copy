@@ -37,6 +37,8 @@ public class Enemy extends Entity{
         // this.x = x;
         // this.y = y;
 
+        this.image=null;
+
         //largezza e altezza dell' immagine dell' enemy
         this.width = 16*gp.scale; // larghezza dell' enemy
         this.height = 29*gp.scale; // altezza dell' enemy 
@@ -185,7 +187,7 @@ public class Enemy extends Entity{
                         break;
                     }
 
-                spriteCounter = 0;  // e resetta il counter
+                spriteCounter = 0;  // e resetta  il counter
                 // System.out.println(x+" "+y);  // da eliminare
                 // System.out.println("Enemy tile:"+getEnemyTileX()+ " "+getEnemyTileY());
             }
@@ -193,7 +195,7 @@ public class Enemy extends Entity{
     }
 
     public void draw(){
-        BufferedImage image = null;
+        image = null;
         if(!died){  // se ancora non è stato colpito dalla bomba allora disegna l'enemy normale
             switch(direction){  // in base alla direzione, la variabile image prende il valore dell'immagine inserita
                 case "up":
