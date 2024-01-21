@@ -355,6 +355,7 @@ public class Player extends Entity{
                 case "nothing":
                 break;
             }
+            notifyObservers();
         }
     }
     public void invincibleCheck(){
@@ -420,8 +421,8 @@ public class Player extends Entity{
                 right3 = ogRight3;
                 invulnerableTimer = 0;  // resetta il timer
                 //setStatus(invulnerable, died, extinguished, speed);
-                notifyObservers();
             }
+            notifyObservers();
         }
         
     }

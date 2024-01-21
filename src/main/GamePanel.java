@@ -93,9 +93,9 @@ public class GamePanel extends JPanel implements Runnable{
             aSetter.setMatrixBlocks();
             entityCounter=1;
             enemy.clear();  // resetto la lista dei nemici
-           // enemy.add(new Enemy(this));  // aggiungo 3 nemici
-           // enemy.add(new Enemy(this));
-            //enemy.add(new Enemy(this));
+            enemy.add(new Enemy(this));  // aggiungo 3 nemici
+            enemy.add(new Enemy(this));
+            enemy.add(new Enemy(this));
             for(Enemy entity: enemy){  // imposto i valori di default per i nemici
                 entity.uniCode=entityCounter;
                 entity.registerObserver(entityManager);

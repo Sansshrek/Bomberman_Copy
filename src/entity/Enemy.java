@@ -168,7 +168,6 @@ public class Enemy extends Entity{
                         hitbox.x += speed;
                         break;
                 }
-                notifyObservers();
             }
             spriteCounter++;
             if(spriteCounter > 15){  // ogni 15/60 volte al secondo 
@@ -191,6 +190,7 @@ public class Enemy extends Entity{
                 // System.out.println(x+" "+y);  // da eliminare
                 // System.out.println("Enemy tile:"+getEnemyTileX()+ " "+getEnemyTileY());
             }
+            notifyObservers();
         }
     }
 
@@ -243,6 +243,7 @@ public class Enemy extends Entity{
                     }
                     break;
             }
+            notifyObservers();
         }else{  // altrimenti se l'enemy è stato colpito dalla bomba allora disegna l'esplosione
             spriteCounter++;
             if(spriteCounter > 10){
@@ -278,6 +279,7 @@ public class Enemy extends Entity{
                     kill();  // altrimenti uccidi l'enemy
                 }
             }
+            notifyObservers();
         }
         if(!extinguished){  // se l'enemy non è esploso totalmente disegna l'immagine
             g2.drawImage(image, imageP.x, imageP.y, width, height, null);  // disegna lo sprite del personaggio (image) nella posizione x,y di grandezza tileSize
