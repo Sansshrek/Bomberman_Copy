@@ -2,42 +2,57 @@ package entity;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.awt.Graphics2D;
+import java.awt.List;
 import java.awt.Point;
 
 import main.GamePanel;
 
-public class Entity {
+public class Entity implements EntityObservable{
+    ArrayList<EntityObserver> observers = new ArrayList<>();
+
     GamePanel gp;
     int tileSize;
     public Graphics2D g2;
     // public int x, y;  // le coordinate nel mondo
-    public Point imageP;  // le coordinate dell'immagine
+    public Point imageP;  // le coordinate in alto a sinistra dell'immagine
     public double speed;
-
-    public int hitboxX, hitboxY;
+    public EntityEnum name;  // definisce il comportamento dell'entita in base al tipo
+    public int uniCode;  // codice univoco dell'entita per la ricerca dentro la lista delle entita
     
-    
-    public String direction, goTo = "";
+    public String direction;
 
-    public int spriteCounter = 0;
-    public int spriteNum = 1;
+    public int spriteCounter, spriteNum, invulnerableStart, lifeNumber = 1, width, height;
 
     public Rectangle hitbox;
-    public int hitboxDefaultX, hitboxDefaultY;
-    public int hitboxWidth;
-    public int hitboxHeight;
-    public boolean collisionOn = false;
-    public boolean died = false, extinguished = false, bombExitHitbox = false;
+    public int hitboxX, hitboxY, hitboxWidth, hitboxHeight;
+    public boolean collisionOn = false, died = false, extinguished = false, bombExitHitbox = false, invulnerable = false;
+
+    BufferedImage up1, up2, up3, down1, down2, down3, left1, left2, left3, right1, right2, right3;
+    BufferedImage ogUp1, ogUp2, ogUp3, ogDown1, ogDown2, ogDown3, ogLeft1, ogLeft2, ogLeft3, ogRight1, ogRight2, ogRight3;
+    BufferedImage whiteUp1, whiteUp2, whiteUp3, whiteDown1, whiteDown2, whiteDown3, whiteLeft1, whiteLeft2, whiteLeft3, whiteRight1, whiteRight2, whiteRight3;
 
     public Entity(GamePanel gp){
         this.gp=gp;
         this.tileSize = gp.tileSize;
         this.hitboxWidth = tileSize;
         this.hitboxHeight = tileSize;
+        setEntityDefaultValues();
     }
 
     public void kill(){}
+
+    public void setEntityDefaultValues(){
+        this.direction = "down";
+        this.died = false;
+        this.extinguished = false;
+        this.bombExitHitbox = false;
+        this.speed = 1;
+
+        this.spriteCounter = 0;
+        this.spriteNum = 1;
+    }
 
     public int getCenterX(){
         return (hitbox.x + hitbox.x + hitbox.width) / 2;
@@ -62,4 +77,34 @@ public class Entity {
     public int getTileY() {
         return getTileNumRow() * gp.tileSize + 120; // TilePlayerY*48 + lo spostamento verso l'alto
     }
+    @Override
+    public void registerObserver(EntityObserver observer) {
+        observers.add(observer);
+        notifyObservers();
+    }
+
+    @Override
+    public void removeObserver(EntityObserver observer){
+        observers.remove(observer);
+    }
+    
+    @Override
+    public void notifyObservers(){
+        for (int i = 0; i < observers.size(); i++) {
+            EntityObserver observer = (EntityObserver)observers.get(i);
+            observer.updateEntity(this);
+        }
+    }
+
+    //set Method
+    public void setEntityVar(Point imageP, Rectangle hitbox, boolean invulnerable, boolean died, boolean extinguished, double speed){
+        this.imageP = imageP;
+        this.hitbox = hitbox; 
+        this.invulnerable = invulnerable;
+        this.died = died;
+        this.extinguished = extinguished;
+        this.speed = speed;
+        notifyObservers();
+    }
+
 }

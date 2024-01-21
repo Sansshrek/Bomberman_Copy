@@ -6,11 +6,14 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.awt.Point;
 
 import javax.swing.JPanel;
 
 import entity.Enemy;
 import entity.Entity;
+import entity.EntityManager;
+import entity.EntityObserver;
 import entity.Player;
 import objects.Bomb;
 import objects.BombHandler;
@@ -41,6 +44,7 @@ public class GamePanel extends JPanel implements Runnable{
     // FPS 
     int FPS = 60;
 
+    public EntityManager entityManager = new EntityManager();
     public HUD hud = new HUD(this);
     public CollisionChecker cChecker = new CollisionChecker(this);
     public TileManager tileM = new TileManager(this);
@@ -52,7 +56,7 @@ public class GamePanel extends JPanel implements Runnable{
     // public ArrayList<SuperObject> obj = new ArrayList<>();
     public SuperObject obj[][];
     public ArrayList<Enemy> enemy = new ArrayList<>();
-
+    public int entityCounter;
     // Stato di Gioco
     public final int menuState = 5;
 
@@ -73,6 +77,7 @@ public class GamePanel extends JPanel implements Runnable{
         if(!checkSetup){
             checkSetup = true;
             hud.resetTimer();
+            player.registerObserver(entityManager);  //Pongo come osservatore l'entity manager per orgni entità
             player.setPlayerDefaultValues();
             tileM.setupTile();
 
@@ -84,13 +89,16 @@ public class GamePanel extends JPanel implements Runnable{
 
             System.out.println("Caricando i blocchi distruttibili");  // da eliminare
             aSetter.setMatrixBlocks();
-
+            entityCounter=1;
             enemy.clear();  // resetto la lista dei nemici
             enemy.add(new Enemy(this));  // aggiungo 3 nemici
             enemy.add(new Enemy(this));
             enemy.add(new Enemy(this));
             for(Enemy entity: enemy){  // imposto i valori di default per i nemici
+                entity.uniCode=entityCounter;
+                entity.registerObserver(entityManager);
                 entity.setEnemyDefaultValues();
+                entityCounter++;
             }
             checkGameOn = true;
         }

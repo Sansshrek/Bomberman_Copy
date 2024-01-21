@@ -25,9 +25,6 @@ public class Player extends Entity{
     public final int width;
     public final int height; 
     
-    //codinate top left dell' hitbox
-    public Point hitboxP;
-    
     //larghezza e altezza dell' hitbox
     public int firePower, bombNumber, lifeNumber, score, invulnerableTimer = 0, startDeathY;
     public boolean invulnerable, pauseGame;
@@ -52,8 +49,6 @@ public class Player extends Entity{
         this.hitboxWidth = 12*scale;// larghezza dell'hitbox del player
         this.hitboxHeight = 12*scale;// altezza dell'hitbox del player
         
-        hitboxDefaultX = hitboxX;
-        hitboxDefaultY = hitboxY;
 
         System.out.println("Caricando il player");  // da eliminare
         gp.bombH.addBombNumber();  // aggiunge la prima bomba al player
@@ -62,7 +57,11 @@ public class Player extends Entity{
         getPlayerImage();
 
     }
-
+/* 
+    public void setEntityDefaultValues(){
+        setPlayerDefaultValues();
+    }
+    */
 	public void setPlayerDefaultValues(){
         int x=0;
         int y=0;
@@ -82,6 +81,7 @@ public class Player extends Entity{
         spriteDeathCounter = 0;
         spriteNum = 1;
         this.hitbox = new Rectangle(hitboxX+imageP.x, hitboxY+imageP.y, hitboxWidth, hitboxHeight);
+        notifyObservers();
     }
 
     public void kill(){
@@ -107,6 +107,7 @@ public class Player extends Entity{
             lifeNumber -= 1;  // diminuisce di 1 la vita
             this.hitbox = new Rectangle(hitboxX+imageP.x, hitboxY+imageP.y, hitboxWidth, hitboxHeight);
             gp.hud.resetTimer();
+            notifyObservers();
         }
     }
 
@@ -207,6 +208,7 @@ public class Player extends Entity{
                             hitbox.x += speed;
                             break;
                     }
+                    notifyObservers();
                 }
 
                 spriteCounter++;
@@ -390,6 +392,7 @@ public class Player extends Entity{
                 right2 = ogRight2;
                 right3 = ogRight3;
                 invulnerableTimer = 0;  // resetta il timer
+                notifyObservers();
             }
         }
         

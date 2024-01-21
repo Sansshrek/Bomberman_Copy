@@ -26,12 +26,6 @@ public class Enemy extends Entity{
     //largezza e altezza dell' immagine del player
     public final int width;
     public final int height; 
-    
-    //codinate top left dell' hitbox
-    
-    //larghezza e altezza dell' hitbox
-    public int hitboxWidth;
-    public int hitboxHeight;
 
     public Enemy(GamePanel gp){
         super(gp);
@@ -56,10 +50,6 @@ public class Enemy extends Entity{
         // this.hitboxHeight = 15*gp.scale;// altezza dell'hitbox dell' enemy
         this.hitboxWidth = gp.tileSize;
         this.hitboxHeight = gp.tileSize;
-        
-        
-        hitboxDefaultX = hitboxX;
-        hitboxDefaultY = hitboxY;
 
         getEnemyImage();
     }

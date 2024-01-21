@@ -255,6 +255,7 @@ public class CollisionChecker {
         }
     }
 
+    /* 
     public void checkBomb2(Entity entity){  // sistema carino che ti sposta dove è libera la posizione piu vicina
         for(Bomb bomb: gp.bombH.bombs){
             if(bomb.exploded){
@@ -323,5 +324,5 @@ public class CollisionChecker {
                 }
             }
         }
-    }
+    }*/
 }
