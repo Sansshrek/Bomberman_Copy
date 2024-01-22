@@ -27,3 +27,15 @@ vite, di 3 power up, shermata hai vinto, game over, continua.
 5) utilizzo appropriato di stream
 6) riproduzione di audio sample (si veda appendice AudioManager.Java)
 7) animazioni ed effetti speciali
+
+8) le specifiche da 1 a 7 
+9) almeno 5 livelli e 2 boss, 5 tipologie di nemici e con grafica e comportamento di gioco differenti, gioco anche con mouse (ad esempio, left click mi sposto, right click rilascio bomba) 
+10) 8 power up 
+
+ROBA FATTA
+powerUp:
+    life, death, fire, bomb, skate
+
+ROBA DA FARE
+powerUp:
+    calcioBomba, attraversamentoBlocchi (attraversa gli allarmi), 

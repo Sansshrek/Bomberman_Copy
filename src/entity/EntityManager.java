@@ -15,6 +15,11 @@ public class EntityManager implements EntityObserver { //EntityManagerObservable
 
     public void updateEntity(Entity entity){
         entityMap.put(entity.uniCode, entity);
-        
+        /*if (entity instanceof Player) {
+            System.out.println("Entity updated" + entity.hitbox.x + " " + entity.hitbox.y);  }
+        */
+    }
+    public void removeEntity(int uniCode){
+        entityMap.remove(uniCode);
     }
 }

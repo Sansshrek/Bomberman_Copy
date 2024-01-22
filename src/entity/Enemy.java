@@ -19,7 +19,6 @@ import main.GamePanel;
 public class Enemy extends Entity{
     // public ArrayList<SuperObject> bombObj = new ArrayList<>();
 
-    public BufferedImage up1, up2, up3, down1, down2, down3, left1, left2, left3, right1, right2, right3;
     public BufferedImage explosion1, explosion2, explosion3, explosion4, explosion5, explosion6, explosion7, explosion8;
     int spriteDeathNum = 1, checkTimer=0;
     boolean playerCollision = false;
@@ -27,8 +26,9 @@ public class Enemy extends Entity{
     public final int width;
     public final int height; 
 
-    public Enemy(GamePanel gp){
+    public Enemy(GamePanel gp, int uniCode){
         super(gp);
+        this.uniCode = uniCode;
 
         this.speed = 1;
         this.direction = "down";
@@ -62,6 +62,9 @@ public class Enemy extends Entity{
         for (int i = 0; i < observers.size(); i++) {
             EntityObserver observer = (EntityObserver)observers.get(i);
             observer.updateEntity(this);
+            if(extinguished){  // se muore rimuoviamo l'entita
+                observer.removeEntity(uniCode);
+            }
         }
     }
 
@@ -128,11 +131,6 @@ public class Enemy extends Entity{
             // Check for collisions
 
         if(!died){  // se non è morto
-            collisionOn = false;
-            gp.cChecker.checkBomb(this);
-            gp.cChecker.checkTile(this);
-            gp.cChecker.checkPlayerCollision(this, gp.player);
-            Point objPoint = gp.cChecker.checkObj(this, false, g2);
             // controlliamo cosa fare con l'oggetto
             // If a collision occurs, check for collisions in all directions and choose a new direction
             if (collisionOn) {  // se colpisce qualcosa
@@ -141,22 +139,19 @@ public class Enemy extends Entity{
                 for (String dir : directions) {  // itera le posizioni disponibili in cui puo andare
                     direction = dir;
                     gp.cChecker.checkTile(this);  // controlla se puo andare in quella posizione
-                    if(!collisionOn) {
+                    if(!collisionOn){
                         break;
                     }
                 }
             }
-            // controlla se colpiamo qualche blocco
-                // CONTROLLA COLLISIONE OBJECT
-
-            if(!collisionOn){ // si puo muovere
+            if(!collisionOn){ // se si puo muovere
                 switch(direction){
                     case "up": 
-                        imageP.y -= speed; 
+                        imageP.y -= speed;
                         hitbox.y -= speed;
                         break;  // la posizione Y diminuisce della velocita del player
                     case "down": 
-                        imageP.y += speed; 
+                        imageP.y += speed;
                         hitbox.y += speed;
                         break;
                     case "left": 
@@ -169,6 +164,9 @@ public class Enemy extends Entity{
                         break;
                 }
             }
+            // controlla se colpiamo qualche blocco
+                // CONTROLLA COLLISIONE OBJECT
+
             spriteCounter++;
             if(spriteCounter > 15){  // ogni 15/60 volte al secondo 
                 switch(spriteNum){
@@ -285,13 +283,10 @@ public class Enemy extends Entity{
             g2.drawImage(image, imageP.x, imageP.y, width, height, null);  // disegna lo sprite del personaggio (image) nella posizione x,y di grandezza tileSize
             //da eliminare
             g2.setColor(Color.BLUE);
-            g2.draw(this.hitbox);  
+            g2.draw(hitbox);  
 
             g2.setColor(Color.GREEN);
             g2.drawRect(getTileX(), getTileY(), tileSize, tileSize);
-
-            g2.setColor(Color.RED);
-            g2.draw(hitbox);
         }
     }
 }

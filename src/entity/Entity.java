@@ -128,4 +128,6 @@ public class Entity implements EntityObservable{
         notifyObservers();
     }
 
+    public void powerUpHandler(Point index){};
+
 }

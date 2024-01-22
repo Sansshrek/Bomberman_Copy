@@ -92,16 +92,13 @@ public class GamePanel extends JPanel implements Runnable{
             System.out.println("Caricando i blocchi distruttibili");  // da eliminare
             aSetter.setMatrixBlocks();
             entityCounter=1;
+            int maxEnemy = 3;
             enemy.clear();  // resetto la lista dei nemici
-            enemy.add(new Enemy(this));  // aggiungo 3 nemici
-            enemy.add(new Enemy(this));
-            enemy.add(new Enemy(this));
-            for(Enemy entity: enemy){  // imposto i valori di default per i nemici
-                entity.uniCode=entityCounter;
-                entity.registerObserver(entityManager);
-                entity.registerObserver(cChecker);
-                entity.setEnemyDefaultValues();
+            for(int i=0; i<maxEnemy; i++){
+                enemy.add(new Enemy(this, entityCounter));  // aggiungo 3 nemici
                 entityCounter++;
+                enemy.get(i).registerObserver(entityManager);
+                enemy.get(i).registerObserver(cChecker);
             }
             checkGameOn = true;
         }
@@ -183,6 +180,7 @@ public class GamePanel extends JPanel implements Runnable{
                 if(!entity.extinguished)
                     entity.update();
             }
+            cChecker.checkEntity();
             
             for(int row=0; row < maxGameRow; row++){
                 for(int col=0; col < maxGameCol; col++){

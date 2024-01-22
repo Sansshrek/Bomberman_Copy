@@ -30,11 +30,31 @@ public class CollisionChecker implements EntityObserver{
         boundaryWidth = 13*gp.tileSize;
         boundaryHeight = 11*gp.tileSize;
     }
+
     public void updateEntity(Entity entity){
         entityMap.put(entity.uniCode, entity);
-        
+    }
+    public void removeEntity(int uniCode){
+        entityMap.remove(uniCode);
     }
 
+    public void checkEntity(){
+        for (Map.Entry<Integer, Entity> entry : entityMap.entrySet()) {
+            Entity entity = entry.getValue(); 
+            entity.collisionOn = false;
+            // imposta il collisionOn nelle prossime funzioni
+            checkTile(entity);
+            Point objPoint = checkObj(entity);
+            if(!(entity instanceof Player)){  // se è un nemico
+                if(!entityMap.get(0).died){
+                    checkPlayerCollision(entity, entityMap.get(0));  // controlla se colpisce il player
+                }
+            }else{  // se è il player
+                entity.powerUpHandler(objPoint);  // fa il controllo del powerUp preso in quel blocco
+            }
+        }
+    }
+    
     public void checkTile(Entity entity){
         int tileCol = entity.getTileNumCol();
         int tileRow = entity.getTileNumRow();
@@ -143,10 +163,9 @@ public class CollisionChecker implements EntityObserver{
             }else
                 entity.collisionOn = true;
         }
-        entity.notifyObservers();
     }
     
-    public void checkPlayerCollision(Entity enemy, Player player) {
+    public void checkPlayerCollision(Entity enemy, Entity player) {
         // se il check del player è falso vuol dire che l'enemy non ha colpito il player
         // Controlla se l'hitbox del nemico interseca l'hitbox del giocatore
         if (enemy.hitbox.intersects(player.hitbox) && !player.invulnerable) {  // se colpisce l'hitbox del player e non è invulnerabile
@@ -159,8 +178,7 @@ public class CollisionChecker implements EntityObserver{
         }
     }
  
-    public Point checkObj(Entity entity, boolean player, Graphics2D g2){
-        int index = 999; // default index
+    public Point checkObj(Entity entity){
         for(int row=0; row<gp.maxGameRow; row++){
             for(int col=0; col<gp.maxGameCol; col++){
                 if(gp.obj[row][col] != null){  //se non è null
@@ -186,7 +204,7 @@ public class CollisionChecker implements EntityObserver{
                             if(gp.obj[row][col].collision){  // se puo essere scontrato setta la collisione del player a true
                                 entity.collisionOn = true;
                             }
-                            if(player){ // se è il player a toccare l'oggetto allora ritorna l'indice
+                            if(entity instanceof Player){ // se è il player a toccare l'oggetto allora ritorna l'indice
                                 return new Point(col, row);
                             }
                         }

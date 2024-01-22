@@ -116,8 +116,8 @@ public class Player extends Entity{
             this.hitbox = new Rectangle(hitboxX+imageP.x, hitboxY+imageP.y, hitboxWidth, hitboxHeight);
             gp.hud.resetTimer();
             //setEntityVar(imageP, hitbox, invulnerable, died, extinguished, speed);
-            notifyObservers();
         }
+        notifyObservers();
     }
 
     public void getPlayerImage(){
@@ -201,19 +201,7 @@ public class Player extends Entity{
                 if(keyH.rightPressed){
                     direction = "right";
                 }
-
-                // hitbox.x = x + hitboxX;
-                // hitbox.y = y + hitboxY;
-            // CONTROLLA COLLISIONE TILES
-            collisionOn = false;
-            // gp.cChecker.checkBomb(this);
-            Point objPoint = gp.cChecker.checkObj(this, true, g2);
-            powerUpHandler(objPoint);
-            gp.cChecker.checkTile(this);  // controlla se colpiamo qualche blocco
-                // CONTROLLA COLLISIONE OBJECT
-                // controlliamo cosa fare con l'oggetto
-
-                if(!collisionOn){ // si puo muovere
+                if(!collisionOn){ // se si puo muovere
                     switch(direction){
                         case "up": 
                             imageP.y -= speed;
@@ -232,9 +220,11 @@ public class Player extends Entity{
                             hitbox.x += speed;
                             break;
                     }
-                    //setLocation(objPoint, hitbox);
-                    
                 }
+
+                // hitbox.x = x + hitboxX;
+                // hitbox.y = y + hitboxY;
+                // controlliamo cosa fare con l'oggetto
 
                 spriteCounter++;
                 if(spriteCounter > 15){  // ogni 15/60 volte al secondo 
