@@ -6,12 +6,15 @@ import java.util.ArrayList;
 import java.awt.Graphics2D;
 import java.awt.List;
 import java.awt.Point;
+import main.KeyHandler;
 
 import main.GamePanel;
 
 public class Entity implements EntityObservable{
     ArrayList<EntityObserver> observers = new ArrayList<>();
 
+    protected EntityBehavior behavior;  // comportamento delle entita
+    KeyHandler keyH;
     GamePanel gp;
     int tileSize;
     public Graphics2D g2;
@@ -23,7 +26,7 @@ public class Entity implements EntityObservable{
     public BufferedImage image;
     public String direction;
 
-    public int spriteCounter, spriteNum, invulnerableStart, lifeNumber = 1, width, height;
+    public int firePower, spriteCounter, spriteNum, maxSpriteNum, invulnerableStart, lifeNumber = 1, width, height;
 
     public Rectangle hitbox;
     public int hitboxX, hitboxY, hitboxWidth, hitboxHeight;
@@ -53,7 +56,6 @@ public class Entity implements EntityObservable{
 
         this.spriteCounter = 0;
         this.spriteNum = 1;
-        notifyObservers();
     }
 
     public int getCenterX(){

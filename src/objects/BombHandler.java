@@ -38,6 +38,11 @@ public class BombHandler{
             }
         }
     }
+    
+    public void createEnemyBomb(int x, int y, int tileRow, int tileCol, int firePower){
+        Bomb newBomb = new Bomb(this.gp, x, y, tileRow, tileCol, 3, tileSize, g2);
+        bombs.add(newBomb);
+    }
 
     public void updateBomb(){
         int index = -1;

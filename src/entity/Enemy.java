@@ -18,7 +18,6 @@ import main.GamePanel;
 
 public class Enemy extends Entity{
     // public ArrayList<SuperObject> bombObj = new ArrayList<>();
-
     public BufferedImage explosion1, explosion2, explosion3, explosion4, explosion5, explosion6, explosion7, explosion8;
     int spriteDeathNum = 1, checkTimer=0;
     boolean playerCollision = false;
@@ -52,6 +51,8 @@ public class Enemy extends Entity{
         // this.hitboxHeight = 15*gp.scale;// altezza dell'hitbox dell' enemy
         this.hitboxWidth = gp.tileSize;
         this.hitboxHeight = gp.tileSize;
+        this.behavior = new StupidEntity();  // inizializza behaviour base
+
         setEnemyDefaultValues();
         getEnemyImage();
     }
@@ -134,15 +135,7 @@ public class Enemy extends Entity{
             // controlliamo cosa fare con l'oggetto
             // If a collision occurs, check for collisions in all directions and choose a new direction
             if (collisionOn) {  // se colpisce qualcosa
-                List<String> directions = Arrays.asList("up", "down", "left", "right");
-                Collections.shuffle(directions);
-                for (String dir : directions) {  // itera le posizioni disponibili in cui puo andare
-                    direction = dir;
-                    gp.cChecker.checkTile(this);  // controlla se puo andare in quella posizione
-                    if(!collisionOn){
-                        break;
-                    }
-                }
+                behavior.update(this);
             }
             if(!collisionOn){ // se si puo muovere
                 switch(direction){

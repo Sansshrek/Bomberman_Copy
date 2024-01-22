@@ -14,7 +14,6 @@ import objects.Bomb;
 import objects.BombHandler;
 
 public class Player extends Entity{
-    KeyHandler keyH;
     // public ArrayList<SuperObject> bombObj = new ArrayList<>();
 
     //largezza e altezza dell' immagine del player
@@ -22,7 +21,7 @@ public class Player extends Entity{
     public final int height; 
     
     //larghezza e altezza dell' hitbox
-    public int firePower, bombNumber, lifeNumber, score, invulnerableTimer = 0, startDeathY;
+    public int bombNumber, lifeNumber, score, invulnerableTimer = 0, startDeathY, heartNumber;
     public boolean pauseGame;
     boolean checkDeathJump = false, checkDeathFall = false;
     int spriteDeathCounter = 0;
@@ -46,7 +45,8 @@ public class Player extends Entity{
         //larghezza e altezza dell' hitbox
         this.hitboxWidth = 12*scale;// larghezza dell'hitbox del player
         this.hitboxHeight = 12*scale;// altezza dell'hitbox del player
-        
+
+        this.behavior = new BasePlayerBehaviour();
 
         System.out.println("Caricando il player");  // da eliminare
         gp.bombH.addBombNumber();  // aggiunge la prima bomba al player
@@ -79,6 +79,7 @@ public class Player extends Entity{
         direction = "down";
         firePower = 1;
         lifeNumber = 5;
+        heartNumber = 1;
         score = 0;
         invulnerable = true;
         died = false;
@@ -87,17 +88,21 @@ public class Player extends Entity{
         checkDeathFall = false;
         spriteDeathCounter = 0;
         spriteNum = 1;
+        maxSpriteNum = 3;
         this.hitbox = new Rectangle(hitboxX+imageP.x, hitboxY+imageP.y, hitboxWidth, hitboxHeight);
         //setEntityVar(imageP, hitbox, invulnerable, died, extinguished, speed);
         notifyObservers();
     }
 
     public void kill(){
-        if(!died){
-            startDeathY = imageP.y;
-            died = true;
+        heartNumber -= 1;  // perde una vita del player stesso (non perde il numero di player)
+        invulnerable = true;  // diventa invulnerabile
+        if(heartNumber == 0){  // se perde tutte le vite del player
+            if(!died){  // se non è morto
+                startDeathY = imageP.y;  // inizia lo sprite della morte
+                died = true;  // imposta la morte a true
+            }
         }
-        // playerDeathJump();
         if(extinguished){  // quando è completamente morto resetta i valori
             int x=0;
             int y=0;
@@ -113,6 +118,7 @@ public class Player extends Entity{
             spriteDeathCounter = 0;
             spriteNum = 1;
             lifeNumber -= 1;  // diminuisce di 1 la vita
+            heartNumber = 1;
             this.hitbox = new Rectangle(hitboxX+imageP.x, hitboxY+imageP.y, hitboxWidth, hitboxHeight);
             gp.hud.resetTimer();
             //setEntityVar(imageP, hitbox, invulnerable, died, extinguished, speed);
@@ -187,74 +193,8 @@ public class Player extends Entity{
                 gp.resetLevel();
             }
 
-            if(keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed){
-
-                if(keyH.upPressed){ // se clicchi sopra
-                    direction = "up";
-                }
-                if(keyH.downPressed){
-                    direction = "down";
-                }
-                if(keyH.leftPressed){
-                    direction = "left";
-                }
-                if(keyH.rightPressed){
-                    direction = "right";
-                }
-                if(!collisionOn){ // se si puo muovere
-                    switch(direction){
-                        case "up": 
-                            imageP.y -= speed;
-                            hitbox.y -= speed;
-                            break;  // la posizione Y diminuisce della velocita del player
-                        case "down": 
-                            imageP.y += speed;
-                            hitbox.y += speed;
-                            break;
-                        case "left": 
-                            imageP.x -= speed; 
-                            hitbox.x -= speed;
-                            break;
-                        case "right": 
-                            imageP.x += speed; 
-                            hitbox.x += speed;
-                            break;
-                    }
-                }
-
-                // hitbox.x = x + hitboxX;
-                // hitbox.y = y + hitboxY;
-                // controlliamo cosa fare con l'oggetto
-
-                spriteCounter++;
-                if(spriteCounter > 15){  // ogni 15/60 volte al secondo 
-                    switch(spriteNum){
-                        case 1:  // dalla 1 alla 2
-                            spriteNum = 2; 
-                            break;
-                        case 2:  // dalla 2 alla 3(1)
-                            spriteNum = 3;
-                            break;
-                        case 3:  // dalla 3(1) alla 4
-                            spriteNum = 4;
-                            break;
-                        case 4: // dalla 4 alla 1
-                            spriteNum = 1;
-                            break;
-                        }
-                    spriteCounter = 0;  // e resetta il counter
-                    // System.out.println(x+" "+y);  // da eliminare
-                    //System.out.println(getPlayerTileX()+ " "+getPlayerTileY());
-                }
-            }
-            if(keyH.bombPressed){ // se preme il tasto P (bomba)
-                // BombHandler bomb = new BombHandler(getPlayerCenterCol()*gp.tileSize+(gp.tileSize/2), getPlayerCenterRow()*gp.tileSize+(24 * gp.scale), firePower, g2, gp.tileSize);
-                gp.bombH.createBomb(getTileX(), getTileY(), getTileNumRow(), getTileNumCol(), firePower);
-                // gp.cChecker.checkBomb(this);
-                // BombHandler bomb = new BombHandler(x, y, firePower, g2, gp.tileSize);
-                // gp.bombs.add(bomb);
-                // gp.obj.add(bomb);
-            }
+            behavior.update(this);
+            
             if(keyH.statsPressed){ // da eliminare
                 System.out.println("\nFire "+firePower);
                 System.out.println("Speed "+speed);
@@ -307,6 +247,7 @@ public class Player extends Entity{
             String objName = gp.obj[index.y][index.x].name;
             gp.obj[index.y][index.x] = null;
             switch(objName){
+                // powerUp
                 case "fire":
                     score += 10;
                     firePower += 1;
@@ -327,6 +268,11 @@ public class Player extends Entity{
                 case "death":
                     lifeNumber -= 1;
                 break;
+                case "heart":
+                    score += 800;
+                    heartNumber += 1;
+                break;
+                // cibi
                 case "onigiri":
                     score += 150;
                 break;

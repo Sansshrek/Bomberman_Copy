@@ -38,4 +38,5 @@ powerUp:
 
 ROBA DA FARE
 powerUp:
-    calcioBomba, attraversamentoBlocchi (attraversa gli allarmi), 
+    heart, time, armor
+    modificare la morte che resetta tutti i powerUp tranne fire e bombNum

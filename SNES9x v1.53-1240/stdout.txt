@@ -5,4 +5,12 @@ No ROM file header found.
 Map_HiROMMap
 "SUPER BOMBERMAN" [checksum ok] HiROM, 4Mbits, ROM, PAL, SRAM:0Kbits, ID:, CRC32:678501F2
 Sound buffer size: 8192 (2048 samples)
+Sound buffer size: 4096 (2048 samples)
+Sound buffer size: 2048 (2048 samples)
+Saving	config file	C:\Users\Jack\OneDrive - uniroma1.it\Documenti\GitKraken\Bomberman_Copy\SNES9x v1.53-1240/snes9x.conf
+Sound buffer size: 2048 (2048 samples)
+Saving	config file	C:\Users\Jack\OneDrive - uniroma1.it\Documenti\GitKraken\Bomberman_Copy\SNES9x v1.53-1240/snes9x.conf
+Sound buffer size: 2048 (2048 samples)
+Saving	config file	C:\Users\Jack\OneDrive - uniroma1.it\Documenti\GitKraken\Bomberman_Copy\SNES9x v1.53-1240/snes9x.conf
+Sound buffer size: 2048 (2048 samples)
 Saving	config file	C:\Users\Jack\OneDrive - uniroma1.it\Documenti\GitKraken\Bomberman_Copy\SNES9x v1.53-1240/snes9x.conf
