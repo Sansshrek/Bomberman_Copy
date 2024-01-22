@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class BasePlayerBehaviour implements EntityBehavior{
+public class BasePlayerBehaviour implements EntityMovementBehavior{
     
     public void update(Entity entity){
         if(entity.keyH.upPressed || entity.keyH.downPressed || entity.keyH.leftPressed || entity.keyH.rightPressed){

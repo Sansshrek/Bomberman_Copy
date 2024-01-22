@@ -194,7 +194,7 @@ public class Player extends Entity{
             }
 
             behavior.update(this);
-            
+
             if(keyH.statsPressed){ // da eliminare
                 System.out.println("\nFire "+firePower);
                 System.out.println("Speed "+speed);

@@ -13,7 +13,7 @@ import main.GamePanel;
 public class Entity implements EntityObservable{
     ArrayList<EntityObserver> observers = new ArrayList<>();
 
-    protected EntityBehavior behavior;  // comportamento delle entita
+    protected EntityMovementBehavior behavior;  // comportamento delle entita
     KeyHandler keyH;
     GamePanel gp;
     int tileSize;

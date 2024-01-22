@@ -51,7 +51,7 @@ public class Enemy extends Entity{
         // this.hitboxHeight = 15*gp.scale;// altezza dell'hitbox dell' enemy
         this.hitboxWidth = gp.tileSize;
         this.hitboxHeight = gp.tileSize;
-        this.behavior = new StupidEntity();  // inizializza behaviour base
+        this.behavior = new StupidEntity();  // inizializza behaviour
 
         setEnemyDefaultValues();
         getEnemyImage();
