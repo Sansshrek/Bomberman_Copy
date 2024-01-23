@@ -10,14 +10,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 
 import main.GamePanel;
 
 public class Enemy extends Entity{
-    int spriteDeathNum = 1, checkTimer=0;
     boolean playerCollision = false;
     //largezza e altezza dell' immagine del player
     public final int width;
@@ -29,7 +27,7 @@ public class Enemy extends Entity{
         this.maxSpriteNum = maxSpriteNum;
 
         this.speed = 1;
-        this.direction = "down";
+        // this.direction = "down";
         this.tileSize = gp.getTileSize();
         //coordinate nel mondo
         // this.x = x;
@@ -50,7 +48,8 @@ public class Enemy extends Entity{
         // this.hitboxHeight = 15*gp.scale;// altezza dell'hitbox dell' enemy
         this.hitboxWidth = gp.tileSize;
         this.hitboxHeight = gp.tileSize;
-        this.behavior = new StupidEntity();  // inizializza behaviour
+        this.movementBehaviour = new StupidEntity();  // inizializza movementBehaviour
+        this.drawBehaviour = new EnemyDrawBehaviour();
 
         setEnemyDefaultValues();
         getEnemyImage();
@@ -105,14 +104,10 @@ public class Enemy extends Entity{
                     imageList[dir].add(ImageIO.read(getClass().getResourceAsStream("../res/enemies/walking Enemy/"+directionImage+String.valueOf(sprite)+".png")));
                 }
             }
-            
-            death1 = ImageIO.read(getClass().getResourceAsStream("../res/enemies/Enemy fire/explosion1.png"));
-            death2 = ImageIO.read(getClass().getResourceAsStream("../res/enemies/Enemy fire/explosion2.png"));
-            death3 = ImageIO.read(getClass().getResourceAsStream("../res/enemies/Enemy fire/explosion3.png"));
-            death4 = ImageIO.read(getClass().getResourceAsStream("../res/enemies/Enemy fire/explosion4.png"));
-            death5 = ImageIO.read(getClass().getResourceAsStream("../res/enemies/Enemy fire/explosion5.png"));
-            death6 = ImageIO.read(getClass().getResourceAsStream("../res/enemies/Enemy fire/explosion6.png"));
-            death7 = ImageIO.read(getClass().getResourceAsStream("../res/enemies/Enemy fire/explosion7.png"));
+            for(int sprite=1; sprite<=7; sprite++){
+                deathImage.add(ImageIO.read(getClass().getResourceAsStream("../res/enemies/Enemy fire/explosion"+String.valueOf(sprite)+".png")));
+            }
+
             //explosion8 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_08.png"));
             notifyObservers();
         }catch(IOException e){
@@ -132,9 +127,8 @@ public class Enemy extends Entity{
         if(!died){  // se non è morto
             // controlliamo cosa fare con l'oggetto
             // If a collision occurs, check for collisions in all directions and choose a new direction
-            if (collisionOn) {  // se colpisce qualcosa
-                behavior.update(this);
-            }
+            movementBehaviour.updateMovement(this);
+
             if(!collisionOn){ // se si puo muovere
                 switch(direction){
                     case "up": 
@@ -172,68 +166,18 @@ public class Enemy extends Entity{
     }
 
     public void draw(){
-        image = null;
-        if(!died){  // se ancora non è stato colpito dalla bomba allora disegna l'enemy normale
-            switch(direction){  // in base alla direzione, la variabile image prende il valore dell'immagine inserita
-                case "up":
-                    image = imageList[0].get(spriteNum);
-                break;
-                case "down":
-                    image = imageList[1].get(spriteNum);
-                break;
-                case "left":
-                    image = imageList[2].get(spriteNum);
-                break;
-                case "right":
-                    image = imageList[3].get(spriteNum);
-                break;
-            }
-            notifyObservers();
-        }else{  // altrimenti se l'enemy è stato colpito dalla bomba allora disegna l'esplosione
-            spriteCounter++;
-            if(spriteCounter > 10){
-                spriteDeathNum++;
-                spriteCounter = 0;
-            }
-            switch(spriteDeathNum){
-                case 1:
-                    image = death1;
-                break;
-                case 2:
-                    image = death2;
-                break;
-                case 3:
-                    image = death3;
-                break;
-                case 4:
-                    image = death4;
-                break;
-                case 5:
-                    image = death5;
-                break;
-                case 6:
-                    image = death6;
-                break;
-                case 7:
-                    image = death6;
-                break;
-                case 8:
-                    image = death7;
-                break;
-                default:{
-                    kill();  // altrimenti uccidi l'enemy
-                }
-            }
-            notifyObservers();
-        }
+
+        drawBehaviour.draw(this);
+        
         if(!extinguished){  // se l'enemy non è esploso totalmente disegna l'immagine
             g2.drawImage(image, imageP.x, imageP.y, width, height, null);  // disegna lo sprite del personaggio (image) nella posizione x,y di grandezza tileSize
             //da eliminare
+            /*
             g2.setColor(Color.BLUE);
-            g2.draw(hitbox);  
+            g2.draw(hitbox);
 
             g2.setColor(Color.GREEN);
-            g2.drawRect(getTileX(), getTileY(), tileSize, tileSize);
+            g2.drawRect(getTileX(), getTileY(), tileSize, tileSize);  */
         }
     }
 }

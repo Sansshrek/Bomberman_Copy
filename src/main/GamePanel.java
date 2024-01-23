@@ -91,7 +91,7 @@ public class GamePanel extends JPanel implements Runnable{
 
             System.out.println("Caricando i blocchi distruttibili");  // da eliminare
             aSetter.setMatrixBlocks();
-            entityCounter=1;
+            entityCounter = 1;
             int maxEnemy = 3;
             enemy.clear();  // resetto la lista dei nemici
             for(int i=0; i<maxEnemy; i++){
@@ -211,13 +211,14 @@ public class GamePanel extends JPanel implements Runnable{
             tileM.drawMap(g2, 24*this.scale, this.hudHeight+(8*this.scale), "house");  // poi i palazzi
             tileM.drawMap(g2, -8*this.scale, this.hudHeight-(8*this.scale), "walls");  // poi le mura
 
+            /*
             g2.setColor(Color.RED);  // da eliminare
             for(int row=0; row<maxGameRow; row++){
                 for(int col=0; col<maxGameCol; col++){
                     if(tileM.houseHitbox[row][col] != null)
                         g2.draw(tileM.houseHitbox[row][col]);
                 }
-            }
+            }  */
 
             for(int row=0; row < maxGameRow; row++){
                 for(int col=0; col < maxGameCol; col++){
@@ -230,11 +231,13 @@ public class GamePanel extends JPanel implements Runnable{
             }
 
             bombH.updateBomb();
-            player.draw();  // poi il player
+            // player.draw();  // poi il player
+            player.drawBehaviour.draw(player);
             ArrayList<Enemy> enemyDelete = new ArrayList<>();  // lista di nemici temporanea da eliminare nel caso dalla lista enemy originale
             for(Enemy entity: enemy){
                 if(!entity.extinguished){  // se ancora non è esploso del tutto
                     entity.draw();  // disegna l'enemy
+                    // entity.drawBehaviour.draw(entity);
                 }else{
                     enemyDelete.add(entity);  // aggiunge il nemico morto alla lista temporanea dei nemici da eliminare
                 }

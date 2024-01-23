@@ -17,9 +17,9 @@ public class Main {
         public void mouseEntered(MouseEvent me) { }
         public void mouseExited(MouseEvent me) { }
         public void mouseClicked(MouseEvent me) { 
-          int x = me.getX();
-          int y = me.getY();
-          System.out.println("mouseX: "+(x-7)+" mouseY: "+(y-30));
+          int x = me.getX()-7;
+          int y = me.getY()-30;
+          System.out.println("mouseX: "+x+" mouseY: "+y);
         }
         });
 

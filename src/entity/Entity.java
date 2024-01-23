@@ -3,8 +3,9 @@ package entity;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.PriorityQueue;
 import java.awt.Graphics2D;
-import java.awt.List;
 import java.awt.Point;
 import main.KeyHandler;
 
@@ -13,34 +14,33 @@ import main.GamePanel;
 public class Entity implements EntityObservable{
     ArrayList<EntityObserver> observers = new ArrayList<>();
 
-    protected EntityMovementBehavior behavior;  // comportamento delle entita
+    public EntityMovementBehaviour movementBehaviour;  // interfaccia movement behaviour
+    public EntityDrawBehaviour drawBehaviour; //interfaccia draw behaviour
     KeyHandler keyH;
     GamePanel gp;
     int tileSize;
     public Graphics2D g2;
     // public int x, y;  // le coordinate nel mondo
     public Point imageP;  // le coordinate in alto a sinistra dell'immagine
+    public Point findP;
     public double speed;
     public EntityEnum name;  // definisce il comportamento dell'entita in base al tipo
     public int uniCode;  // codice univoco dell'entita per la ricerca dentro la lista delle entita
     public BufferedImage image;
     public String direction;
+    public ArrayList<Node> pathSearch; 
 
-    public int firePower, spriteCounter, spriteNum, maxSpriteNum, invulnerableStart, lifeNumber = 1, width, height;
+    public int firePower, spriteCounter, spriteNum, maxSpriteNum, invulnerableStart,  invulnerableTimer = 0, lifeNumber = 1, width, height, spriteDeathNum = 0, startDeathY;
 
     public Rectangle hitbox;
     public int hitboxX, hitboxY, hitboxWidth, hitboxHeight;
-    public boolean collisionOn = false, died = false, extinguished = false, bombExitHitbox = false, invulnerable = false, spriteEnd = false;
+    public boolean collisionOn = false, died = false, extinguished = false, bombExitHitbox = false, invulnerable = false;
+    public boolean checkDeathJump = false, checkDeathFall = false;
 
     ArrayList<BufferedImage>[] imageList = new ArrayList[4];
     ArrayList<BufferedImage>[] ogImage = new ArrayList[4];
     ArrayList<BufferedImage>[] whiteImage = new ArrayList[4];
     ArrayList<BufferedImage> deathImage = new ArrayList<>();
-
-    BufferedImage up1, up2, up3, down1, down2, down3, left1, left2, left3, right1, right2, right3;
-    BufferedImage ogUp1, ogUp2, ogUp3, ogDown1, ogDown2, ogDown3, ogLeft1, ogLeft2, ogLeft3, ogRight1, ogRight2, ogRight3;
-    BufferedImage whiteUp1, whiteUp2, whiteUp3, whiteDown1, whiteDown2, whiteDown3, whiteLeft1, whiteLeft2, whiteLeft3, whiteRight1, whiteRight2, whiteRight3;
-    BufferedImage death1, death2, death3, death4, death5, death6, death7;
     
     public Entity(GamePanel gp){
         this.gp=gp;
@@ -64,6 +64,7 @@ public class Entity implements EntityObservable{
     }
 
     public int getCenterX(){
+        // calcola la media del punto centrale della x
         return (hitbox.x + hitbox.x + hitbox.width) / 2;
     }
     public int getCenterY(){
@@ -82,7 +83,6 @@ public class Entity implements EntityObservable{
     public int getTileX() {
         return getTileNumCol() * gp.tileSize + 72; // TilePlayerX*48 + lo spostamento a sinistra
     }
-    
     public int getTileY() {
         return getTileNumRow() * gp.tileSize + 120; // TilePlayerY*48 + lo spostamento verso l'alto
     }
@@ -137,4 +137,45 @@ public class Entity implements EntityObservable{
 
     public void powerUpHandler(Point index){};
 
+    public void invincibleCheck(){
+        int d, r;
+        if(invulnerable){  // se il player è invulnerabile 
+            invulnerableTimer++;  // aumenta il timer per l'invulnerabilità
+            if(invulnerableTimer>=600){
+                System.out.println("Mancano 2 sec");
+                d=6;
+                r=3;
+            }else if (invulnerableTimer>=480){
+                System.out.println("Mancano 4 sec");
+                d=15;
+                r=9;
+            }else{  
+                d=30;
+                r=15;
+            }
+            if (invulnerableTimer%d==r){  // divide per 30 (quindi la metà di 60 FPS del gioco, cioe ogni mezzo secondo) e per ogni quarto di secondo cambia lo sprite 
+                for(int dir=0; dir<4; dir++){
+                    imageList[dir] = whiteImage[dir];  // sostituiamo le arraylist della lista image originale
+                }
+            }
+            if (invulnerableTimer%d==0){
+                for(int dir=0; dir<4; dir++){
+                    imageList[dir] = ogImage[dir];
+                }
+            }
+            // System.out.println(invulnerableTimer);
+            if(invulnerableTimer == 720){  // quando finisce il timer
+                System.out.println("Finita invulnerabilita");
+                invulnerable = false;  // finisce l'invulnerabilità
+                // resetta le immagini originali per sicurezza
+                for(int dir=0; dir<4; dir++){
+                    imageList[dir] = ogImage[dir];
+                }
+                invulnerableTimer = 0;  // resetta il timer
+                //setStatus(invulnerable, died, extinguished, speed);
+            }
+            notifyObservers();
+        }
+        
+    }
 }

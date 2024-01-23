@@ -6,6 +6,9 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
@@ -23,9 +26,8 @@ public class Player extends Entity{
     public final int height; 
     
     //larghezza e altezza dell' hitbox
-    public int bombNumber, lifeNumber, score, invulnerableTimer = 0, startDeathY, heartNumber;
+    public int bombNumber, lifeNumber, score, heartNumber;
     public boolean pauseGame;
-    boolean checkDeathJump = false, checkDeathFall = false;
     int spriteDeathCounter = 0;
 
     public Player(GamePanel gp, KeyHandler keyH){
@@ -49,7 +51,8 @@ public class Player extends Entity{
         this.hitboxWidth = 12*scale;// larghezza dell'hitbox del player
         this.hitboxHeight = 12*scale;// altezza dell'hitbox del player
 
-        this.behavior = new BasePlayerBehaviour();
+        this.movementBehaviour = new BasePlayerBehaviour();
+        this.drawBehaviour = new PlayerDrawBehaviour();
 
         System.out.println("Caricando il player");  // da eliminare
         gp.bombH.addBombNumber();  // aggiunge la prima bomba al player
@@ -146,16 +149,9 @@ public class Player extends Entity{
                     whiteImage[dir].add(ImageIO.read(getClass().getResourceAsStream("../res/player/walking Invincible/"+directionImage+String.valueOf(sprite)+".png")));
                 }
             }
-            
-            death1 = ImageIO.read(getClass().getResourceAsStream("../res/player/Player Death/death1.png"));
-            death2 = ImageIO.read(getClass().getResourceAsStream("../res/player/Player Death/death2.png"));
-            death3 = ImageIO.read(getClass().getResourceAsStream("../res/player/Player Death/death3.png"));
-            death4 = ImageIO.read(getClass().getResourceAsStream("../res/player/Player Death/death4.png"));
-            death5 = ImageIO.read(getClass().getResourceAsStream("../res/player/Player Death/death5.png"));
-            death6 = ImageIO.read(getClass().getResourceAsStream("../res/player/Player Death/death6.png"));
-            death7 = ImageIO.read(getClass().getResourceAsStream("../res/player/Player Death/death7.png"));
-            
-            //up1=up2=up3=down1=down2=down3=left1=left2=left3=right1=right2=right3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Totti/up01.png")); 
+            for(int sprite=1; sprite<=7; sprite++){
+                deathImage.add(ImageIO.read(getClass().getResourceAsStream("../res/player/Player Death/death"+String.valueOf(sprite)+".png")));
+            }
             
         }catch(IOException e){
             e.printStackTrace();
@@ -171,7 +167,7 @@ public class Player extends Entity{
                 gp.resetLevel();
             }
 
-            behavior.update(this);
+            movementBehaviour.updateMovement(this);
 
             if(keyH.statsPressed){ // da eliminare
                 System.out.println("\nFire "+firePower);
@@ -272,154 +268,13 @@ public class Player extends Entity{
             notifyObservers();
         }
     }
-    public void invincibleCheck(){
-        int d, r;
-        if(invulnerable){  // se il player è invulnerabile 
-            invulnerableTimer++;  // aumenta il timer per l'invulnerabilità
-            if(invulnerableTimer>=600){
-                System.out.println("Mancano 2 sec");
-                d=6;
-                r=3;
-            }else if (invulnerableTimer>=480){
-                System.out.println("Mancano 4 sec");
-                d=15;
-                r=9;
-            }else{  
-                d=30;
-                r=15;
-            }
-            if (invulnerableTimer%d==r){  // divide per 30 (quindi la metà di 60 FPS del gioco, cioe ogni mezzo secondo) e per ogni quarto di secondo cambia lo sprite 
-                for(int dir=0; dir<4; dir++){
-                    imageList[dir] = whiteImage[dir];
-                }
-            }
-            if (invulnerableTimer%d==0){
-                for(int dir=0; dir<4; dir++){
-                    imageList[dir] = ogImage[dir];
-                }
-            }
-            // System.out.println(invulnerableTimer);
-            if(invulnerableTimer == 720){  // quando finisce il timer
-                System.out.println("Finita invulnerabilita");
-                invulnerable = false;  // finisce l'invulnerabilità
-                // resetta le immagini originali per sicurezza
-                for(int dir=0; dir<4; dir++){
-                    imageList[dir] = ogImage[dir];
-                }
-                invulnerableTimer = 0;  // resetta il timer
-                //setStatus(invulnerable, died, extinguished, speed);
-            }
-            notifyObservers();
-        }
-        
-    }
+    
 
     public void draw(){
-        image = null;
-        if(!died){
-            invincibleCheck();
-            switch(direction){  // in base alla direzione, la variabile image prende il valore dell'immagine inserita
-                case "up":
-                    image = imageList[0].get(spriteNum);
-                break;
-                case "down":
-                    image = imageList[1].get(spriteNum);
-                break;
-                case "left":
-                    image = imageList[2].get(spriteNum);
-                break;
-                case "right":
-                    image = imageList[3].get(spriteNum);
-                break;
-            }
-        }else{  // se il player è morto
-            if(!checkDeathFall){  // se ancora non ha toccato terra allora salta
-                image = death1;
-                if(checkDeathJump){  // dopo aver toccato 2 blocchi di altezza
-                    imageP.y += 8;  // scende
-                }
-                else{
-                    imageP.y -= 8;  // altrimenti sale
-                }
-                if(imageP.y == startDeathY-gp.tileSize-gp.tileSize/2){  // se supera i 2 blocchi
-                    checkDeathJump = true;
-                }
-                if(imageP.y == startDeathY){
-                    checkDeathFall = true;
-                    spriteNum = 1;
-                }
-            }else{  // altrimenti se tocca terra er poro chicco sta a stira
-                if(spriteDeathCounter == 10){
-                    extinguished = true;
-                }
         
-    
-                spriteCounter++;
-                if(spriteCounter > 10){  // ogni 15/60 volte al secondo 
-                    switch(spriteNum){
-                        case 1:
-                            spriteNum++; 
-                            break;
-                        case 2: 
-                            spriteNum++;
-                            break;
-                        case 3: 
-                            spriteNum++;
-                            break;
-                        case 4:
-                            spriteNum++;
-                            break;
-                        case 5:
-                            spriteNum = 6;
-                            spriteDeathCounter++;
-                            break;
-                        case 6:
-                            spriteNum = 5;  // fa un loop nelle ultime due animazioni
-                            spriteDeathCounter++;
-                            break;
-                        }
-                    spriteCounter = 0;  // e resetta il counter
-                }
-                if(spriteNum == 1)
-                    image = death2;
-                else if(spriteNum == 2)
-                    image = death3;
-                else if(spriteNum == 3)
-                    image = death4;
-                else if(spriteNum == 4)
-                    image = death5;
-                else if(spriteNum == 5)
-                    image = death6;
-                else if(spriteNum == 6)
-                    image = death7;
-            }
-        }
-        notifyObservers();
-        g2.drawImage(image, imageP.x, imageP.y, gp.player.width, gp.player.height, null);  // disegna lo sprite del personaggio (image) nella posizione x,y di grandezza tileSize
-        //da eliminare
-        g2.setColor(Color.BLUE);
-        // g2.drawRect(this.hitboxX+x, this.hitboxY+y, this.hitboxWidth, this.hitboxHeight);  
-        g2.drawRect(hitbox.x, hitbox.y, hitboxWidth, hitboxHeight);
-        // System.out.println("x: "+hitbox.x+ " y: "+hitbox.y);
+        drawBehaviour.draw(this);
 
-        g2.setColor(Color.GREEN);
-        // System.out.println("Tilex: "+getPlayerTileX()+ " TileY: "+getPlayerTileY());
-        // System.out.println("NTilex: "+getTileNumCol()+ " NTileY: "+getTileNumRow());
-        // System.out.println("x: "+hitbox.x+ " y: "+hitbox.y);
-        // System.out.println("CentX: "+(getCenterX()/gp.tileSize)+" CentY: "+(getCenterY()/gp.tileSize)+" x: "+hitbox.x+" y: "+hitbox.y);
-        g2.drawRect(getTileX(), getTileY(), tileSize, tileSize);
-
-
-        //da eliminare
-        g2.setColor(Color.YELLOW);
-        g2.drawRect(gp.gameBorderLeftX, gp.gameBorderUpY, 13*gp.tileSize, 11*gp.tileSize);
-        // g2.drawRect(gp.gameBorderLeftX, gp.gameBorderUpY, Math.abs(gp.gameBorderRightX - gp.gameBorderLeftX), Math.abs(gp.gameBorderDownY - gp.gameBorderUpY));
-
-        g2.setColor(Color.RED);
-        g2.drawRect(getCenterX(), getCenterY(), hitboxWidth/2, hitboxHeight/2);
-
-        g2.setColor(Color.RED);
-        // g2.drawRect(x, y, width, height);
+        
 
     }
 }

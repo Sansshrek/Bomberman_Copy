@@ -1,11 +1,19 @@
 package main;
 
 import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 
 import entity.Entity;
+import entity.EntityMovementBehaviour;
 import entity.EntityObserver;
+import entity.Node;
 import entity.Player;
+import entity.SearchEntity;
+import entity.StupidEntity;
 import objects.Bomb;
 
 import java.awt.Color;
@@ -21,6 +29,8 @@ public class CollisionChecker implements EntityObserver{
     GamePanel gp;
     int boundaryX, boundaryY, boundaryWidth, boundaryHeight;
     private ConcurrentHashMap<Integer, Entity> entityMap;
+    EntityMovementBehaviour stupidBehaviour = new StupidEntity();
+    EntityMovementBehaviour searchBehaviour = new SearchEntity();
     
     public CollisionChecker(GamePanel gp){
         this.entityMap = new ConcurrentHashMap<>();
@@ -40,7 +50,7 @@ public class CollisionChecker implements EntityObserver{
 
     public void checkEntity(){
         for (Map.Entry<Integer, Entity> entry : entityMap.entrySet()) {
-            Entity entity = entry.getValue(); 
+            Entity entity = entry.getValue();
             entity.collisionOn = false;
             // imposta il collisionOn nelle prossime funzioni
             checkTile(entity);
@@ -49,9 +59,18 @@ public class CollisionChecker implements EntityObserver{
                 if(!entityMap.get(0).died){
                     checkPlayerCollision(entity, entityMap.get(0));  // controlla se colpisce il player
                 }
+                entity.findP = new Point(entityMap.get(0).getTileNumCol(), entityMap.get(0).getTileNumRow());  // prendo la pos del player
+                ArrayList<Node> path = findPath(entity, entity.findP.y, entity.findP.x, gp);  // cerco il sentiero per arrivare al player
+                entity.pathSearch = path;
+                if(path.size() > 1){  // se puo muoversi verso il player
+                    if(entity.movementBehaviour instanceof StupidEntity)
+                        entity.movementBehaviour = searchBehaviour;  // cambiamo movementBehaviour
+                }else
+                    entity.movementBehaviour = stupidBehaviour;
             }else{  // se è il player
                 entity.powerUpHandler(objPoint);  // fa il controllo del powerUp preso in quel blocco
             }
+            entity.notifyObservers();
         }
     }
     
@@ -83,7 +102,7 @@ public class CollisionChecker implements EntityObserver{
                             wallCheck2 = gp.tileM.houseHitbox[tileRow-1][tileCol+1];  // carichiamo l'hitbox del blocco in alto a destra
                         wallCheckCx = gp.tileM.houseHitbox[tileRow-1][tileCol];
                     }
-                }else
+                }else // se supera il bordo
                     entity.collisionOn = true;
             break;
             case "down":
@@ -137,31 +156,82 @@ public class CollisionChecker implements EntityObserver{
             break;
         }
         // controllo delle hitbox
-        if(wallCheckCx != null && (hitboxCheck1.intersects(wallCheckCx) || hitboxCheck2.intersects(wallCheckCx))){  // se entrambe le hitbox intercettano il blocco al centro
-            entity.collisionOn = true;  // allora l'hitbox dell'entity colpisce interamente il blocco
-        }
-        else if(wallCheck1 != null && hitboxCheck1.intersects(wallCheck1)){  // se solo l'hitbox1 intercetta il blocco in wallCheck1
-            if(wallCheckCx == null || !hitboxCheck2.intersects(wallCheckCx)){  // se l'hitbox2 non intercetta il blocco al centro
-                if(entity.direction == "up" || entity.direction == "down"){  // se la dir è verso l'alto/basso sposta verso destra
-                    entity.imageP.x += entity.speed;
-                    entity.hitbox.x += entity.speed;
-                }else{  // se la dir è verso destra/sinistra sposta verso il basso
-                    entity.imageP.y += entity.speed;
-                    entity.hitbox.y += entity.speed;
-                }
-            }else
+        if(entity instanceof Player){
+            if(wallCheckCx != null && (hitboxCheck1.intersects(wallCheckCx) || hitboxCheck2.intersects(wallCheckCx))){  // se entrambe le hitbox intercettano il blocco al centro
+                entity.collisionOn = true;  // allora l'hitbox dell'entity colpisce interamente il blocco
+            }
+            else if(wallCheck1 != null && hitboxCheck1.intersects(wallCheck1)){  // se solo l'hitbox1 intercetta il blocco in wallCheck1
+                if(wallCheckCx == null || !hitboxCheck2.intersects(wallCheckCx)){  // se l'hitbox2 non intercetta il blocco al centro
+                    if(entity.direction == "up" || entity.direction == "down"){  // se la dir è verso l'alto/basso sposta verso destra
+                        entity.imageP.x += entity.speed;
+                        entity.hitbox.x += entity.speed;
+                    }else{  // se la dir è verso destra/sinistra sposta verso il basso
+                        entity.imageP.y += entity.speed;
+                        entity.hitbox.y += entity.speed;
+                    }
+                }else
+                    entity.collisionOn = true;  // altrimenti non passa
+            }else if(wallCheck2 != null && hitboxCheck2.intersects(wallCheck2)){  // se solo l'hitbox2 intercetta il blocco in wallCheck2
+                if(wallCheckCx == null || !hitboxCheck1.intersects(wallCheckCx)){  // se l'hitbox1 non intercetta il blocco al centro
+                    if(entity.direction == "up" || entity.direction == "down"){  // se la dir è verso l'alto/basso sposta verso sinistra
+                        entity.imageP.x -= entity.speed;
+                        entity.hitbox.x -= entity.speed;
+                    }else{  // se la dir è verso l'alto/basso sposta verso l'alto
+                        entity.imageP.y -= entity.speed;
+                        entity.hitbox.y -= entity.speed;
+                    }
+                }else
+                    entity.collisionOn = true;
+            }
+        }else{  // controllo enemy
+            if(wallCheckCx != null && (hitboxCheck1.intersects(wallCheckCx) || hitboxCheck2.intersects(wallCheckCx))){  // se entrambe le hitbox intercettano il blocco al centro
+                entity.collisionOn = true;  // allora l'hitbox dell'entity colpisce interamente il blocco
+            }
+            if(wallCheck1 != null && hitboxCheck1.intersects(wallCheck1)){  // se l'hitbox1 intercetta il blocco in wallCheck1
                 entity.collisionOn = true;  // altrimenti non passa
-        }else if(wallCheck2 != null && hitboxCheck2.intersects(wallCheck2)){  // se solo l'hitbox2 intercetta il blocco in wallCheck2
-            if(wallCheckCx == null || !hitboxCheck1.intersects(wallCheckCx)){  // se l'hitbox1 non intercetta il blocco al centro
-                if(entity.direction == "up" || entity.direction == "down"){  // se la dir è verso l'alto/basso sposta verso sinistra
-                    entity.imageP.x -= entity.speed;
-                    entity.hitbox.x -= entity.speed;
-                }else{  // se la dir è verso l'alto/basso sposta verso l'alto
-                    entity.imageP.y -= entity.speed;
-                    entity.hitbox.y -= entity.speed;
-                }
-            }else
+            }
+            if(wallCheck2 != null && hitboxCheck2.intersects(wallCheck2)){  // se l'hitbox2 intercetta il blocco in wallCheck2
                 entity.collisionOn = true;
+            }
+        }
+    }
+
+    public void checkTileEnemy(Entity entity){
+        int tileCol = entity.getTileNumCol();
+        int tileRow = entity.getTileNumRow();
+        switch(entity.direction){
+            case "up":
+                if((entity.hitbox.y - entity.speed) >= gp.gameBorderUpY){  // se non supera il bordo di gioco
+                    if(tileRow > 0){  // nella prima riga non serve controllare se sopra c'è un blocco
+
+                    }
+                }else
+                    entity.collisionOn = true;
+            break;
+            case "down":
+                if((entity.hitbox.y + entity.hitboxHeight + entity.speed) <= gp.gameBorderDownY){  // se non supera il bordo di gioco
+                    if(tileRow < 10){  // nell'ultima riga non serve controllare se sopra c'è un blocco
+
+                    }
+                }else
+                    entity.collisionOn = true;
+            break;
+            case "left":
+                if((entity.hitbox.x - entity.speed) >= gp.gameBorderLeftX){  // se non supera il bordo di gioco
+                    if(tileCol > 0){  // nella prima colonna non serve controllare se sopra c'è un blocco
+
+                    }
+                }else
+                    entity.collisionOn = true;
+            break;
+            case "right":
+                if((entity.hitbox.x + entity.hitboxWidth + entity.speed) <= gp.gameBorderRightX){  // se non supera il bordo di gioco
+                    if(tileCol < 12){  // nell'ultima colonna non serve controllare se sopra c'è un blocco
+
+                    }
+                }else
+                    entity.collisionOn = true;
+            break;
         }
     }
     
@@ -285,74 +355,81 @@ public class CollisionChecker implements EntityObserver{
         }
     }
 
-    /* 
-    public void checkBomb2(Entity entity){  // sistema carino che ti sposta dove è libera la posizione piu vicina
-        for(Bomb bomb: gp.bombH.bombs){
-            if(bomb.exploded){
-                entity.goTo = ""; // resetta la posizione in cui deve andare l'entity
-                break;
+    
+    public ArrayList<Node> findPath(Entity entity, int findRow, int findCol, GamePanel gp) {
+        Node startNode = new Node(entity.getTileNumRow(), entity.getTileNumCol());
+        Node endNode = new Node(findRow, findCol);
+
+        PriorityQueue<Node> openWay = new PriorityQueue<>();
+        ArrayList<Node> closedWay = new ArrayList<>();
+
+        openWay.add(startNode);
+
+        while (!openWay.isEmpty()) {  // se la lista di nodi 
+            Node current = openWay.poll();
+
+            if (current.equals(endNode)) {
+                return reconstructPath(current);
             }
-            String direction = "";
-            int bombLeftBorder = bomb.x;
-            int bombRightBorder = bomb.x + bomb.hitbox.width;
-            int bombTopBorder = bomb.y;
-            int bombBottomBorder = bomb.y + bomb.hitbox.height;
-            int tileCol = bomb.tileCol;
-            int tileRow = bomb.tileRow;
-            int playerDistance = 999;
-            if(entity.goTo == ""){  // se la posizione in cui deve andare l'entity è vuota
-                // allora trova la posizione piu vicina
-                if(tileCol-1 >= 0 && gp.obj[tileRow][tileCol-1] == null && gp.tileM.houseTileNum[tileRow][tileCol-1] == 0){  // se Sx libera
-                    direction = "Sx";
-                    playerDistance = Math.abs(entity.getCenterX() - bombLeftBorder);
-                      // modifico la distanza dal centro del player al bordo a sinistra della bomba
+
+            closedWay.add(current);
+
+            for (Node neighbor: getNeighbors(current, gp)) {
+                if(closedWay.contains(neighbor)) {
+                    continue;
                 }
-                if(tileCol+1 < 13 && gp.obj[tileRow][tileCol+1] == null && gp.tileM.houseTileNum[tileRow][tileCol+1] == 0){  // se Dx libera
-                    int distanceCheck = Math.abs(entity.getCenterX() - bombRightBorder);
-                    if(distanceCheck < playerDistance){  // se una delle due distanze è minore di una gia controllata
-                        direction = "Dx";  // cambio la direzione
-                        playerDistance = distanceCheck;  // reimposto la distanza a quella piu piccola
+
+                int tentativeGScore = current.getG() + 1;
+
+                if (!openWay.contains(neighbor) || tentativeGScore < neighbor.getG()) {
+                    neighbor.setParent(current);
+                    neighbor.setG(tentativeGScore);
+                    neighbor.setH(heuristic(neighbor, endNode));
+
+                    if (!openWay.contains(neighbor)) {
+                        openWay.add(neighbor);
                     }
-                }
-                if(tileRow-1 >= 0 && gp.obj[tileRow-1][tileCol] == null && gp.tileM.houseTileNum[tileRow-1][tileCol] == 0){  // se Up libera
-                    int distanceCheck = Math.abs(entity.getCenterY() - bombTopBorder);
-                    if(distanceCheck < playerDistance){  // se una delle due distanze è minore di una gia controllata
-                        direction = "Up";  // cambio la direzione
-                        playerDistance = distanceCheck;  // reimposto la distanza a quella piu piccola
-                    }
-                }
-                if(tileRow+1 < 11 && gp.obj[tileRow+1][tileCol] == null && gp.tileM.houseTileNum[tileRow+1][tileCol] == 0){  // se Up libera
-                    int distanceCheck = Math.abs(entity.getCenterY() - bombBottomBorder);
-                    if(distanceCheck < playerDistance){  // se una delle due distanze è minore di una gia controllata
-                        direction = "Dw";  // cambio la direzione
-                        playerDistance = distanceCheck;  // reimposto la distanza a quella piu piccola
-                    }
-                }
-                entity.goTo = direction;
-            }
-            // System.out.println("Direzione libera: "+direction); // da eliminare
-            // controllo hitbox con bomba
-            if(!bomb.exploded && entity.hitbox.intersects(bomb.hitbox)){  // se il player colpisce una bomba
-                // direction = getPlayerNearestAvTile(entity, bomb);
-                switch (entity.goTo){
-                    case "Sx":
-                        entity.imageP.x -= entity.speed;  // sposto l'entity verso sinistra
-                        entity.hitbox.x -= entity.speed;
-                    break;
-                    case "Dx":
-                        entity.imageP.x += entity.speed;
-                        entity.hitbox.x += entity.speed;
-                    break;
-                    case "Up":
-                        entity.imageP.y -= entity.speed;
-                        entity.hitbox.y -= entity.speed;
-                    break;
-                    case "Dw":
-                        entity.imageP.y += entity.speed;
-                        entity.hitbox.y += entity.speed;
-                    break;
                 }
             }
         }
-    }*/
+
+        return new ArrayList<>(); // No path found
+    }
+
+    private ArrayList<Node> getNeighbors(Node node, GamePanel gp) {
+        ArrayList<Node> neighbors = new ArrayList<>();
+
+        int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}}; // Up, Down, Left, Right
+
+        for (int[] dir : directions) {
+            int newRow = node.getRow() + dir[0];
+            int newCol = node.getCol() + dir[1];
+
+            if (isValid(newRow, newCol, gp)) {
+                neighbors.add(new Node(newRow, newCol));
+            }
+        }
+
+        return neighbors;
+    }
+
+    private boolean isValid(int row, int col, GamePanel gp) {
+        return row >= 0 && row < gp.maxGameRow && col >= 0 && col < gp.maxGameCol
+                && gp.obj[row][col] == null && gp.tileM.houseTileNum[row][col] == 0;
+    }
+
+    private int heuristic(Node a, Node b) {
+        // Implement a simple heuristic function (Manhattan distance)
+        return Math.abs(a.getRow() - b.getRow()) + Math.abs(a.getCol() - b.getCol());
+    }
+
+    private ArrayList<Node> reconstructPath(Node node) {
+        ArrayList<Node> path = new ArrayList<>();
+        while (node != null) {
+            path.add(node);
+            node = node.getParent();
+        }
+        Collections.reverse(path);
+        return path;
+    }
 }
