@@ -23,7 +23,7 @@ public class Player extends Entity{
     public final int height; 
     
     //larghezza e altezza dell' hitbox
-    public int bombNumber, lifeNumber, score, invulnerableTimer = 0, startDeathY, heartNumber;
+    public int bombNumber, lifeNumber, score, startDeathY, heartNumber;
     public boolean pauseGame;
     boolean checkDeathJump = false, checkDeathFall = false;
     int spriteDeathCounter = 0;
@@ -138,7 +138,7 @@ public class Player extends Entity{
                 if(dir == 0) {directionImage = "up";}
                 else if(dir == 1) {directionImage = "down";}
                 else if(dir == 2) {directionImage = "left";}
-                else {directionImage = "right";}
+                else if(dir == 3){directionImage = "right";}
                 for(int sprite=1; sprite<=maxSpriteNum; sprite++){  // per quante sprite ci stanno in una direzione
                     BufferedImage ogImg = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/"+directionImage+String.valueOf(sprite)+".png"));
                     imageList[dir].add(ogImg);
@@ -272,47 +272,7 @@ public class Player extends Entity{
             notifyObservers();
         }
     }
-    public void invincibleCheck(){
-        int d, r;
-        if(invulnerable){  // se il player è invulnerabile 
-            invulnerableTimer++;  // aumenta il timer per l'invulnerabilità
-            if(invulnerableTimer>=600){
-                System.out.println("Mancano 2 sec");
-                d=6;
-                r=3;
-            }else if (invulnerableTimer>=480){
-                System.out.println("Mancano 4 sec");
-                d=15;
-                r=9;
-            }else{  
-                d=30;
-                r=15;
-            }
-            if (invulnerableTimer%d==r){  // divide per 30 (quindi la metà di 60 FPS del gioco, cioe ogni mezzo secondo) e per ogni quarto di secondo cambia lo sprite 
-                for(int dir=0; dir<4; dir++){
-                    imageList[dir] = whiteImage[dir];
-                }
-            }
-            if (invulnerableTimer%d==0){
-                for(int dir=0; dir<4; dir++){
-                    imageList[dir] = ogImage[dir];
-                }
-            }
-            // System.out.println(invulnerableTimer);
-            if(invulnerableTimer == 720){  // quando finisce il timer
-                System.out.println("Finita invulnerabilita");
-                invulnerable = false;  // finisce l'invulnerabilità
-                // resetta le immagini originali per sicurezza
-                for(int dir=0; dir<4; dir++){
-                    imageList[dir] = ogImage[dir];
-                }
-                invulnerableTimer = 0;  // resetta il timer
-                //setStatus(invulnerable, died, extinguished, speed);
-            }
-            notifyObservers();
-        }
-        
-    }
+    
 
     public void draw(){
         image = null;

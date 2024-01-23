@@ -70,3 +70,12 @@ switch (direction)
 spriteNum += maxSprite*0 // per prendere le prime 3 sprite [0:2]
 
 spriteNum += maxSprite*1 // per prendere le sprite [3:5]
+
+
+
+
+|P| | |B| |
+| |B| |B| |
+| |B|B|B| |
+| 
+| |X|B| |

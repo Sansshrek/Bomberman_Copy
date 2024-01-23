@@ -27,7 +27,7 @@ public class Entity implements EntityObservable{
     public BufferedImage image;
     public String direction;
 
-    public int firePower, spriteCounter, spriteNum, maxSpriteNum, invulnerableStart, lifeNumber = 1, width, height;
+    public int firePower, spriteCounter, spriteNum, maxSpriteNum, invulnerableStart,  invulnerableTimer = 0, lifeNumber = 1, width, height;
 
     public Rectangle hitbox;
     public int hitboxX, hitboxY, hitboxWidth, hitboxHeight;
@@ -137,5 +137,47 @@ public class Entity implements EntityObservable{
     }
 
     public void powerUpHandler(Point index){};
+
+    public void invincibleCheck(){
+        int d, r;
+        if(invulnerable){  // se il player è invulnerabile 
+            invulnerableTimer++;  // aumenta il timer per l'invulnerabilità
+            if(invulnerableTimer>=600){
+                System.out.println("Mancano 2 sec");
+                d=6;
+                r=3;
+            }else if (invulnerableTimer>=480){
+                System.out.println("Mancano 4 sec");
+                d=15;
+                r=9;
+            }else{  
+                d=30;
+                r=15;
+            }
+            if (invulnerableTimer%d==r){  // divide per 30 (quindi la metà di 60 FPS del gioco, cioe ogni mezzo secondo) e per ogni quarto di secondo cambia lo sprite 
+                for(int dir=0; dir<4; dir++){
+                    imageList[dir] = whiteImage[dir];  // sostituiamo le arraylist della lista image originale
+                }
+            }
+            if (invulnerableTimer%d==0){
+                for(int dir=0; dir<4; dir++){
+                    imageList[dir] = ogImage[dir];
+                }
+            }
+            // System.out.println(invulnerableTimer);
+            if(invulnerableTimer == 720){  // quando finisce il timer
+                System.out.println("Finita invulnerabilita");
+                invulnerable = false;  // finisce l'invulnerabilità
+                // resetta le immagini originali per sicurezza
+                for(int dir=0; dir<4; dir++){
+                    imageList[dir] = ogImage[dir];
+                }
+                invulnerableTimer = 0;  // resetta il timer
+                //setStatus(invulnerable, died, extinguished, speed);
+            }
+            notifyObservers();
+        }
+        
+    }
 
 }
