@@ -1,6 +1,6 @@
 package entity;
 
-public interface EntityMovementBehavior {
+public interface EntityMovementBehaviour {
 
     public void update(Entity entity);
 

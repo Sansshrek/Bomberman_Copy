@@ -1,7 +1,7 @@
 package entity;
 
 
-public class BasePlayerBehaviour implements EntityMovementBehavior{
+public class BasePlayerBehaviour implements EntityMovementBehaviour{
     
     public void update(Entity entity){
         if(entity.keyH.upPressed || entity.keyH.downPressed || entity.keyH.leftPressed || entity.keyH.rightPressed){
@@ -45,15 +45,9 @@ public class BasePlayerBehaviour implements EntityMovementBehavior{
 
             entity.spriteCounter++;
             if(entity.spriteCounter > 15){  // ogni 15/60 volte al secondo 
-                if(!entity.spriteEnd){  // se sta iterando in ordine gli sprite
-                    entity.spriteNum++;  // aumenta l'index degli sprite
-                    if(entity.spriteNum == entity.maxSpriteNum-1)  // se arriva al numero max di sprite
-                        entity.spriteEnd = true;  // ha finito la lista degli sprite e inizia la stampa in reverse degli sprite
-                }else{  // itera in reverse gli sprite
-                    entity.spriteNum--;  // diminuisce l'index degli sprite
-                    if(entity.spriteNum == 0)  // se torna a 0
-                        entity.spriteEnd = false;  // ricomincia l'ordine normale degli sprite
-                }
+                entity.spriteNum++;
+                if(entity.spriteNum == entity.maxSpriteNum)
+                    entity.spriteNum = 0;
                 
                 entity.spriteCounter = 0;  // e resetta il counter
                 // System.out.println(x+" "+y);  // da eliminare

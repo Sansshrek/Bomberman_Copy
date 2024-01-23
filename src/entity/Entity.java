@@ -13,13 +13,14 @@ import main.GamePanel;
 public class Entity implements EntityObservable{
     ArrayList<EntityObserver> observers = new ArrayList<>();
 
-    protected EntityMovementBehavior behavior;  // comportamento delle entita
+    protected EntityMovementBehaviour behaviour;  // comportamento delle entita
     KeyHandler keyH;
     GamePanel gp;
     int tileSize;
     public Graphics2D g2;
     // public int x, y;  // le coordinate nel mondo
     public Point imageP;  // le coordinate in alto a sinistra dell'immagine
+    protected Point findP;
     public double speed;
     public EntityEnum name;  // definisce il comportamento dell'entita in base al tipo
     public int uniCode;  // codice univoco dell'entita per la ricerca dentro la lista delle entita
@@ -30,7 +31,7 @@ public class Entity implements EntityObservable{
 
     public Rectangle hitbox;
     public int hitboxX, hitboxY, hitboxWidth, hitboxHeight;
-    public boolean collisionOn = false, died = false, extinguished = false, bombExitHitbox = false, invulnerable = false, spriteEnd = false;
+    public boolean collisionOn = false, died = false, extinguished = false, bombExitHitbox = false, invulnerable = false;
 
     ArrayList<BufferedImage>[] imageList = new ArrayList[4];
     ArrayList<BufferedImage>[] ogImage = new ArrayList[4];

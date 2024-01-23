@@ -49,7 +49,7 @@ public class Player extends Entity{
         this.hitboxWidth = 12*scale;// larghezza dell'hitbox del player
         this.hitboxHeight = 12*scale;// altezza dell'hitbox del player
 
-        this.behavior = new BasePlayerBehaviour();
+        this.behaviour = new BasePlayerBehaviour();
 
         System.out.println("Caricando il player");  // da eliminare
         gp.bombH.addBombNumber();  // aggiunge la prima bomba al player
@@ -171,7 +171,7 @@ public class Player extends Entity{
                 gp.resetLevel();
             }
 
-            behavior.update(this);
+            behaviour.update(this);
 
             if(keyH.statsPressed){ // da eliminare
                 System.out.println("\nFire "+firePower);

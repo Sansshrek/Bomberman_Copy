@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class StupidEntity implements EntityMovementBehavior{
+public class StupidEntity implements EntityMovementBehaviour{
     
     public void update(Entity entity){
         List<String> directions = Arrays.asList("up", "down", "left", "right");

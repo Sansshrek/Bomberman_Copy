@@ -50,7 +50,8 @@ public class Enemy extends Entity{
         // this.hitboxHeight = 15*gp.scale;// altezza dell'hitbox dell' enemy
         this.hitboxWidth = gp.tileSize;
         this.hitboxHeight = gp.tileSize;
-        this.behavior = new StupidEntity();  // inizializza behaviour
+        // this.behaviour = new StupidEntity();  // inizializza behaviour
+        this.behaviour = new SearchEntity();
 
         setEnemyDefaultValues();
         getEnemyImage();
@@ -132,9 +133,11 @@ public class Enemy extends Entity{
         if(!died){  // se non è morto
             // controlliamo cosa fare con l'oggetto
             // If a collision occurs, check for collisions in all directions and choose a new direction
-            if (collisionOn) {  // se colpisce qualcosa
-                behavior.update(this);
+            if (collisionOn && false) {  // se colpisce qualcosa
+                behaviour.update(this);
             }
+            findP = new Point(gp.player.getTileNumCol(), gp.player.getTileNumRow());
+            behaviour.update(this);
             if(!collisionOn){ // se si puo muovere
                 switch(direction){
                     case "up": 
