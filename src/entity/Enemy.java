@@ -17,17 +17,16 @@ import javax.imageio.ImageIO;
 import main.GamePanel;
 
 public class Enemy extends Entity{
-    // public ArrayList<SuperObject> bombObj = new ArrayList<>();
-    public BufferedImage explosion1, explosion2, explosion3, explosion4, explosion5, explosion6, explosion7, explosion8;
     int spriteDeathNum = 1, checkTimer=0;
     boolean playerCollision = false;
     //largezza e altezza dell' immagine del player
     public final int width;
     public final int height; 
 
-    public Enemy(GamePanel gp, int uniCode){
+    public Enemy(GamePanel gp, int uniCode, int maxSpriteNum){
         super(gp);
         this.uniCode = uniCode;
+        this.maxSpriteNum = maxSpriteNum;
 
         this.speed = 1;
         this.direction = "down";
@@ -95,26 +94,25 @@ public class Enemy extends Entity{
 
     public void getEnemyImage(){
         try{  // prova a caricare le immagini nelle variabili
-            up1 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Enemy/up01.png"));
-            up2 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Enemy/up02.png"));
-            up3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Enemy/up03.png"));
-            down1 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Enemy/down01.png"));
-            down2 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Enemy/down02.png"));
-            down3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Enemy/down03.png"));
-            left1 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Enemy/left01.png"));
-            left2 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Enemy/left02.png"));
-            left3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Enemy/left03.png"));
-            right1 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Enemy/right01.png"));
-            right2 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Enemy/right02.png"));
-            right3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Enemy/right03.png"));
+            for(int dir=0; dir<4; dir++){
+                imageList[dir] = new ArrayList<>();
+                String directionImage = "";
+                if(dir == 0) {directionImage = "up";}
+                else if(dir == 1) {directionImage = "down";}
+                else if(dir == 2) {directionImage = "left";}
+                else {directionImage = "right";}
+                for(int sprite=1; sprite<=maxSpriteNum; sprite++){  // per quante sprite ci stanno in una direzione
+                    imageList[dir].add(ImageIO.read(getClass().getResourceAsStream("../res/enemies/walking Enemy/"+directionImage+String.valueOf(sprite)+".png")));
+                }
+            }
             
-            death1 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_01.png"));
-            death2 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_02.png"));
-            death3 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_03.png"));
-            death4 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_04.png"));
-            death5 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_05.png"));
-            death6 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_06.png"));
-            death7 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_07.png"));
+            death1 = ImageIO.read(getClass().getResourceAsStream("../res/enemies/Enemy fire/explosion1.png"));
+            death2 = ImageIO.read(getClass().getResourceAsStream("../res/enemies/Enemy fire/explosion2.png"));
+            death3 = ImageIO.read(getClass().getResourceAsStream("../res/enemies/Enemy fire/explosion3.png"));
+            death4 = ImageIO.read(getClass().getResourceAsStream("../res/enemies/Enemy fire/explosion4.png"));
+            death5 = ImageIO.read(getClass().getResourceAsStream("../res/enemies/Enemy fire/explosion5.png"));
+            death6 = ImageIO.read(getClass().getResourceAsStream("../res/enemies/Enemy fire/explosion6.png"));
+            death7 = ImageIO.read(getClass().getResourceAsStream("../res/enemies/Enemy fire/explosion7.png"));
             //explosion8 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_08.png"));
             notifyObservers();
         }catch(IOException e){
@@ -162,21 +160,9 @@ public class Enemy extends Entity{
 
             spriteCounter++;
             if(spriteCounter > 15){  // ogni 15/60 volte al secondo 
-                switch(spriteNum){
-                    case 1:  // dalla 1 alla 2
-                        spriteNum = 2; 
-                        break;
-                    case 2:  // dalla 2 alla 3(1)
-                        spriteNum = 3;
-                        break;
-                    case 3:  // dalla 3(1) alla 4
-                        spriteNum = 4;
-                        break;
-                    case 4: // dalla 4 alla 1
-                        spriteNum = 1;
-                        break;
-                    }
-
+                spriteNum++;
+                if(spriteNum == maxSpriteNum)
+                    spriteNum = 0;
                 spriteCounter = 0;  // e resetta  il counter
                 // System.out.println(x+" "+y);  // da eliminare
                 // System.out.println("Enemy tile:"+getEnemyTileX()+ " "+getEnemyTileY());
@@ -190,49 +176,17 @@ public class Enemy extends Entity{
         if(!died){  // se ancora non è stato colpito dalla bomba allora disegna l'enemy normale
             switch(direction){  // in base alla direzione, la variabile image prende il valore dell'immagine inserita
                 case "up":
-                    if(spriteNum == 1 || spriteNum == 3){
-                        image = up1;
-                    }
-                    if(spriteNum == 2){
-                        image = up2;
-                    }
-                    if(spriteNum == 4){
-                        image = up3;
-                    }
-                    break;
+                    image = imageList[0].get(spriteNum);
+                break;
                 case "down":
-                    if(spriteNum == 1 || spriteNum == 3){
-                        image = down1;
-                    }
-                    if(spriteNum == 2){
-                        image = down2;
-                    }
-                    if(spriteNum == 4){
-                        image = down3;
-                    }
-                    break;
+                    image = imageList[1].get(spriteNum);
+                break;
                 case "left":
-                    if(spriteNum == 1 || spriteNum == 3){
-                        image = left1;
-                    }
-                    if(spriteNum == 2){
-                        image = left2;
-                    }
-                    if(spriteNum == 4){
-                        image = left3;
-                    }
-                    break;
+                    image = imageList[2].get(spriteNum);
+                break;
                 case "right":
-                    if(spriteNum == 1 || spriteNum == 3){
-                        image = right1;
-                    }
-                    if(spriteNum == 2){
-                        image = right2;
-                    }
-                    if(spriteNum == 4){
-                        image = right3;
-                    }
-                    break;
+                    image = imageList[3].get(spriteNum);
+                break;
             }
             notifyObservers();
         }else{  // altrimenti se l'enemy è stato colpito dalla bomba allora disegna l'esplosione

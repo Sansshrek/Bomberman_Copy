@@ -95,7 +95,7 @@ public class GamePanel extends JPanel implements Runnable{
             int maxEnemy = 3;
             enemy.clear();  // resetto la lista dei nemici
             for(int i=0; i<maxEnemy; i++){
-                enemy.add(new Enemy(this, entityCounter));  // aggiungo 3 nemici
+                enemy.add(new Enemy(this, entityCounter, 3));  // aggiungo 3 nemici
                 entityCounter++;
                 enemy.get(i).registerObserver(entityManager);
                 enemy.get(i).registerObserver(cChecker);

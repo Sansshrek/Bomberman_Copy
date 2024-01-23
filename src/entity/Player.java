@@ -6,6 +6,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+
 import javax.imageio.ImageIO;
 
 import main.GamePanel;
@@ -31,6 +33,7 @@ public class Player extends Entity{
         this.keyH = keyH;
         int scale = gp.getScale();
         this.tileSize = gp.getTileSize();
+        maxSpriteNum = 4;
 
         this.image=null;
 
@@ -87,8 +90,7 @@ public class Player extends Entity{
         checkDeathJump = false;
         checkDeathFall = false;
         spriteDeathCounter = 0;
-        spriteNum = 1;
-        maxSpriteNum = 3;
+        spriteNum = 0;
         this.hitbox = new Rectangle(hitboxX+imageP.x, hitboxY+imageP.y, hitboxWidth, hitboxHeight);
         //setEntityVar(imageP, hitbox, invulnerable, died, extinguished, speed);
         notifyObservers();
@@ -116,7 +118,7 @@ public class Player extends Entity{
             checkDeathJump = false;
             checkDeathFall = false;
             spriteDeathCounter = 0;
-            spriteNum = 1;
+            spriteNum = 0;
             lifeNumber -= 1;  // diminuisce di 1 la vita
             heartNumber = 1;
             this.hitbox = new Rectangle(hitboxX+imageP.x, hitboxY+imageP.y, hitboxWidth, hitboxHeight);
@@ -128,46 +130,22 @@ public class Player extends Entity{
 
     public void getPlayerImage(){
         try{  // prova a caricare le immagini nelle variabili
-            
-            ogUp1 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/up01.png"));
-            ogUp2 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/up02.png"));
-            ogUp3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/up03.png"));
-            ogDown1 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/down01.png"));
-            ogDown2 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/down02.png"));
-            ogDown3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/down03.png"));
-            ogLeft1 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/left01.png"));
-            ogLeft2 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/left02.png"));
-            ogLeft3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/left03.png"));
-            ogRight1 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/right01.png"));
-            ogRight2 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/right02.png"));
-            ogRight3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/right03.png"));
-
-            up1=ogUp1;
-            up2=ogUp2;
-            up3=ogUp3;
-            down1=ogDown1;
-            down2=ogDown2;
-            down3=ogDown3;
-            left1=ogLeft1;
-            left2=ogLeft2;
-            left3=ogLeft3;
-            right1=ogRight1;
-            right2=ogRight2;
-            right3=ogRight3;
-
-
-            whiteUp1 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Invincible/up01.png"));
-            whiteUp2 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Invincible/up02.png"));
-            whiteUp3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Invincible/up03.png"));
-            whiteDown1 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Invincible/down01.png"));
-            whiteDown2 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Invincible/down02.png"));
-            whiteDown3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Invincible/down03.png"));
-            whiteLeft1 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Invincible/left01.png"));
-            whiteLeft2 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Invincible/left02.png"));
-            whiteLeft3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Invincible/left03.png"));
-            whiteRight1 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Invincible/right01.png"));
-            whiteRight2 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Invincible/right02.png"));
-            whiteRight3 = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Invincible/right03.png"));
+            for(int dir=0; dir<4; dir++){
+                imageList[dir] = new ArrayList<>();
+                ogImage[dir] = new ArrayList<>();
+                whiteImage[dir] = new ArrayList<>();
+                String directionImage = "";
+                if(dir == 0) {directionImage = "up";}
+                else if(dir == 1) {directionImage = "down";}
+                else if(dir == 2) {directionImage = "left";}
+                else {directionImage = "right";}
+                for(int sprite=1; sprite<=maxSpriteNum; sprite++){  // per quante sprite ci stanno in una direzione
+                    BufferedImage ogImg = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/"+directionImage+String.valueOf(sprite)+".png"));
+                    imageList[dir].add(ogImg);
+                    ogImage[dir].add(ogImg);
+                    whiteImage[dir].add(ImageIO.read(getClass().getResourceAsStream("../res/player/walking Invincible/"+directionImage+String.valueOf(sprite)+".png")));
+                }
+            }
             
             death1 = ImageIO.read(getClass().getResourceAsStream("../res/player/Player Death/death1.png"));
             death2 = ImageIO.read(getClass().getResourceAsStream("../res/player/Player Death/death2.png"));
@@ -311,50 +289,23 @@ public class Player extends Entity{
                 r=15;
             }
             if (invulnerableTimer%d==r){  // divide per 30 (quindi la metà di 60 FPS del gioco, cioe ogni mezzo secondo) e per ogni quarto di secondo cambia lo sprite 
-                up1 = whiteUp1;
-                up2 = whiteUp2;
-                up3 = whiteUp3;
-                down1 = whiteDown1;
-                down2 = whiteDown2;
-                down3 = whiteDown3;
-                left1 = whiteLeft1;
-                left2 = whiteLeft2;
-                left3 = whiteLeft3;
-                right1 = whiteRight1;
-                right2 = whiteRight2;
-                right3 = whiteRight3;
+                for(int dir=0; dir<4; dir++){
+                    imageList[dir] = whiteImage[dir];
+                }
             }
             if (invulnerableTimer%d==0){
-                up1 = ogUp1;
-                up2 = ogUp2;
-                up3 = ogUp3;
-                down1 = ogDown1;
-                down2 = ogDown2;
-                down3 = ogDown3;
-                left1 = ogLeft1;
-                left2 = ogLeft2;
-                left3 = ogLeft3;
-                right1 = ogRight1;
-                right2 = ogRight2;
-                right3 = ogRight3;
+                for(int dir=0; dir<4; dir++){
+                    imageList[dir] = ogImage[dir];
+                }
             }
             // System.out.println(invulnerableTimer);
             if(invulnerableTimer == 720){  // quando finisce il timer
                 System.out.println("Finita invulnerabilita");
                 invulnerable = false;  // finisce l'invulnerabilità
                 // resetta le immagini originali per sicurezza
-                up1 = ogUp1;
-                up2 = ogUp2;
-                up3 = ogUp3;
-                down1 = ogDown1;
-                down2 = ogDown2;
-                down3 = ogDown3;
-                left1 = ogLeft1;
-                left2 = ogLeft2;
-                left3 = ogLeft3;
-                right1 = ogRight1;
-                right2 = ogRight2;
-                right3 = ogRight3;
+                for(int dir=0; dir<4; dir++){
+                    imageList[dir] = ogImage[dir];
+                }
                 invulnerableTimer = 0;  // resetta il timer
                 //setStatus(invulnerable, died, extinguished, speed);
             }
@@ -369,50 +320,18 @@ public class Player extends Entity{
             invincibleCheck();
             switch(direction){  // in base alla direzione, la variabile image prende il valore dell'immagine inserita
                 case "up":
-                    if(spriteNum == 1 || spriteNum == 3){
-                        image = up1;
-                    }
-                    if(spriteNum == 2){
-                        image = up2;
-                    }
-                    if(spriteNum == 4){
-                        image = up3;
-                    }
-                    break;
+                    image = imageList[0].get(spriteNum);
+                break;
                 case "down":
-                    if(spriteNum == 1 || spriteNum == 3){
-                        image = down1;
-                    }
-                    if(spriteNum == 2){
-                        image = down2;
-                    }
-                    if(spriteNum == 4){
-                        image = down3;
-                    }
-                    break;
+                    image = imageList[1].get(spriteNum);
+                break;
                 case "left":
-                    if(spriteNum == 1 || spriteNum == 3){
-                        image = left1;
-                    }
-                    if(spriteNum == 2){
-                        image = left2;
-                    }
-                    if(spriteNum == 4){
-                        image = left3;
-                    }
-                    break;
+                    image = imageList[2].get(spriteNum);
+                break;
                 case "right":
-                    if(spriteNum == 1 || spriteNum == 3){
-                        image = right1;
-                    }
-                    if(spriteNum == 2){
-                        image = right2;
-                    }
-                    if(spriteNum == 4){
-                        image = right3;
-                    }
-                    break;
-            }   
+                    image = imageList[3].get(spriteNum);
+                break;
+            }
         }else{  // se il player è morto
             if(!checkDeathFall){  // se ancora non ha toccato terra allora salta
                 image = death1;

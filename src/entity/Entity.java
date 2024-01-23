@@ -30,7 +30,12 @@ public class Entity implements EntityObservable{
 
     public Rectangle hitbox;
     public int hitboxX, hitboxY, hitboxWidth, hitboxHeight;
-    public boolean collisionOn = false, died = false, extinguished = false, bombExitHitbox = false, invulnerable = false;
+    public boolean collisionOn = false, died = false, extinguished = false, bombExitHitbox = false, invulnerable = false, spriteEnd = false;
+
+    ArrayList<BufferedImage>[] imageList = new ArrayList[4];
+    ArrayList<BufferedImage>[] ogImage = new ArrayList[4];
+    ArrayList<BufferedImage>[] whiteImage = new ArrayList[4];
+    ArrayList<BufferedImage> deathImage = new ArrayList<>();
 
     BufferedImage up1, up2, up3, down1, down2, down3, left1, left2, left3, right1, right2, right3;
     BufferedImage ogUp1, ogUp2, ogUp3, ogDown1, ogDown2, ogDown3, ogLeft1, ogLeft2, ogLeft3, ogRight1, ogRight2, ogRight3;
@@ -55,7 +60,7 @@ public class Entity implements EntityObservable{
         this.speed = 1;
 
         this.spriteCounter = 0;
-        this.spriteNum = 1;
+        this.spriteNum = 0;
     }
 
     public int getCenterX(){
