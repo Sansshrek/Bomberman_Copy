@@ -8,6 +8,7 @@ public class EnemyDrawBehaviour implements EntityDrawBehaviour{
         entity.image = null;
 
         if(!entity.died){  // se ancora non è stato colpito dalla bomba allora disegna l'enemy normale
+            entity.invincibleCheck();
             switch(entity.direction){  // in base alla direzione, la variabile image prende il valore dell'immagine inserita
                 case "up":
                     entity.image = entity.imageList[0].get(entity.spriteNum);
@@ -42,7 +43,7 @@ public class EnemyDrawBehaviour implements EntityDrawBehaviour{
             entity.g2.draw(entity.hitbox);
 
             entity.g2.setColor(Color.GREEN);
-            entity.g2.drawRect(entity.getTileX(), entity.getTileY(), entity.tileSize, entity.tileSize);
+            // entity.g2.drawRect(entity.getTileX(), entity.getTileY(), entity.tileSize, entity.tileSize);
         }
         entity.notifyObservers();
     }

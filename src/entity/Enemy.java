@@ -38,13 +38,13 @@ public class Enemy extends Entity{
         this.startX = type.startX;
         this.startY = type.startY;
 
-        this.speed = 4;
+        this.invulnerableSec = 3;
         this.tileSize = gp.getTileSize();
 
         this.image=null;
 
-        this.hitboxWidth = gp.tileSize;
-        this.hitboxHeight = gp.tileSize;
+        this.hitboxWidth = gp.tileSize; //DIMENSIONE DI UNA TILE
+        this.hitboxHeight = gp.tileSize;  //DIMENSIONE DI UNA TILE
         this.drawBehaviour = new EnemyDrawBehaviour();
 
         setEnemyDefaultValues();
@@ -66,8 +66,9 @@ public class Enemy extends Entity{
 	public void setEnemyDefaultValues(){
         if(startX == -1){  // se la pos di partenza è quella di default allora la cambia
             Point avPos = findAvStartPos();  // trova una posizione disponibile sulla mappa
+            // Point avPos = new Point(1, 0);
             int hitboxXAv = (avPos.x*tileSize) + (tileSize+tileSize/2);   // posizione x dell'enemy IN ALTO A SINISTRA
-            int hitboxYAv = (avPos.y*tileSize) + (2*tileSize+tileSize/2)-1;   // posizione y dell'enemy IN ALTO A SINISTRA
+            int hitboxYAv = (avPos.y*tileSize) + (2*tileSize+tileSize/2);   // posizione y dell'enemy IN ALTO A SINISTRA
             hitbox = new Rectangle(hitboxXAv, hitboxYAv, hitboxWidth, hitboxHeight);
             this.imageP = new Point(hitboxXAv-offsetX, hitboxYAv-offsetY);
         }else{
@@ -83,7 +84,7 @@ public class Enemy extends Entity{
         ArrayList<Point> avPos = new ArrayList<>();  // array di posizioni disponibili
         for(int row=0; row<gp.maxGameRow; row++){ 
             for(int col=0; col<gp.maxGameCol; col++){
-                if(gp.obj[row][col] == null && gp.tileM.houseTileNum[row][col] != 3 && row+col != 0 && row+col != 1 && row+col != 2 && row+col != 3){  // se non c'è una casa e non c'è un blocco o sono le pos del player
+                if(gp.obj[row][col] == null && gp.tileM.houseTileNum[row][col] != 3 && gp.tileM.houseTileNum[row][col] != -1 && row+col != 0 && row+col != 1 && row+col != 2 && row+col != 3){  // se non c'è una casa e non c'è un blocco o sono le pos del player
                     avPos.add(new Point(col, row));  // ritorno x:col e y:row
                 }
             }
@@ -107,7 +108,7 @@ public class Enemy extends Entity{
                     BufferedImage ogImg = ImageIO.read(getClass().getResourceAsStream("../res/enemies/"+type+"/"+directionImage+String.valueOf(sprite)+".png"));
                     imageList[dir].add(ogImg);
                     ogImage[dir].add(ogImg);
-                    whiteImage[dir].add(ImageIO.read(getClass().getResourceAsStream("../res/enemies/"+type+"/"+directionImage+String.valueOf(sprite)+".png")));
+                    whiteImage[dir].add(ImageIO.read(getClass().getResourceAsStream("../res/enemies/invulnerable/"+type+"/"+directionImage+String.valueOf(sprite)+".png")));
                 }
             }
             for(int sprite=1; sprite<=7; sprite++){
@@ -122,16 +123,16 @@ public class Enemy extends Entity{
 
     public void kill(){
         heartNumber--;
+        System.out.println(heartNumber);
         invulnerable = true;
+        invulnerableTimer = 0;
         if(heartNumber == 0){
-            if(!died){
-                died = true;
-                System.out.println("Enemy morto");
-                gp.enemyNum--;
-                
-                height = 32*gp.scale;
-                imageP.y -= 16*gp.scale;
-            }
+            died = true;
+            System.out.println("Enemy morto");
+            gp.enemyNum--;
+            
+            height = 32*gp.scale;
+            imageP.y -= 16*gp.scale;
         }
         notifyObservers();
     }

@@ -30,7 +30,7 @@ public class Entity implements EntityObservable{
     public String direction;
     public ArrayList<Node> pathSearch; 
 
-    public int firePower, spriteCounter, spriteNum, maxSpriteNum, invulnerableStart,  invulnerableTimer = 0, lifeNumber = 1, heartNumber = 1, width, height, spriteDeathNum = 0, startDeathY;
+    public int firePower, spriteCounter, spriteNum, maxSpriteNum, invulnerableStart, invulnerableSec, invulnerableTimer = 0, lifeNumber = 1, heartNumber = 1, width, height, spriteDeathNum = 0, startDeathY;
 
     public Rectangle hitbox;
     public int offsetX, offsetY, hitboxWidth, hitboxHeight;
@@ -165,12 +165,10 @@ public class Entity implements EntityObservable{
         int d, r;
         if(invulnerable){  // se il player è invulnerabile 
             invulnerableTimer++;  // aumenta il timer per l'invulnerabilità
-            if(invulnerableTimer>=600){
-                System.out.println("Mancano 2 sec");
+            if(invulnerableTimer>=invulnerableSec*60-2*60){
                 d=6;
                 r=3;
-            }else if (invulnerableTimer>=480){
-                System.out.println("Mancano 4 sec");
+            }else if (invulnerableTimer>=invulnerableSec*60-4*60){
                 d=15;
                 r=9;
             }else{  
@@ -188,7 +186,7 @@ public class Entity implements EntityObservable{
                 }
             }
             // System.out.println(invulnerableTimer);
-            if(invulnerableTimer == 720){  // quando finisce il timer
+            if(invulnerableTimer == invulnerableSec*60){  // quando finisce il timer
                 System.out.println("Finita invulnerabilita");
                 invulnerable = false;  // finisce l'invulnerabilità
                 // resetta le immagini originali per sicurezza

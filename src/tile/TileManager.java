@@ -54,7 +54,6 @@ public class TileManager {
         loadMap("../res/map/ground01.txt", "ground");
         System.out.println("Generando palazzi random");
         generateHouse();  // genera le case random 
-
     }
 
     public void getTileImage(){

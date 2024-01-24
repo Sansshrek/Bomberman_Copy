@@ -31,7 +31,8 @@ public class Player extends Entity{
         this.keyH = keyH;
         int scale = gp.getScale();
         this.tileSize = gp.getTileSize();
-        maxSpriteNum = 3;
+        this. maxSpriteNum = 3;
+        this.invulnerableSec = 12;
 
         this.image=null;
 
@@ -41,7 +42,7 @@ public class Player extends Entity{
 
         //codinate top left dell' hitbox
         this.offsetX = 2*scale;// dove parte hitbox del player (2 pixel a destra rispetto a dove parte l'immagine)
-        this.offsetY = 12*scale; // dove parte hitbox del player (12 pixel sotto rispetto a dove parte l'immagine)
+        this.offsetY = 8*scale; // dove parte hitbox del player (12 pixel sotto rispetto a dove parte l'immagine)
         
         //larghezza e altezza dell' hitbox
         this.hitboxWidth = 12*scale;// larghezza dell'hitbox del player
@@ -149,7 +150,6 @@ public class Player extends Entity{
             for(int sprite=1; sprite<=7; sprite++){
                 deathImage.add(ImageIO.read(getClass().getResourceAsStream("../res/player/Player Death/death"+String.valueOf(sprite)+".png")));
             }
-            
         }catch(IOException e){
             e.printStackTrace();
         }
@@ -213,6 +213,12 @@ public class Player extends Entity{
         }
     }
 */
+
+    public void resetInvincibility(){
+        invulnerableTimer = 0;
+        invulnerable = true;
+    }
+
     public void powerUpHandler(Point index){
         if(index.x != 999 && gp.obj[index.y][index.x].name != "block" && gp.obj[index.y][index.x] != null && !(gp.obj[index.y][index.x] instanceof Bomb)){  // se non è il valore default o un blocco
             String objName = gp.obj[index.y][index.x].name;
@@ -247,7 +253,7 @@ public class Player extends Entity{
                 break;
                 case "armor":
                     score += 800;
-                    invulnerable = true;
+                    resetInvincibility();
                 break;
                 case "time":
                     score += 800;

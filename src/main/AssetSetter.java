@@ -32,19 +32,7 @@ public class AssetSetter{
         this.gp = gp;
         this.tileM = tileM;
     }
-
-    public ArrayList<Integer> availablePos(){
-        ArrayList<Integer> avPos = new ArrayList<>();
-        for(int x=0; x<10; x++){  // 13 è il massimo dei tiles della mappa per la x
-            for(int y=0; y<13; y++){  // 10 è il massimo dei tiles della mappa per la y
-                if(tileM.houseTileNum[x][y] != 3 && tileM.houseTileNum[x][y] != -1 && x+y != 0 && x+y != 1 && x-y !=0){  // se non è un palazzo o non è gia preso
-                    if(true)  // pos vicino alla partenza del player 
-                        avPos.add( x * 10 + y); // calcola l'indice unico per la posizione
-                }
-            }
-        }
-        return avPos;
-    }
+    
     public ArrayList<Point> availablePosMatrix(){
         ArrayList<Point> avPos = new ArrayList<>();
         for(int row=0; row<gp.maxGameRow; row++){  // 13 è il massimo dei tiles della mappa per la x

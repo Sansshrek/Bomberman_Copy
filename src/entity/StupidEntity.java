@@ -13,9 +13,15 @@ public class StupidEntity implements EntityMovementBehaviour{
 
             entity.gp.cChecker.checkTile(entity);
             entity.gp.cChecker.checkObj(entity);
-            if(entity.collisionOn){
+            
+            if(entity.collisionOn && entity.gp.cChecker.canMove(entity)){  // se in quella direzione non si puo muovere
                 ArrayList<String> directions = entity.gp.cChecker.validDirections(entity);  // prende ogni posizione in cui si puo muovere
-                Collections.shuffle(directions);  
+                System.out.println(directions.size());
+                directions.remove(entity.direction);  // rimuove dalla lista la direzione in cui sta andando perche collide
+                Collections.shuffle(directions);
+                if(directions.size() > 0)
+                    entity.direction = directions.get(0);  // sceglie una direzione a caso tra quelle disponibili  
+                /*
                 for(String dir: directions){  // per ogni posizione disponibile in cui si puo muovere
                     entity.collisionOn = false;  // resettiamo la collisione
                     entity.direction = dir;  // impostiamo la posizione per l'entity
@@ -23,7 +29,7 @@ public class StupidEntity implements EntityMovementBehaviour{
                     if(!entity.collisionOn){  // se si puo muovere
                         break;  // esce dal ciclo e lascia la direzione inserita come quella scelta
                     }
-                }
+                } */
             }
             entity.notifyObservers();
         }

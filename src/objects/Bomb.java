@@ -140,7 +140,7 @@ public class Bomb extends SuperObject{
                 gp.player.kill();
             }
             for(Entity ent: gp.enemy){  // controllo se colpisce un enemy
-                if(ent.hitbox.intersects(hitboxCenter))
+                if(ent.hitbox.intersects(hitboxCenter) && !ent.invulnerable)
                     ent.kill();
             }
 
@@ -176,7 +176,7 @@ public class Bomb extends SuperObject{
                     gp.player.kill();
                 }
                 for(Entity ent: gp.enemy){  // controllo se colpisce un enemy
-                    if(ent.hitbox.intersects(hitboxFire))
+                    if(ent.hitbox.intersects(hitboxFire) && !ent.invulnerable)
                         ent.kill();
                 }
                 if(gp.obj[tileRow][tileCol-i] instanceof Bomb){
@@ -228,7 +228,7 @@ public class Bomb extends SuperObject{
                     gp.player.kill();
                 }
                 for(Entity ent: gp.enemy){
-                    if(ent.hitbox.intersects(hitboxFire))
+                    if(ent.hitbox.intersects(hitboxFire) && !ent.invulnerable)
                         ent.kill();
                 }
                 if(gp.obj[tileRow][tileCol+i] instanceof Bomb){
@@ -276,7 +276,7 @@ public class Bomb extends SuperObject{
                     gp.player.kill();
                 }
                 for(Entity ent: gp.enemy){
-                    if(ent.hitbox.intersects(hitboxFire))
+                    if(ent.hitbox.intersects(hitboxFire) && !ent.invulnerable)
                         ent.kill();
                 }
                 if(gp.obj[tileRow-i][tileCol] instanceof Bomb){
@@ -331,7 +331,7 @@ public class Bomb extends SuperObject{
                     gp.player.kill();
                 }
                 for(Entity ent: gp.enemy){
-                    if(ent.hitbox.intersects(hitboxFire))
+                    if(ent.hitbox.intersects(hitboxFire) && !ent.invulnerable)
                         ent.kill();
                 }
                 if(gp.obj[tileRow+i][tileCol] instanceof Bomb){

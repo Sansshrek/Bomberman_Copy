@@ -47,7 +47,6 @@ public class GamePanel extends JPanel implements Runnable{
     // FPS 
     int FPS = 60;
 
-    public EntityManager entityManager = new EntityManager();
     public HUD hud = new HUD(this);
     public CollisionChecker cChecker = new CollisionChecker(this);
     public TileManager tileM = new TileManager(this);
@@ -67,7 +66,7 @@ public class GamePanel extends JPanel implements Runnable{
     public final int menuState = 5;
 
     // test da eliminare
-    boolean checkSetup = false, checkGameOn = false;
+    boolean checkSetup, checkGameOn;
     
     public GamePanel(){
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -76,6 +75,8 @@ public class GamePanel extends JPanel implements Runnable{
         this.addKeyListener(keyH);
         this.setFocusable(true);  // cosi il GamePanel è "concentrato" a ricevere input di tastiera
         this.obj = new SuperObject[maxGameRow][maxGameCol]; 
+        checkSetup = false;
+        checkGameOn = false;
         setupGame();
     }
 
@@ -83,7 +84,6 @@ public class GamePanel extends JPanel implements Runnable{
         if(!checkSetup){
             checkSetup = true;
             hud.resetTimer();
-            player.registerObserver(entityManager);  //Pongo come osservatore l'entity manager per orgni entità
             player.registerObserver(cChecker);
             player.setPlayerDefaultValues();
             tileM.setupTile();
@@ -105,7 +105,6 @@ public class GamePanel extends JPanel implements Runnable{
             for(EnemyType enemyType: listaNemici){
                 enemy.add(new Enemy(this, entityCounter, enemyType));  // aggiungo 3 nemici
                 entityCounter++;
-                enemy.get(counter).registerObserver(entityManager);
                 enemy.get(counter).registerObserver(cChecker);
                 counter++;
             }
