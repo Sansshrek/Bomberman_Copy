@@ -17,38 +17,34 @@ import main.GamePanel;
 
 public class Enemy extends Entity{
     boolean playerCollision = false;
+    EntityMovementBehaviour stupidBehaviour = new StupidEntity();
+    EntityMovementBehaviour searchBehaviour = new SearchEntity();
     //largezza e altezza dell' immagine del player
-    public final int width;
-    public final int height; 
+    public int score, startX, startY;
 
-    public Enemy(GamePanel gp, int uniCode, int maxSpriteNum){
+    public Enemy(GamePanel gp, int uniCode, EnemyType type){
         super(gp);
         this.uniCode = uniCode;
-        this.maxSpriteNum = maxSpriteNum;
+        
+        this.movementBehaviour = type.movementBehaviour;  // inizializza movementBehaviour
+        this.maxSpriteNum = type.maxSpriteNum;
+        this.heartNumber = type.startingLives;
+        this.score = type.startingScore;
+        this.type = type.type;
+        this.width = type.width*gp.scale; // larghezza dell' enemy
+        this.height = type.height*gp.scale; // altezza dell' enemy 
+        this.offsetX = type.offsetX*gp.scale;// dove parte hitbox dell' enemy (0 pixel a destra rispetto a dove parte l'immagine)
+        this.offsetY = type.offsetY*gp.scale; // dove parte hitbox dell' enemy (12 pixel sotto rispetto a dove parte l'immagine)
+        this.startX = type.startX;
+        this.startY = type.startY;
 
-        this.speed = 1;
-        // this.direction = "down";
+        this.speed = 2;
         this.tileSize = gp.getTileSize();
-        //coordinate nel mondo
-        // this.x = x;
-        // this.y = y;
 
         this.image=null;
 
-        //largezza e altezza dell' immagine dell' enemy
-        this.width = 16*gp.scale; // larghezza dell' enemy
-        this.height = 29*gp.scale; // altezza dell' enemy 
-
-        //codinate top left dell' hitbox
-        this.hitboxX = 0*gp.scale;// dove parte hitbox dell' enemy (0 pixel a destra rispetto a dove parte l'immagine)
-        this.hitboxY = 8*gp.scale; // dove parte hitbox dell' enemy (12 pixel sotto rispetto a dove parte l'immagine)
-        
-        //larghezza e altezza dell' hitbox
-        // this.hitboxWidth = 15*gp.scale;// larghezza dell'hitbox dell' enemy
-        // this.hitboxHeight = 15*gp.scale;// altezza dell'hitbox dell' enemy
         this.hitboxWidth = gp.tileSize;
         this.hitboxHeight = gp.tileSize;
-        this.movementBehaviour = new StupidEntity();  // inizializza movementBehaviour
         this.drawBehaviour = new EnemyDrawBehaviour();
 
         setEnemyDefaultValues();
@@ -68,11 +64,16 @@ public class Enemy extends Entity{
     }
 
 	public void setEnemyDefaultValues(){
-        Point avPos = findAvStartPos();  // trova una posizione disponibile sulla mappa
-        int x = (avPos.x*tileSize) + (tileSize+tileSize/2);   // posizione x dell'enemy IN ALTO A SINISTRA
-        int y = (avPos.y*tileSize) + 2*tileSize;   // posizione y dell'enemy IN ALTO A SINISTRA
-        this.imageP = new Point(x, y);
-        hitbox = new Rectangle(hitboxX + imageP.x, hitboxY + imageP.y, hitboxWidth, hitboxHeight);
+        if(startX == -1){  // se la pos di partenza è quella di default allora la cambia
+            Point avPos = findAvStartPos();  // trova una posizione disponibile sulla mappa
+            int hitboxXAv = (avPos.x*tileSize) + (tileSize+tileSize/2);   // posizione x dell'enemy IN ALTO A SINISTRA
+            int hitboxYAv = (avPos.y*tileSize) + 2*tileSize+tileSize/2;   // posizione y dell'enemy IN ALTO A SINISTRA
+            hitbox = new Rectangle(hitboxXAv, hitboxYAv, hitboxWidth, hitboxHeight);
+            this.imageP = new Point(hitboxXAv-offsetX, hitboxYAv-offsetY);
+        }else{
+            startX = startX*tileSize;
+            startY = startY*tileSize;
+        }
         this.speed = 1;
         this.direction = "down";
         notifyObservers();
@@ -95,20 +96,24 @@ public class Enemy extends Entity{
         try{  // prova a caricare le immagini nelle variabili
             for(int dir=0; dir<4; dir++){
                 imageList[dir] = new ArrayList<>();
+                ogImage[dir] = new ArrayList<>();
+                whiteImage[dir] = new ArrayList<>();
                 String directionImage = "";
                 if(dir == 0) {directionImage = "up";}
                 else if(dir == 1) {directionImage = "down";}
                 else if(dir == 2) {directionImage = "left";}
                 else {directionImage = "right";}
                 for(int sprite=1; sprite<=maxSpriteNum; sprite++){  // per quante sprite ci stanno in una direzione
-                    imageList[dir].add(ImageIO.read(getClass().getResourceAsStream("../res/enemies/walking Enemy/"+directionImage+String.valueOf(sprite)+".png")));
+                    BufferedImage ogImg = ImageIO.read(getClass().getResourceAsStream("../res/enemies/"+type+"/"+directionImage+String.valueOf(sprite)+".png"));
+                    imageList[dir].add(ogImg);
+                    ogImage[dir].add(ogImg);
+                    whiteImage[dir].add(ImageIO.read(getClass().getResourceAsStream("../res/enemies/"+type+"/"+directionImage+String.valueOf(sprite)+".png")));
                 }
             }
             for(int sprite=1; sprite<=7; sprite++){
-                deathImage.add(ImageIO.read(getClass().getResourceAsStream("../res/enemies/Enemy fire/explosion"+String.valueOf(sprite)+".png")));
+                deathImage.add(ImageIO.read(getClass().getResourceAsStream("../res/enemies/enemy_fire/explosion"+String.valueOf(sprite)+".png")));
             }
 
-            //explosion8 = ImageIO.read(getClass().getResourceAsStream("../res/player/Enemy/Enemy fire/explosion_08.png"));
             notifyObservers();
         }catch(IOException e){
             e.printStackTrace();
@@ -116,17 +121,27 @@ public class Enemy extends Entity{
     }
 
     public void kill(){
-        System.out.println("Enemy morto");
-        extinguished = true;
+        heartNumber--;
+        invulnerable = true;
+        if(heartNumber == 0){
+            if(!died){
+                died = true;
+                System.out.println("Enemy morto");
+                gp.enemyNum--;
+                
+                height = 32*gp.scale;
+                imageP.y -= 16*gp.scale;
+            }
+        }
         notifyObservers();
     }
 
+
     public void update(){  // update viene chiamato 60 volte al secondo
-            // Check for collisions
 
         if(!died){  // se non è morto
             // controlliamo cosa fare con l'oggetto
-            // If a collision occurs, check for collisions in all directions and choose a new direction
+
             movementBehaviour.updateMovement(this);
 
             if(!collisionOn){ // se si puo muovere
@@ -154,12 +169,17 @@ public class Enemy extends Entity{
 
             spriteCounter++;
             if(spriteCounter > 15){  // ogni 15/60 volte al secondo 
-                spriteNum++;
-                if(spriteNum == maxSpriteNum)
-                    spriteNum = 0;
-                spriteCounter = 0;  // e resetta  il counter
-                // System.out.println(x+" "+y);  // da eliminare
-                // System.out.println("Enemy tile:"+getEnemyTileX()+ " "+getEnemyTileY());
+                if(endAnimation)  // se è finita l'animazione
+                    spriteNum--;  // ristampa gli sprite in reverse
+                else
+                    spriteNum++;  // altrimenti li stampa in modo normale
+
+                if(spriteNum == maxSpriteNum-1)
+                    endAnimation = true;
+                else if(spriteNum == 0)
+                    endAnimation = false;
+                
+                spriteCounter = 0;  // e resetta il counter
             }
             notifyObservers();
         }

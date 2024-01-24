@@ -28,8 +28,8 @@ public class EnemyDrawBehaviour implements EntityDrawBehaviour{
                 entity.spriteDeathNum++;
                 entity.spriteCounter = 0;
             }
-            if(entity.spriteDeathNum == 7){
-                entity.kill();
+            if(entity.spriteDeathNum == 7){  // se ha finito l'animazione di morte
+                entity.extinguished = true;
             }else{
                 entity.image = entity.deathImage.get(entity.spriteDeathNum);
             }
@@ -37,7 +37,7 @@ public class EnemyDrawBehaviour implements EntityDrawBehaviour{
 
         if(!entity.extinguished){
             // entity.g2.drawImage(entity.image, entity.imageP.x, entity.imageP.y, entity.width, entity.height, null);  // disegna lo sprite del personaggio (image) nella posizione x,y di grandezza tileSize
-            //da eliminare
+            // da eliminare
             entity.g2.setColor(Color.BLUE);
             entity.g2.draw(entity.hitbox);
 

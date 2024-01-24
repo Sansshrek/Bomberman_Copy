@@ -10,7 +10,6 @@ public class EntityManager implements EntityObserver { //EntityManagerObservable
     public EntityManager() {
         this.entityMap = new ConcurrentHashMap<>();
         //observers = new ArrayList<>();
-        
     }
 
     public void updateEntity(Entity entity){

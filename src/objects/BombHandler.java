@@ -61,6 +61,12 @@ public class BombHandler{
         }
     }
 
+    public void removeBomb(Bomb bomb){
+        int index = bombs.indexOf(bomb);
+        gp.obj[bombs.get(index).tileRow][bombs.get(index).tileCol] = null;  // elimina la bomba dalla mappa
+        bombs.remove(index);  // e dalla lista delle bombe
+    }
+
     /*
     public void explode(){
         System.out.println("Cnaicao");

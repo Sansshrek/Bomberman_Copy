@@ -141,7 +141,7 @@ public class Bomb extends SuperObject{
             }
             for(Entity ent: gp.enemy){  // controllo se colpisce un enemy
                 if(ent.hitbox.intersects(hitboxCenter))
-                    ent.died = true;
+                    ent.kill();
             }
 
         for (int i = 1; i <= firePower; i++) {
@@ -177,7 +177,7 @@ public class Bomb extends SuperObject{
                 }
                 for(Entity ent: gp.enemy){  // controllo se colpisce un enemy
                     if(ent.hitbox.intersects(hitboxFire))
-                        ent.died = true;
+                        ent.kill();
                 }
                 if(gp.obj[tileRow][tileCol-i] instanceof Bomb){
                     ((Bomb)gp.obj[tileRow][tileCol-i]).exploded = true;
@@ -229,7 +229,7 @@ public class Bomb extends SuperObject{
                 }
                 for(Entity ent: gp.enemy){
                     if(ent.hitbox.intersects(hitboxFire))
-                        ent.died = true;
+                        ent.kill();
                 }
                 if(gp.obj[tileRow][tileCol+i] instanceof Bomb){
                     ((Bomb)gp.obj[tileRow][tileCol+i]).exploded = true;
@@ -277,7 +277,7 @@ public class Bomb extends SuperObject{
                 }
                 for(Entity ent: gp.enemy){
                     if(ent.hitbox.intersects(hitboxFire))
-                        ent.died = true;
+                        ent.kill();
                 }
                 if(gp.obj[tileRow-i][tileCol] instanceof Bomb){
                     ((Bomb)gp.obj[tileRow-i][tileCol]).exploded = true;
@@ -332,7 +332,7 @@ public class Bomb extends SuperObject{
                 }
                 for(Entity ent: gp.enemy){
                     if(ent.hitbox.intersects(hitboxFire))
-                        ent.died = true;
+                        ent.kill();
                 }
                 if(gp.obj[tileRow+i][tileCol] instanceof Bomb){
                     ((Bomb)gp.obj[tileRow+i][tileCol]).exploded = true;

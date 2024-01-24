@@ -45,13 +45,20 @@ public class BasePlayerBehaviour implements EntityMovementBehaviour{
 
             entity.spriteCounter++;
             if(entity.spriteCounter > 15){  // ogni 15/60 volte al secondo 
-                entity.spriteNum++;
-                if(entity.spriteNum == entity.maxSpriteNum)
+                if(entity.endAnimation)  // se è finita l'animazione
+                    entity.spriteNum--;  // ristampa gli sprite in reverse
+                else
+                    entity.spriteNum++;  // altrimenti li stampa in modo normale
+
+                if(entity.spriteNum == entity.maxSpriteNum-1){
+                    entity.endAnimation = true;
+                }
+                if(entity.spriteNum <= 0){
+                    entity.endAnimation = false;
                     entity.spriteNum = 0;
+                }
                 
                 entity.spriteCounter = 0;  // e resetta il counter
-                // System.out.println(x+" "+y);  // da eliminare
-                //System.out.println(getPlayerTileX()+ " "+getPlayerTileY());
             }
         }
         if(entity.keyH.bombPressed){ // se preme il tasto P (bomba)

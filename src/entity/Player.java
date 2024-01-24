@@ -20,13 +20,9 @@ import objects.BombHandler;
 
 public class Player extends Entity{
     // public ArrayList<SuperObject> bombObj = new ArrayList<>();
-
-    //largezza e altezza dell' immagine del player
-    public final int width;
-    public final int height; 
     
     //larghezza e altezza dell' hitbox
-    public int bombNumber, lifeNumber, score, heartNumber;
+    public int bombNumber, lifeNumber, score;
     public boolean pauseGame;
     int spriteDeathCounter = 0;
 
@@ -35,7 +31,7 @@ public class Player extends Entity{
         this.keyH = keyH;
         int scale = gp.getScale();
         this.tileSize = gp.getTileSize();
-        maxSpriteNum = 4;
+        maxSpriteNum = 3;
 
         this.image=null;
 
@@ -44,8 +40,8 @@ public class Player extends Entity{
         this.height = 29*scale; // altezza del player 
 
         //codinate top left dell' hitbox
-        this.hitboxX = 2*scale;// dove parte hitbox del player (2 pixel a destra rispetto a dove parte l'immagine)
-        this.hitboxY = 12*scale; // dove parte hitbox del player (12 pixel sotto rispetto a dove parte l'immagine)
+        this.offsetX = 2*scale;// dove parte hitbox del player (2 pixel a destra rispetto a dove parte l'immagine)
+        this.offsetY = 12*scale; // dove parte hitbox del player (12 pixel sotto rispetto a dove parte l'immagine)
         
         //larghezza e altezza dell' hitbox
         this.hitboxWidth = 12*scale;// larghezza dell'hitbox del player
@@ -94,13 +90,13 @@ public class Player extends Entity{
         checkDeathFall = false;
         spriteDeathCounter = 0;
         spriteNum = 0;
-        this.hitbox = new Rectangle(hitboxX+imageP.x, hitboxY+imageP.y, hitboxWidth, hitboxHeight);
+        this.hitbox = new Rectangle(offsetX+imageP.x, offsetY+imageP.y, hitboxWidth, hitboxHeight);
         //setEntityVar(imageP, hitbox, invulnerable, died, extinguished, speed);
         notifyObservers();
     }
 
     public void kill(){
-        heartNumber -= 1;  // perde una vita del player stesso (non perde il numero di player)
+        heartNumber--;  // perde una vita del player stesso (non perde il numero di player)
         invulnerable = true;  // diventa invulnerabile
         if(heartNumber == 0){  // se perde tutte le vite del player
             if(!died){  // se non è morto
@@ -124,7 +120,7 @@ public class Player extends Entity{
             spriteNum = 0;
             lifeNumber -= 1;  // diminuisce di 1 la vita
             heartNumber = 1;
-            this.hitbox = new Rectangle(hitboxX+imageP.x, hitboxY+imageP.y, hitboxWidth, hitboxHeight);
+            this.hitbox = new Rectangle(offsetX+imageP.x, offsetY+imageP.y, hitboxWidth, hitboxHeight);
             gp.hud.resetTimer();
             //setEntityVar(imageP, hitbox, invulnerable, died, extinguished, speed);
         }
@@ -219,7 +215,8 @@ public class Player extends Entity{
     public void powerUpHandler(Point index){
         if(index.x != 999 && gp.obj[index.y][index.x].name != "block" && gp.obj[index.y][index.x] != null && !(gp.obj[index.y][index.x] instanceof Bomb)){  // se non è il valore default o un blocco
             String objName = gp.obj[index.y][index.x].name;
-            gp.obj[index.y][index.x] = null;
+            if(gp.obj[index.y][index.x].name != "exit")  // se non è l'exit
+                gp.obj[index.y][index.x] = null;  // allora lo elimina
             switch(objName){
                 // powerUp
                 case "fire":
@@ -273,8 +270,6 @@ public class Player extends Entity{
     public void draw(){
         
         drawBehaviour.draw(this);
-
-        
 
     }
 }

@@ -30,12 +30,13 @@ public class Entity implements EntityObservable{
     public String direction;
     public ArrayList<Node> pathSearch; 
 
-    public int firePower, spriteCounter, spriteNum, maxSpriteNum, invulnerableStart,  invulnerableTimer = 0, lifeNumber = 1, width, height, spriteDeathNum = 0, startDeathY;
+    public int firePower, spriteCounter, spriteNum, maxSpriteNum, invulnerableStart,  invulnerableTimer = 0, lifeNumber = 1, heartNumber = 1, width, height, spriteDeathNum = 0, startDeathY;
 
     public Rectangle hitbox;
-    public int hitboxX, hitboxY, hitboxWidth, hitboxHeight;
-    public boolean collisionOn = false, died = false, extinguished = false, bombExitHitbox = false, invulnerable = false;
+    public int offsetX, offsetY, hitboxWidth, hitboxHeight;
+    public boolean collisionOn = false, died = false, extinguished = false, bombExitHitbox = false, invulnerable = false, endAnimation = false;
     public boolean checkDeathJump = false, checkDeathFall = false;
+    public String type;
 
     ArrayList<BufferedImage>[] imageList = new ArrayList[4];
     ArrayList<BufferedImage>[] ogImage = new ArrayList[4];

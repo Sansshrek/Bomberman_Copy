@@ -12,6 +12,7 @@ import java.awt.Point;
 import javax.swing.JPanel;
 
 import entity.Enemy;
+import entity.EnemyType;
 import entity.Entity;
 import entity.EntityManager;
 import entity.EntityObserver;
@@ -39,6 +40,7 @@ public class GamePanel extends JPanel implements Runnable{
     public final int gameBorderRightX = gameBorderLeftX + 13*tileSize;
     public final int gameBorderUpY = (tileSize/2)+hudHeight;
     public final int gameBorderDownY = gameBorderUpY + 11*tileSize;
+    int gameLevel = 1;
 
     // World Settings
 
@@ -58,6 +60,9 @@ public class GamePanel extends JPanel implements Runnable{
     public SuperObject obj[][];
     public ArrayList<Enemy> enemy = new ArrayList<>();
     public int entityCounter;
+    public LevelType[] listaLivelli= {LevelType.LEVEL1, LevelType.LEVEL2, LevelType.LEVEL3};
+    int levelIndex = 0;
+    public int enemyNum;
     // Stato di Gioco
     public final int menuState = 5;
 
@@ -91,14 +96,18 @@ public class GamePanel extends JPanel implements Runnable{
 
             System.out.println("Caricando i blocchi distruttibili");  // da eliminare
             aSetter.setMatrixBlocks();
-            entityCounter = 1;
-            int maxEnemy = 3;
             enemy.clear();  // resetto la lista dei nemici
-            for(int i=0; i<maxEnemy; i++){
-                enemy.add(new Enemy(this, entityCounter, 3));  // aggiungo 3 nemici
+            LevelType livello = listaLivelli[levelIndex];
+            ArrayList<EnemyType> listaNemici = livello.enemyList;
+            enemyNum = listaNemici.size();
+            entityCounter = 1;
+            int counter = 0;
+            for(EnemyType enemyType: listaNemici){
+                enemy.add(new Enemy(this, entityCounter, enemyType));  // aggiungo 3 nemici
                 entityCounter++;
-                enemy.get(i).registerObserver(entityManager);
-                enemy.get(i).registerObserver(cChecker);
+                enemy.get(counter).registerObserver(entityManager);
+                enemy.get(counter).registerObserver(cChecker);
+                counter++;
             }
             checkGameOn = true;
         }
@@ -114,8 +123,15 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     public void nextLevel(){
-        checkSetup = false;
-        setupGame();  // per ora lascio che resetta il livello
+        if(enemyNum == 0){
+            checkSetup = false;
+            levelIndex++;
+            if(levelIndex == listaLivelli.length){  // per ora quando finisce i livelli resetta il gioco
+                levelIndex = 0;
+                resetLevel();
+            }
+            setupGame();  // per ora lascio che resetta il livello
+        }
     }
 
     public int getTileSize(){

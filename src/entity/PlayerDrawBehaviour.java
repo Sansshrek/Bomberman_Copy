@@ -40,36 +40,20 @@ public class PlayerDrawBehaviour implements EntityDrawBehaviour{
                     entity.spriteNum = 1;
                 }
             }else{  // altrimenti se tocca terra er poro chicco sta a stira
-                if(entity.spriteDeathNum == 10){
+                if(entity.spriteDeathNum == 5){
                     entity.extinguished = true;
                 }
         
     
                 entity.spriteCounter++;
                 if(entity.spriteCounter > 10){  // ogni 15/60 volte al secondo 
-                    switch(entity.spriteNum){
-                        case 1:
-                            entity.spriteNum++; 
-                            break;
-                        case 2: 
-                            entity.spriteNum++;
-                            break;
-                        case 3: 
-                            entity.spriteNum++;
-                            break;
-                        case 4:
-                            entity.spriteNum++;
-                            break;
-                        case 5:
-                            entity.spriteNum++;
-                            entity.spriteDeathNum++;
-                            break;
-                        case 6:
-                            entity.spriteNum = 5;  // fa un loop nelle ultime due animazioni
-                            entity.spriteDeathNum++;
-                            break;
-                        }
-                        entity.spriteCounter = 0;  // e resetta il counter
+                    if(entity.spriteNum == 6){
+                        entity.spriteNum = 5;
+                        entity.spriteDeathNum++;
+                    }else
+                        entity.spriteNum++;
+                    
+                    entity.spriteCounter = 0;  // e resetta il counter
                 }
                 entity.image = entity.deathImage.get(entity.spriteNum);
             }
