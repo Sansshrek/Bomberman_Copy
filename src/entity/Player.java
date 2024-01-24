@@ -117,6 +117,7 @@ public class Player extends Entity{
             checkDeathJump = false;
             checkDeathFall = false;
             spriteDeathCounter = 0;
+            spriteDeathNum = 0;
             spriteNum = 0;
             lifeNumber -= 1;  // diminuisce di 1 la vita
             heartNumber = 1;
@@ -234,7 +235,8 @@ public class Player extends Entity{
                 break;
                 case "life":
                     score += 50;
-                    lifeNumber += 1;
+                    if(lifeNumber < 9) // il massimo di vite che puo avere è nove
+                        lifeNumber += 1;
                 break;
                 case "death":
                     lifeNumber -= 1;
@@ -242,6 +244,14 @@ public class Player extends Entity{
                 case "heart":
                     score += 800;
                     heartNumber += 1;
+                break;
+                case "armor":
+                    score += 800;
+                    invulnerable = true;
+                break;
+                case "time":
+                    score += 800;
+                    gp.hud.resetTimer();
                 break;
                 // cibi
                 case "onigiri":
@@ -257,7 +267,8 @@ public class Player extends Entity{
                     score += 1000;
                 break;
                 case "exit":
-                    gp.nextLevel();
+                    if(getTileNumCol() == gp.obj[index.y][index.x].tileCol && getTileNumRow() == gp.obj[index.y][index.x].tileRow)
+                        gp.nextLevel();
                 break;
                 case "nothing":
                 break;

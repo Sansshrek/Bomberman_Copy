@@ -4,6 +4,7 @@ package entity;
 public class BasePlayerBehaviour implements EntityMovementBehaviour{
     
     public void updateMovement(Entity entity){
+        entity.collisionOn = false;
         if(entity.keyH.upPressed || entity.keyH.downPressed || entity.keyH.leftPressed || entity.keyH.rightPressed){
 
             if(entity.keyH.upPressed){ // se clicchi sopra
@@ -18,26 +19,10 @@ public class BasePlayerBehaviour implements EntityMovementBehaviour{
             if(entity.keyH.rightPressed){
                 entity.direction = "right";
             }
-            if(!entity.collisionOn){ // se si puo muovere
-                switch(entity.direction){
-                    case "up": 
-                        entity.imageP.y -= entity.speed;
-                        entity.hitbox.y -= entity.speed;
-                        break;  // la posizione Y diminuisce della velocita del player
-                    case "down": 
-                        entity.imageP.y += entity.speed;
-                        entity.hitbox.y += entity.speed;
-                        break;
-                    case "left": 
-                        entity.imageP.x -= entity.speed; 
-                        entity.hitbox.x -= entity.speed;
-                        break;
-                    case "right": 
-                        entity.imageP.x += entity.speed; 
-                        entity.hitbox.x += entity.speed;
-                        break;
-                }
-            }
+            entity.gp.cChecker.checkTile(entity);  // se in quella posizione si puo muovere allora collisionOn resta false
+            entity.gp.cChecker.checkObj(entity);
+            
+            entity.changeSpriteDirection();
 
             // hitbox.x = x + hitboxX;
             // hitbox.y = y + hitboxY;

@@ -35,10 +35,12 @@ public class HUD {
         this.scoreHeight = 14*scale;
         this.lifeX = tileSize+tileSize/2;
         this.lifeY = 9*scale;
-        clockHandX = 125*scale;
-        clockHandY = 15*scale;
-        clockHandWidth = 7*scale;
-        clockHandHeight = 7*scale;
+        this.clockHandX = 125*scale;
+        this.clockHandY = 15*scale;
+        this.clockHandWidth = 7*scale;
+        this.clockHandHeight = 7*scale;
+        this.timerY = 26*scale;
+        this.timerHeight = 3*scale;
         try {
             image = ImageIO.read(getClass().getResourceAsStream("../res/HUD/HUD.png"));
         } catch (Exception e) {
@@ -55,9 +57,7 @@ public class HUD {
         this.timerTick = 0;
         this.timerHand = 0;
         this.timerX = 10*scale;
-        this.timerY = 26*scale;
         this.timerWidth = 228*scale;
-        this.timerHeight = 3*scale;
     }
 
     public void loadClockImages(){

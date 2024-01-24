@@ -105,6 +105,29 @@ public class Entity implements EntityObservable{
             observer.updateEntity(this);
         }
     }
+    
+    public void changeSpriteDirection(){
+        if(!collisionOn){ // se si puo muovere
+            switch(direction){
+                case "up": 
+                    imageP.y -= speed;
+                    hitbox.y -= speed;
+                    break;  // la posizione Y diminuisce della velocita del player
+                case "down": 
+                    imageP.y += speed;
+                    hitbox.y += speed;
+                    break;
+                case "left": 
+                    imageP.x -= speed; 
+                    hitbox.x -= speed;
+                    break;
+                case "right": 
+                    imageP.x += speed; 
+                    hitbox.x += speed;
+                    break;
+            }
+        }
+    }
 
     //set Method
     public void setEntityVar(Point imageP, Rectangle hitbox, boolean invulnerable, boolean died, boolean extinguished, double speed){

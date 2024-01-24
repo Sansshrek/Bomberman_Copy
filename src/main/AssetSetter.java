@@ -15,20 +15,19 @@ public class AssetSetter{
     GamePanel gp;
     TileManager tileM;
     Random rand = new Random();
-    ArrayList<String> powerUp = new ArrayList<>(Arrays.asList("fire", "fire", "fire", "fire", "fire", 
-    "bomb", "bomb", "bomb", "bomb", "bomb", 
-    "skate", "skate", "skate", "skate", "skate", 
-    "skate", "skate", "skate", "skate", "skate", 
-    "skate", "skate", "skate", "skate", "skate", 
-    "skate", "skate", "skate", "skate", "skate", 
-    "skate", "skate", "skate", "skate", "skate", 
-    "skate", "skate", "skate", "skate", "skate", 
-    "life", "life", "life", "death", "death", "death",
-    "onigiri", "onigiri", "onigiri", "onigiri", "onigiri", "onigiri", "onigiri", 
-    "apple", "apple", "apple", "apple", "apple", 
-    "ice_cream", "ice_cream", "ice_cream", "ice_cream", 
-    "cake", "cake", "cake",
-    "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing"));
+    ArrayList<String> powerUp = new ArrayList<>(Arrays.asList(
+    "fire", "fire", "fire", "fire", "fire", // 5%
+    "bomb", "bomb", "bomb", "bomb", "bomb",  // 5% bomb
+    "skate", "skate", "skate", "skate", "skate",  // 5% skate
+    "life", "life", "death", "death",  // 2% life, 2% death
+    "heart", "heart", "armor", "armor", "time", "time",  // 2% heart, 2% armor, 2% time
+    "onigiri", "onigiri", "onigiri", "onigiri", "onigiri",  // 5% onigiri
+    "apple", "apple", "apple", "apple",   // 4% apple 
+    "ice_cream", "ice_cream", "ice_cream",  // 3% ice cream
+    "cake", "cake", "cake" // 3% cake
+    // 60% nothing
+    // "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing", "nothing"
+    ));
     public AssetSetter(GamePanel gp, TileManager tileM) {
         this.gp = gp;
         this.tileM = tileM;
@@ -58,7 +57,7 @@ public class AssetSetter{
         return avPos;
     }
     public void setMatrixBlocks(){
-        int numBlock = (int)(Math.random()*(45-33))+33;  // 33-45 blocchi a random
+        int numBlock = (int)(Math.random()*(40-33))+33;  // 33-45 blocchi a random
         ArrayList<Point> avPos = availablePosMatrix();  // prendiamo le posizioni disponibili
         ArrayList<String> avPowerUp = getPowerUp(numBlock);
           // prendiamo i powerUp disponibili

@@ -3,7 +3,6 @@ package main;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import entity.Enemy;
 import entity.EnemyType;
 
 public enum LevelType{

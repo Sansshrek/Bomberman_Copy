@@ -125,6 +125,7 @@ public class GamePanel extends JPanel implements Runnable{
     public void nextLevel(){
         if(enemyNum == 0){
             checkSetup = false;
+            checkGameOn = false;
             levelIndex++;
             if(levelIndex == listaLivelli.length){  // per ora quando finisce i livelli resetta il gioco
                 levelIndex = 0;
@@ -213,6 +214,7 @@ public class GamePanel extends JPanel implements Runnable{
             super.paintComponent(g);  // utilizza il metodo della classe parente di GamePanel quindi JPanel (GamePanel extends JPanel)
             Graphics2D g2 = (Graphics2D) g;  // estende la classe Graphics per aggiungere piu controlli sulla geometria, trasformazione delle cordinate, gestione colori e layout di testo
             player.g2 = g2;
+
             for(Enemy entity: enemy){  // itero i nemici
                 if(!entity.extinguished){
                     entity.g2 = g2;

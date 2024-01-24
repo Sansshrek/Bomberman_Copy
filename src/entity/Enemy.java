@@ -38,7 +38,7 @@ public class Enemy extends Entity{
         this.startX = type.startX;
         this.startY = type.startY;
 
-        this.speed = 2;
+        this.speed = 4;
         this.tileSize = gp.getTileSize();
 
         this.image=null;
@@ -67,7 +67,7 @@ public class Enemy extends Entity{
         if(startX == -1){  // se la pos di partenza è quella di default allora la cambia
             Point avPos = findAvStartPos();  // trova una posizione disponibile sulla mappa
             int hitboxXAv = (avPos.x*tileSize) + (tileSize+tileSize/2);   // posizione x dell'enemy IN ALTO A SINISTRA
-            int hitboxYAv = (avPos.y*tileSize) + 2*tileSize+tileSize/2;   // posizione y dell'enemy IN ALTO A SINISTRA
+            int hitboxYAv = (avPos.y*tileSize) + (2*tileSize+tileSize/2)-1;   // posizione y dell'enemy IN ALTO A SINISTRA
             hitbox = new Rectangle(hitboxXAv, hitboxYAv, hitboxWidth, hitboxHeight);
             this.imageP = new Point(hitboxXAv-offsetX, hitboxYAv-offsetY);
         }else{
@@ -144,26 +144,7 @@ public class Enemy extends Entity{
 
             movementBehaviour.updateMovement(this);
 
-            if(!collisionOn){ // se si puo muovere
-                switch(direction){
-                    case "up": 
-                        imageP.y -= speed;
-                        hitbox.y -= speed;
-                        break;  // la posizione Y diminuisce della velocita del player
-                    case "down": 
-                        imageP.y += speed;
-                        hitbox.y += speed;
-                        break;
-                    case "left": 
-                        imageP.x -= speed; 
-                        hitbox.x -= speed;
-                        break;
-                    case "right": 
-                        imageP.x += speed; 
-                        hitbox.x += speed;
-                        break;
-                }
-            }
+            changeSpriteDirection();
             // controlla se colpiamo qualche blocco
                 // CONTROLLA COLLISIONE OBJECT
 
