@@ -6,7 +6,7 @@ import java.awt.event.KeyListener;
 public class KeyHandler implements KeyListener {
 
     public boolean upPressed, downPressed, leftPressed, rightPressed, bombPressed, pausePressed;
-    public boolean statsPressed, firePressed, resetPressed;  // da eliminare
+    public boolean statsPressed, firePressed, resetPressed, debugPressed;  // da eliminare
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -30,15 +30,17 @@ public class KeyHandler implements KeyListener {
         if(code == KeyEvent.VK_P){  // se preme il tast P (bomba)
             bombPressed = true;
         }
+        if(code == KeyEvent.VK_ENTER)  // preme il tasto Enter (Pausa)
+            pausePressed = true;
 
         if(code == KeyEvent.VK_L)  // da eliminare
             statsPressed = true;
         if(code == KeyEvent.VK_K)
             firePressed = true;
-        if(code == KeyEvent.VK_R)
+        if(code == KeyEvent.VK_R)  // reset livello
             resetPressed = true;
-        if(code == KeyEvent.VK_ENTER)
-            pausePressed = true;
+        if(code == KeyEvent.VK_I)  // debug
+            debugPressed = true;
     }
 
     @Override

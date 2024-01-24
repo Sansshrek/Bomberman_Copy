@@ -166,21 +166,25 @@ public class Player extends Entity{
 
             movementBehaviour.updateMovement(this);
 
-            if(keyH.statsPressed){ // da eliminare
+            if(keyH.statsPressed){ // tasto L da eliminare
                 System.out.println("\nFire "+firePower);
                 System.out.println("Speed "+speed);
                 System.out.println("BombNumber "+bombNumber);
                 System.out.println("Life "+lifeNumber);
                 keyH.statsPressed = false;
             }
-            if(keyH.firePressed){
+            if(keyH.firePressed){  // tasto K
                 firePower++;
                 System.out.println("Range fuoco aumentato");
                 keyH.firePressed = false;
             }
-            if(keyH.resetPressed){
+            if(keyH.resetPressed){  // tasto R
                 gp.resetLevel();
                 keyH.resetPressed = false;
+            }
+            if(keyH.debugPressed){  // tasto I
+                System.out.println("Debug");
+                keyH.debugPressed = false;
             }
         }
         notifyObservers();
