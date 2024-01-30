@@ -42,7 +42,7 @@ public class Player extends Entity{
 
         //codinate top left dell' hitbox
         this.offsetX = 2*scale;// dove parte hitbox del player (2 pixel a destra rispetto a dove parte l'immagine)
-        this.offsetY = 8*scale; // dove parte hitbox del player (12 pixel sotto rispetto a dove parte l'immagine)
+        this.offsetY = 10*scale; // dove parte hitbox del player (12 pixel sotto rispetto a dove parte l'immagine)
         
         //larghezza e altezza dell' hitbox
         this.hitboxWidth = 12*scale;// larghezza dell'hitbox del player

@@ -32,8 +32,7 @@ public class SearchEntity implements EntityMovementBehaviour{
                     entity.notifyObservers();
                 }
             }else{  // comportamento idiota
-                entity.collisionOn = false;
-
+                
                 entity.gp.cChecker.checkTile(entity);
                 entity.gp.cChecker.checkObj(entity);
                 if(entity.collisionOn){

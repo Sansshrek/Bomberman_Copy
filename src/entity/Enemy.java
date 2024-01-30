@@ -75,8 +75,10 @@ public class Enemy extends Entity{
             startX = startX*tileSize;
             startY = startY*tileSize;
         }
+        this.collisionOn = true;
         this.speed = 1;
         this.direction = "down";
+        gp.cChecker.checkTile(this);
         notifyObservers();
     }
 
@@ -144,7 +146,7 @@ public class Enemy extends Entity{
             // controlliamo cosa fare con l'oggetto
 
             movementBehaviour.updateMovement(this);
-
+            //System.out.println("Collision:" + collisionOn + "  Row:" + getTileNumRow() + "  Col:" + getTileNumCol() + "  Direction:" + direction);
             changeSpriteDirection();
             // controlla se colpiamo qualche blocco
                 // CONTROLLA COLLISIONE OBJECT

@@ -90,7 +90,6 @@ public class Entity implements EntityObservable{
     @Override
     public void registerObserver(EntityObserver observer) {
         observers.add(observer);
-        notifyObservers();
     }
 
     @Override

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 
+import entity.Enemy;
 import entity.Entity;
 import entity.EntityMovementBehaviour;
 import entity.EntityObserver;
@@ -181,17 +182,13 @@ public class CollisionChecker implements EntityObserver{
                 }else
                     entity.collisionOn = true;
             }
-        }else{  // controllo enemy
+        }
+        if (entity instanceof Enemy){  // controllo enemy
             if(wallCheckCx != null && (hitboxCheck1.intersects(wallCheckCx) || hitboxCheck2.intersects(wallCheckCx))){  // se entrambe le hitbox intercettano il blocco al centro
                 entity.collisionOn = true;  // allora l'hitbox dell'entity colpisce interamente il blocco
             }
-            if(wallCheck1 != null && hitboxCheck1.intersects(wallCheck1)){  // se l'hitbox1 intercetta il blocco in wallCheck1
-                entity.collisionOn = true;  // altrimenti non passa
-            }
-            if(wallCheck2 != null && hitboxCheck2.intersects(wallCheck2)){  // se l'hitbox2 intercetta il blocco in wallCheck2
-                entity.collisionOn = true;
-            }
         }
+        entity.notifyObservers();
     }
     
     public void checkPlayerCollision(Entity enemy, Entity player) {
@@ -245,7 +242,9 @@ public class CollisionChecker implements EntityObserver{
                 }
             }
         }
+        entity.notifyObservers();
         return new Point(999, 999);  // punto default
+        
     }
     
     public void checkBomb(Entity entity){  // FATTO DA FRANCESCO PAGLIACCIA™
@@ -401,10 +400,10 @@ public class CollisionChecker implements EntityObserver{
         // se è dentro la mappa e non è un blocco/palazzo allora torna true
         if(entityType != "pakupa"){  // se non è il pakupa faccio il controllo con tutti i tipi di blocchi
             return row >= 0 && row < gp.maxGameRow && col >= 0 && col < gp.maxGameCol
-                && !(gp.obj[row][col] instanceof Block) && !(gp.obj[row][col] instanceof Bomb) && gp.tileM.houseTileNum[row][col] == 0;
+                && !(gp.obj[row][col] instanceof Block) && !(gp.obj[row][col] instanceof Bomb) && gp.tileM.houseTileNum[row][col] != 3 && gp.tileM.houseTileNum[row][col] == 0;
         }else{  // se è il pakupa fa il controllo senza le bombe
             return row >= 0 && row < gp.maxGameRow && col >= 0 && col < gp.maxGameCol
-                && !(gp.obj[row][col] instanceof Block) && gp.tileM.houseTileNum[row][col] == 0 && gp.tileM.houseTileNum[row][col] != 3;
+                && !(gp.obj[row][col] instanceof Block) && gp.tileM.houseTileNum[row][col] != 3;
         }
     }
 
