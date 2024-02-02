@@ -77,6 +77,7 @@ public class GamePanel extends JPanel implements Runnable{
         this.obj = new SuperObject[maxGameRow][maxGameCol]; 
         checkSetup = false;
         checkGameOn = false;
+        setupGame();
     }
 
     public void setupGame(){  // imposto il gioco da capo
@@ -208,8 +209,8 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     public void paintComponent(Graphics g){
-        Graphics2D g2 = (Graphics2D) g;  // estende la classe Graphics per aggiungere piu controlli sulla geometria, trasformazione delle cordinate, gestione colori e layout di testo
         super.paintComponent(g);  // utilizza il metodo della classe parente di GamePanel quindi JPanel (GamePanel extends JPanel)
+        Graphics2D g2 = (Graphics2D) g;  // estende la classe Graphics per aggiungere piu controlli sulla geometria, trasformazione delle cordinate, gestione colori e layout di testo
         if(checkGameOn){
             player.g2 = g2;
 

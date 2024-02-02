@@ -21,7 +21,7 @@ public class StartMenu {
         this.gp = gp;
         this.keyH = keyH;
         //Salvo nella lista options a seconda dell'opzione optionX, optionY
-        options = new int[3][4];
+        options = new int[3][4]; 
         options[0][0] = 400;//optionWidth
         options[0][1] = 55;//optionHeight
         options[0][2] = (gp.screenWidth - options[0][0])/2;//optionX
@@ -74,13 +74,12 @@ public class StartMenu {
             }
         }
         //se preme invio e sono passati almeno 3 secondi dall'inizio dell'avvio del programma
-        if(keyH.pausePressed  && poinerIndex==0 && System.currentTimeMillis()>3000 ){
+        if(keyH.pausePressed  && poinerIndex==0 && System.currentTimeMillis()>3000){
             if(!gp.checkGameOn){
                 //disegna transizione
             }
             gp.setupGame();
         }
-
         pointerX = options[poinerIndex][2];
         pointerY = options[poinerIndex][3];
     }

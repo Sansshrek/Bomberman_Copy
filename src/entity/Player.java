@@ -48,7 +48,7 @@ public class Player extends Entity{
         this.hitboxWidth = 12*scale;// larghezza dell'hitbox del player
         this.hitboxHeight = 12*scale;// altezza dell'hitbox del player
 
-        this.movementBehaviour = new BasePlayerBehaviour();
+        this.movementBehaviour = new MouseBehaviour();
         this.drawBehaviour = new PlayerDrawBehaviour();
 
         System.out.println("Caricando il player");  // da eliminare
@@ -91,6 +91,8 @@ public class Player extends Entity{
         checkDeathFall = false;
         spriteDeathCounter = 0;
         spriteNum = 0;
+        mouseX = x;
+        mouseY = y;
         this.hitbox = new Rectangle(offsetX+imageP.x, offsetY+imageP.y, hitboxWidth, hitboxHeight);
         //setEntityVar(imageP, hitbox, invulnerable, died, extinguished, speed);
         notifyObservers();
@@ -122,6 +124,8 @@ public class Player extends Entity{
             spriteNum = 0;
             lifeNumber -= 1;  // diminuisce di 1 la vita
             heartNumber = 1;
+            mouseX = x;
+            mouseY = y;
             this.hitbox = new Rectangle(offsetX+imageP.x, offsetY+imageP.y, hitboxWidth, hitboxHeight);
             gp.hud.resetTimer();
             //setEntityVar(imageP, hitbox, invulnerable, died, extinguished, speed);
@@ -154,6 +158,18 @@ public class Player extends Entity{
             e.printStackTrace();
         }
         notifyObservers();
+    }
+
+    public void updateMousePosition(int mouseX, int mouseY){
+        this.mouseX = mouseX;
+        this.mouseY = mouseY;
+        // da spostare in mouseBehaviour
+        // eseguo gli stessi calcoli del getTileNumCol e getTileNumRow ma con i valori del mouse
+        int tileNumCol = (mouseX - 72) / gp.tileSize;
+        int tileNumRow = (mouseY - 120) / gp.tileSize;
+        if(gp.tileM.houseTileNum[tileNumRow][tileNumCol] != 3 && gp.obj[tileNumRow][tileNumCol] == null)
+            System.out.println("VALID POS");
+        System.out.println("mouseX: "+tileNumCol+" mouseY: "+tileNumRow);
     }
 
     public void update(){  // update viene chiamato 60 volte al secondo

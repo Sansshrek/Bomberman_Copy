@@ -11,6 +11,8 @@ public class Main {
         window.setResizable(false);
         window.setTitle("Super Bomberman");
 
+        GamePanel gamePanel = new GamePanel();
+
         window.addMouseListener(new MouseListener() {
         public void mousePressed(MouseEvent me) { }
         public void mouseReleased(MouseEvent me) { }
@@ -19,11 +21,10 @@ public class Main {
         public void mouseClicked(MouseEvent me) { 
           int x = me.getX()-7;
           int y = me.getY()-30;
-          System.out.println("mouseX: "+x+" mouseY: "+y);
+          gamePanel.player.updateMousePosition(x, y);
         }
         });
 
-        GamePanel gamePanel = new GamePanel();
         window.add(gamePanel);
 
         window.pack(); // causa la finestra a impostarsi come i componenti (gamePanel) 

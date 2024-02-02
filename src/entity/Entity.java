@@ -33,7 +33,7 @@ public class Entity implements EntityObservable{
     public int firePower, spriteCounter, spriteNum, maxSpriteNum, invulnerableStart, invulnerableSec, invulnerableTimer = 0, lifeNumber = 1, heartNumber = 1, width, height, spriteDeathNum = 0, startDeathY;
 
     public Rectangle hitbox;
-    public int offsetX, offsetY, hitboxWidth, hitboxHeight;
+    public int offsetX, offsetY, hitboxWidth, hitboxHeight, mouseX, mouseY;
     public boolean collisionOn = false, died = false, extinguished = false, bombExitHitbox = false, invulnerable = false, endAnimation = false;
     public boolean checkDeathJump = false, checkDeathFall = false;
     public String type;
@@ -87,6 +87,11 @@ public class Entity implements EntityObservable{
     public int getTileY() {
         return getTileNumRow() * gp.tileSize + 120; // TilePlayerY*48 + lo spostamento verso l'alto
     }
+    public boolean fullyInsideTile(){  // se l'hitbox del player è completamente all'interno della hitbox del blocco in cui sta allora ritorna true
+        Rectangle tileHitbox = new Rectangle(getTileX(), getTileY(), gp.tileSize, gp.tileSize);
+        return tileHitbox.contains(hitbox);
+    }
+
     @Override
     public void registerObserver(EntityObserver observer) {
         observers.add(observer);

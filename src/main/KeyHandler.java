@@ -61,6 +61,8 @@ public class KeyHandler implements KeyListener {
         if(code == KeyEvent.VK_P){  // se preme il tast P (bomba)
             bombPressed = false;
         }
+        if(code == KeyEvent.VK_ENTER)
+            pausePressed = false;
     }
     
     
