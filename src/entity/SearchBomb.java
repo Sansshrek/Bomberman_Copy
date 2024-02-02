@@ -13,7 +13,6 @@ public class SearchBomb implements EntityMovementBehaviour{
     EntityMovementBehaviour stupidBehaviour = new StupidEntity();
     
     public void updateMovement(Entity entity){
-        
         if(entity.hitbox.x == entity.getTileX() && entity.hitbox.y == entity.getTileY()){
             // entity.findP = new Point(entity.gp.player.getTileNumCol(), entity.gp.player.getTileNumRow());  // prendo la pos del player
             Bomb bombSearch = null;

@@ -46,11 +46,11 @@ public class GamePanel extends JPanel implements Runnable{
 
     // FPS 
     int FPS = 60;
-
     public HUD hud = new HUD(this);
     public CollisionChecker cChecker = new CollisionChecker(this);
     public TileManager tileM = new TileManager(this);
     KeyHandler keyH = new KeyHandler();
+    public StartMenu startMenu = new StartMenu(this, keyH);
     Thread gameThread;
     public BombHandler bombH = new BombHandler(this, tileSize);
     public Player player = new Player(this, keyH);
@@ -77,7 +77,6 @@ public class GamePanel extends JPanel implements Runnable{
         this.obj = new SuperObject[maxGameRow][maxGameCol]; 
         checkSetup = false;
         checkGameOn = false;
-        setupGame();
     }
 
     public void setupGame(){  // imposto il gioco da capo
@@ -209,9 +208,9 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     public void paintComponent(Graphics g){
+        Graphics2D g2 = (Graphics2D) g;  // estende la classe Graphics per aggiungere piu controlli sulla geometria, trasformazione delle cordinate, gestione colori e layout di testo
+        super.paintComponent(g);  // utilizza il metodo della classe parente di GamePanel quindi JPanel (GamePanel extends JPanel)
         if(checkGameOn){
-            super.paintComponent(g);  // utilizza il metodo della classe parente di GamePanel quindi JPanel (GamePanel extends JPanel)
-            Graphics2D g2 = (Graphics2D) g;  // estende la classe Graphics per aggiungere piu controlli sulla geometria, trasformazione delle cordinate, gestione colori e layout di testo
             player.g2 = g2;
 
             for(Enemy entity: enemy){  // itero i nemici
@@ -265,6 +264,10 @@ public class GamePanel extends JPanel implements Runnable{
             drawHUD(g2);
 
             g2.dispose();  // rimuove il contesto grafico e rilascia ogni risorsa di sistema che sta usando
+        }
+        else{
+            startMenu.drawStartMenu(g2);
+            startMenu.chooseOptions();
         }
     }
 

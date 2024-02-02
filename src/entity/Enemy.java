@@ -38,7 +38,7 @@ public class Enemy extends Entity{
         this.startX = type.startX;
         this.startY = type.startY;
 
-        this.invulnerableSec = 3;
+        this.invulnerableSec = 2;
         this.tileSize = gp.getTileSize();
 
         this.image=null;
