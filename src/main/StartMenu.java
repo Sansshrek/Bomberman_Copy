@@ -1,27 +1,32 @@
 package main;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
+import java.awt.Color;
 
 import javax.imageio.ImageIO;
 
-public class StartMenu {
-    public GamePanel gp;
-    public KeyHandler keyH;
-    private long lastOptionChangeTime = 0;
-    private final long optionChangeCoolDown = 200; // tempo di cooldown in millisecondi
-    public int screenWidth, screenHeight, pointerX, pointerY, poinerIndex;
-    public int options[][];
-    public BufferedImage transitionImage, pointerImage, backgroundImage, ballonImage, cloudImage, optionStartStirngImage, optionSettingsStringImage, optionDataStringImage;
-    public Graphics2D g2;
+public class StartMenu implements Panel{
+    KeyHandler keyH = KeyHandler.getInstance(); 
+    
+    BufferedImage backgroundImage, ballonImage, cloudImage, optionStartImage, optionSettingsImage, optionScoreImage, pointerImage;
+    //Salvo nella lista options a seconda dell'opzione optionX, optionY
+    int[][] options = new int[3][4];
+    int optionX, optionY, startPointerY, pointerX, pointerY, pointerIndex = 0, pointerWidth, pointerHeight, optionWidth, optionHeight, optionDistance, totOptionNumber=3;
+    public StartMenu(GamePanel gp){
+        optionWidth = 111*gp.scale;
+        optionHeight = 10*gp.scale;
+        optionX = (gp.screenWidth - optionWidth)/2;
+        optionY = (gp.screenHeight - optionHeight)/2 + 100;
+        pointerWidth = 8*gp.scale;
+        pointerHeight = 12*gp.scale;
+        pointerX = optionX - pointerWidth - 3*gp.scale;  // distanza di partenza del pointer
+        startPointerY = optionY - 1*gp.scale;
+        pointerY = startPointerY;
+        optionDistance = 20*gp.scale;   //distanza tra le opzioni
+        
 
-    public StartMenu(GamePanel gp, KeyHandler keyH){
-        this.gp = gp;
-        this.keyH = keyH;
-        //Salvo nella lista options a seconda dell'opzione optionX, optionY
-        options = new int[3][4]; 
+        /* 
         options[0][0] = 400;//optionWidth
         options[0][1] = 55;//optionHeight
         options[0][2] = (gp.screenWidth - options[0][0])/2;//optionX
@@ -33,55 +38,72 @@ public class StartMenu {
         options[2][0] = 400;//optionWidth
         options[2][1] = 55;//optionHeight
         options[2][2] = (gp.screenWidth - options[2][0])/2;//optionX
-        options[2][3] = (gp.screenHeight - options[2][1])/2+220;//optionY
-
-        //caricamento immagini
+        options[2][3] = (gp.screenHeight - options[2][1])/2+220; //optionY0*/
         try {
-            backgroundImage = ImageIO.read(getClass().getResourceAsStream("../res/startMenu/startMenu.png"));
-            ballonImage = ImageIO.read(getClass().getResourceAsStream("../res/startMenu/Ballon.png"));
-            cloudImage = ImageIO.read(getClass().getResourceAsStream("../res/startMenu/Cloud.png"));
-            optionStartStirngImage = ImageIO.read(getClass().getResourceAsStream("../res/startMenu/Start.png"));
-            optionSettingsStringImage = ImageIO.read(getClass().getResourceAsStream("../res/startMenu/Settings.png"));
-            optionDataStringImage = ImageIO.read(getClass().getResourceAsStream("../res/startMenu/Data.png"));
-            pointerImage = ImageIO.read(getClass().getResourceAsStream("../res/startMenu/Pointer.png"));
-            // transitionImage = ImageIO.read(getClass().getResourceAsStream("../res/startMenu/transiton.png"));
+            // ballonImage = ImageIO.read(getClass().getResourceAsStream("../res/menu/Ballon.png"));
+            // cloudImage = ImageIO.read(getClass().getResourceAsStream("../res/menu/Cloud.png"));
+            backgroundImage = ImageIO.read(getClass().getResourceAsStream("../res/menu/Start.png"));
+            optionStartImage = ImageIO.read(getClass().getResourceAsStream("../res/menu/start sprite.png"));
+            optionSettingsImage = ImageIO.read(getClass().getResourceAsStream("../res/menu/Settings.png"));
+            optionScoreImage = ImageIO.read(getClass().getResourceAsStream("../res/menu/Score.png"));
+            pointerImage = ImageIO.read(getClass().getResourceAsStream("../res/menu/pointer.png"));
+            // transitionImage = ImageIO.read(getClass().getResourceAsStream("../res/menu/transiton.png"));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    public void drawStartMenu(Graphics2D g2){
+
+
+    public void drawPanel(Graphics2D g2, GamePanel gp){
+        g2.setColor(new Color(0, 0, 255));
+        g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);  // disegna il background
         g2.drawImage(backgroundImage, 0, 0, gp.screenWidth, gp.screenHeight, null);
-        g2.drawImage(optionStartStirngImage, options[0][2], options[0][3], options[0][0], options[0][1], null);
-        g2.drawImage(optionSettingsStringImage, options[1][2], options[1][3], options[1][0], options[1][1], null);
-        g2.drawImage(optionDataStringImage, options[2][2], options[2][3], options[2][0], options[2][1], null);
+        g2.drawImage(optionStartImage, optionX, optionY, optionWidth, optionHeight, null);
+        g2.drawImage(optionSettingsImage, optionX, optionY+optionDistance, optionWidth, optionHeight, null);
+        g2.drawImage(optionScoreImage, optionX, optionY+optionDistance*2, optionWidth, optionHeight, null);
         g2.drawImage(pointerImage, pointerX, pointerY, 50, 50, null);
     }
-    public void chooseOptions(){
-        pointerX = options[0][2]-60;
-        pointerY = options[0][3];
-        if(keyH.downPressed && System.currentTimeMillis()-lastOptionChangeTime>optionChangeCoolDown){
-            lastOptionChangeTime = System.currentTimeMillis();
-            poinerIndex+=1;
-            if (poinerIndex>2){
-                poinerIndex=0;
+
+    public void chooseOptions(GamePanel gp){
+        System.out.println("pointer index:" + pointerIndex);
+        if(keyH.downPressed){
+            pointerIndex+=1;
+            if (pointerIndex>2){
+                pointerIndex=0;
+                pointerY = startPointerY;
+            }
+            else{
+                pointerY = optionY+optionDistance;
             }
         }
-        else if(keyH.upPressed && System.currentTimeMillis()-lastOptionChangeTime>optionChangeCoolDown){
-            lastOptionChangeTime = System.currentTimeMillis();
-            poinerIndex-=1;
-            if (poinerIndex<0){
-                poinerIndex=2;
+        else if(keyH.upPressed){
+            pointerIndex-=1;
+            if (pointerIndex<0){
+                pointerIndex=2;
+                pointerY = optionY+optionDistance*pointerIndex;
+            }
+            else{
+                pointerY = optionY-optionDistance;
             }
         }
-        //se preme invio e sono passati almeno 3 secondi dall'inizio dell'avvio del programma
-        if(keyH.pausePressed  && poinerIndex==0 && System.currentTimeMillis()>3000){
+        
+        if(keyH.pausePressed && pointerIndex==0){
+            System.out.println("INVIOOOOOO");
+
             if(!gp.checkGameOn){
                 //disegna transizione
             }
             gp.setupGame();
+            // gp.checkGameOn=true;
+            //gp.currentPanel = null;
         }
-        pointerX = options[poinerIndex][2];
-        pointerY = options[poinerIndex][3];
+        if(keyH.pausePressed && pointerIndex==1){
+            //disegna transizione
+            gp.currentPanel = new OptionMenu();
+        }
+        if(keyH.pausePressed && pointerIndex==2){
+            //disegna transizione
+            gp.currentPanel = new ScoreMenu();
+        }
     }
-
 }

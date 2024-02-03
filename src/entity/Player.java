@@ -25,9 +25,9 @@ public class Player extends Entity{
     public int bombNumber, lifeNumber, score;
     int spriteDeathCounter = 0;
 
-    public Player(GamePanel gp, KeyHandler keyH){
+    public Player(GamePanel gp){
         super(gp);
-        this.keyH = keyH;
+        this.keyH = KeyHandler.getInstance();
         int scale = gp.getScale();
         this.tileSize = gp.getTileSize();
         this. maxSpriteNum = 3;
@@ -48,7 +48,7 @@ public class Player extends Entity{
         this.hitboxWidth = 12*scale;// larghezza dell'hitbox del player
         this.hitboxHeight = 12*scale;// altezza dell'hitbox del player
 
-        this.movementBehaviour = new MouseBehaviour();
+        this.movementBehaviour = new BasePlayerBehaviour();
         this.drawBehaviour = new PlayerDrawBehaviour();
 
         System.out.println("Caricando il player");  // da eliminare
@@ -212,16 +212,6 @@ public class Player extends Entity{
         notifyObservers();
     }
 
-    public void updateKey(){
-        if(keyH.pausePressed){ //se viene premuto Enter
-            if(gp.pauseGame){  // se il gioco è gia in pausa fa ricominciare il gioco
-                gp.pauseGame = false;
-            }else{  // se il gioco non è in pausa allora lo ferma
-                gp.pauseGame = true;
-            }
-            keyH.pausePressed = false;
-        }
-    }
 /* 
     public void playerDeathJump(){
         if(died){

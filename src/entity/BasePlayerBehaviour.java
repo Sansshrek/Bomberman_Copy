@@ -21,7 +21,7 @@ public class BasePlayerBehaviour implements EntityMovementBehaviour{
             }
             entity.gp.cChecker.checkTile(entity);  // se in quella posizione si puo muovere allora collisionOn resta false
             entity.gp.cChecker.checkObj(entity);
-            
+
             entity.changeSpriteDirection();
 
             // hitbox.x = x + hitboxX;

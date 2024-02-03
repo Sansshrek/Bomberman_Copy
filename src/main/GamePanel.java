@@ -31,7 +31,7 @@ public class GamePanel extends JPanel implements Runnable{
     public final int tileSize = originalTileSize * scale;  // 48x48 tile (è public cosi la classe Player puo accedere al valore)
     public final int maxScreenCol = 16;
     public final int maxScreenRow = 14;
-    public final int screenWidth = tileSize * maxScreenCol-16*this.scale;  // 768 pixels
+    public final int screenWidth = tileSize * maxScreenCol-tileSize;  // 720 pixels
     public final int screenHeight = tileSize * maxScreenRow;  // 672 pixels
     public final int hudHeight = 32*scale;
     public final int maxGameCol = 13;
@@ -49,11 +49,10 @@ public class GamePanel extends JPanel implements Runnable{
     public HUD hud = new HUD(this);
     public CollisionChecker cChecker = new CollisionChecker(this);
     public TileManager tileM = new TileManager(this);
-    KeyHandler keyH = new KeyHandler();
-    public StartMenu startMenu = new StartMenu(this, keyH);
+    KeyHandler keyH = KeyHandler.getInstance();
     Thread gameThread;
     public BombHandler bombH = new BombHandler(this, tileSize);
-    public Player player = new Player(this, keyH);
+    public Player player = new Player(this);
     public AssetSetter aSetter = new AssetSetter(this, tileM);
     // public ArrayList<SuperObject> obj = new ArrayList<>();
     public SuperObject obj[][];
@@ -65,6 +64,8 @@ public class GamePanel extends JPanel implements Runnable{
     // Stato di Gioco
     public final int menuState = 5;
     public boolean pauseGame = false;
+    public String currentPanelType = "start";
+    public Panel currentPanel = new StartMenu(this);
 
     // test da eliminare
     boolean checkSetup, checkGameOn;
@@ -78,7 +79,8 @@ public class GamePanel extends JPanel implements Runnable{
         this.obj = new SuperObject[maxGameRow][maxGameCol]; 
         checkSetup = false;
         checkGameOn = false;
-        setupGame();
+        
+        //setupGame();
     }
 
     public void setupGame(){  // imposto il gioco da capo
@@ -132,6 +134,17 @@ public class GamePanel extends JPanel implements Runnable{
                 resetLevel();
             }
             setupGame();  // per ora lascio che resetta il livello
+        }
+    }
+
+    public void updateKey(){
+        if(keyH.pausePressed){ //se viene premuto Enter
+            if(pauseGame){  // se il gioco è gia in pausa fa ricominciare il gioco
+                pauseGame = false;
+            }else{  // se il gioco non è in pausa allora lo ferma
+                pauseGame = true;
+            }
+            keyH.pausePressed = false;
         }
     }
 
@@ -189,7 +202,12 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     public void update(){
-        player.updateKey();
+        updateKey();
+        if(!checkGameOn){
+            System.out.println("UPDATEEEE PANEEELL  !!!!!!");
+            currentPanel.chooseOptions(this);
+        }
+        
         if(checkGameOn && !pauseGame){  // se il gioco puo partire e il player non ha fermato il gioco
             hud.updateTime();
             player.update();
@@ -212,67 +230,66 @@ public class GamePanel extends JPanel implements Runnable{
     public void paintComponent(Graphics g){
         super.paintComponent(g);  // utilizza il metodo della classe parente di GamePanel quindi JPanel (GamePanel extends JPanel)
         Graphics2D g2 = (Graphics2D) g;  // estende la classe Graphics per aggiungere piu controlli sulla geometria, trasformazione delle cordinate, gestione colori e layout di testo
-        if(checkGameOn){
-            player.g2 = g2;
-
-            for(Enemy entity: enemy){  // itero i nemici
-                if(!entity.extinguished){
-                    entity.g2 = g2;
-                }
-            }
-            bombH.g2 = g2;
-            
-            g2.setColor(Color.black);
-            g2.fillRect(0, 0, this.maxScreenRow, this.maxScreenCol);  // disegna il background
-
-            tileM.drawMap(g2, 24*this.scale, this.hudHeight+(8*this.scale), "ground");  // prima il pavimento
-            tileM.drawMap(g2, 24*this.scale, this.hudHeight+(8*this.scale), "house");  // poi i palazzi
-            tileM.drawMap(g2, -8*this.scale, this.hudHeight-(8*this.scale), "walls");  // poi le mura
-
-            /*
-            g2.setColor(Color.RED);  // da eliminare
-            for(int row=0; row<maxGameRow; row++){
-                for(int col=0; col<maxGameCol; col++){
-                    if(tileM.houseHitbox[row][col] != null)
-                        g2.draw(tileM.houseHitbox[row][col]);
-                }
-            }  */
-
-            for(int row=0; row < maxGameRow; row++){
-                for(int col=0; col < maxGameCol; col++){
-                    if(obj[row][col] != null){
-                        obj[row][col].draw(g2, this);
-                        g2.setColor(Color.YELLOW);
-                        g2.draw(obj[row][col].hitbox);
-                    }
-                }
-            }
-
-            bombH.updateBomb();
-            // player.draw();  // poi il player
-            player.drawBehaviour.draw(player);
-            ArrayList<Enemy> enemyDelete = new ArrayList<>();  // lista di nemici temporanea da eliminare nel caso dalla lista enemy originale
-            for(Enemy entity: enemy){
-                if(!entity.extinguished){  // se ancora non è esploso del tutto
-                    entity.draw();  // disegna l'enemy
-                    // entity.drawBehaviour.draw(entity);
-                }else{
-                    enemyDelete.add(entity);  // aggiunge il nemico morto alla lista temporanea dei nemici da eliminare
-                }
-            }
-            for(Enemy entity: enemyDelete){
-                enemy.remove(entity);  // rimuove dalla lista originale l'enemy morto
-            }
-            drawHUD(g2);
-
-            //disegno transizione
-
-            g2.dispose();  // rimuove il contesto grafico e rilascia ogni risorsa di sistema che sta usando
+        if(checkGameOn){  // se è partito il gioco
+            paintGame(g2);
+        }if (!checkGameOn){
+            currentPanel.drawPanel(g2, this);
         }
-        else{
-            startMenu.drawStartMenu(g2);
-            startMenu.chooseOptions();
+        g2.dispose();  // rimuove il contesto grafico e rilascia ogni risorsa di sistema che sta usando
+    }
+
+    public void paintGame(Graphics2D g2){
+        player.g2 = g2;
+
+        for(Enemy entity: enemy){  // itero i nemici
+            if(!entity.extinguished){
+                entity.g2 = g2;
+            }
         }
+        bombH.g2 = g2;
+        
+        g2.setColor(Color.black);
+        g2.fillRect(0, 0, this.screenWidth, this.screenHeight);  // disegna il background
+
+        tileM.drawMap(g2, 24*this.scale, this.hudHeight+(8*this.scale), "ground");  // prima il pavimento
+        tileM.drawMap(g2, 24*this.scale, this.hudHeight+(8*this.scale), "house");  // poi i palazzi
+        tileM.drawMap(g2, -8*this.scale, this.hudHeight-(8*this.scale), "walls");  // poi le mura
+
+        /*
+        g2.setColor(Color.RED);  // da eliminare
+        for(int row=0; row<maxGameRow; row++){
+            for(int col=0; col<maxGameCol; col++){
+                if(tileM.houseHitbox[row][col] != null)
+                    g2.draw(tileM.houseHitbox[row][col]);
+            }
+        }  */
+
+        for(int row=0; row < maxGameRow; row++){
+            for(int col=0; col < maxGameCol; col++){
+                if(obj[row][col] != null){
+                    obj[row][col].draw(g2, this);
+                    g2.setColor(Color.YELLOW);
+                    g2.draw(obj[row][col].hitbox);
+                }
+            }
+        }
+
+        bombH.updateBomb();
+        // player.draw();  // poi il player
+        player.drawBehaviour.draw(player);
+        ArrayList<Enemy> enemyDelete = new ArrayList<>();  // lista di nemici temporanea da eliminare nel caso dalla lista enemy originale
+        for(Enemy entity: enemy){
+            if(!entity.extinguished){  // se ancora non è esploso del tutto
+                entity.draw();  // disegna l'enemy
+                // entity.drawBehaviour.draw(entity);
+            }else{
+                enemyDelete.add(entity);  // aggiunge il nemico morto alla lista temporanea dei nemici da eliminare
+            }
+        }
+        for(Enemy entity: enemyDelete){
+            enemy.remove(entity);  // rimuove dalla lista originale l'enemy morto
+        }
+        drawHUD(g2);
     }
 
 }

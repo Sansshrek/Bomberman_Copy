@@ -4,10 +4,19 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class KeyHandler implements KeyListener {
+    private static KeyHandler instance = null;
+
+    private KeyHandler() {}
+
+    public static KeyHandler getInstance() {
+        if(instance == null){
+            instance = new KeyHandler();}
+        return instance;
+    }
 
     public boolean upPressed, downPressed, leftPressed, rightPressed, bombPressed, pausePressed;
     public boolean statsPressed, firePressed, resetPressed, debugPressed;  // da eliminare
-
+    
     @Override
     public void keyTyped(KeyEvent e) {
     }

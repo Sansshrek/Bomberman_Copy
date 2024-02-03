@@ -29,12 +29,11 @@ public class BombHandler{
     }
 
     public void createBomb(int x, int y, int tileRow, int tileCol, int firePower){
-        if(bombNumber > 0){
+        if(bombNumber > bombs.size()){
             if(gp.obj[tileRow][tileCol] == null){  // se non c'è niente in quella posizione allora puo mettere la bomba 
                 Bomb newBomb = new Bomb(this.gp, x, y, tileRow, tileCol, firePower, tileSize, g2);
                 bombs.add(newBomb);
                 gp.obj[tileRow][tileCol] = newBomb;  // aggiunge la bomba alla matrice di oggetti sulla mappa
-                bombNumber--;  // diminuisce di 1 il numero di bombe disponibili del player
             }
         }
     }
