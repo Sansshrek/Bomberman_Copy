@@ -67,13 +67,5 @@ public class MouseBehaviour implements EntityMovementBehaviour{
                 }
             }
         }
-        if(entity.keyH.bombPressed){ // se preme il tasto P (bomba)
-            // BombHandler bomb = new BombHandler(getPlayerCenterCol()*gp.tileSize+(gp.tileSize/2), getPlayerCenterRow()*gp.tileSize+(24 * gp.scale), firePower, g2, gp.tileSize);
-            entity.gp.bombH.createBomb(entity.getTileX(), entity.getTileY(), entity.getTileNumRow(), entity.getTileNumCol(), entity.firePower);
-            // gp.cChecker.checkBomb(this);
-            // BombHandler bomb = new BombHandler(x, y, firePower, g2, gp.tileSize);
-            // gp.bombs.add(bomb);
-            // gp.obj.add(bomb);
-        }
     }
 }

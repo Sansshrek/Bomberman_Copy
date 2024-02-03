@@ -64,7 +64,7 @@ public class GamePanel extends JPanel implements Runnable{
     public int enemyNum;
     // Stato di Gioco
     public final int menuState = 5;
-    public boolean pauseGame=false;
+    public boolean pauseGame = false;
 
     // test da eliminare
     boolean checkSetup, checkGameOn;
