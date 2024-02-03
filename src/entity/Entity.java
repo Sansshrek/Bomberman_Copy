@@ -35,7 +35,7 @@ public class Entity implements EntityObservable{
     public Rectangle hitbox;
     public int offsetX, offsetY, hitboxWidth, hitboxHeight, mouseX, mouseY;
     public boolean collisionOn = false, died = false, extinguished = false, bombExitHitbox = false, invulnerable = false, endAnimation = false;
-    public boolean checkDeathJump = false, checkDeathFall = false;
+    public boolean checkDeathJump = false, checkDeathFall = false, reverseAnimation = false;
     public String type;
 
     ArrayList<BufferedImage>[] imageList = new ArrayList[4];
@@ -166,42 +166,43 @@ public class Entity implements EntityObservable{
     public void powerUpHandler(Point index){};
 
     public void invincibleCheck(){
-        int d, r;
-        if(invulnerable){  // se il player è invulnerabile 
-            invulnerableTimer++;  // aumenta il timer per l'invulnerabilità
-            if(invulnerableTimer>=invulnerableSec*60-2*60){
-                d=6;
-                r=3;
-            }else if (invulnerableTimer>=invulnerableSec*60-4*60){
-                d=15;
-                r=9;
-            }else{  
-                d=30;
-                r=15;
-            }
-            if (invulnerableTimer%d==r){  // divide per 30 (quindi la metà di 60 FPS del gioco, cioe ogni mezzo secondo) e per ogni quarto di secondo cambia lo sprite 
-                for(int dir=0; dir<4; dir++){
-                    imageList[dir] = whiteImage[dir];  // sostituiamo le arraylist della lista image originale
+        if(!gp.pauseGame){
+            int d, r;
+            if(invulnerable){  // se il player è invulnerabile 
+                invulnerableTimer++;  // aumenta il timer per l'invulnerabilità
+                if(invulnerableTimer>=invulnerableSec*60-2*60){
+                    d=6;
+                    r=3;
+                }else if (invulnerableTimer>=invulnerableSec*60-4*60){
+                    d=15;
+                    r=9;
+                }else{  
+                    d=30;
+                    r=15;
                 }
-            }
-            if (invulnerableTimer%d==0){
-                for(int dir=0; dir<4; dir++){
-                    imageList[dir] = ogImage[dir];
+                if (invulnerableTimer%d==r){  // divide per 30 (quindi la metà di 60 FPS del gioco, cioe ogni mezzo secondo) e per ogni quarto di secondo cambia lo sprite 
+                    for(int dir=0; dir<4; dir++){
+                        imageList[dir] = whiteImage[dir];  // sostituiamo le arraylist della lista image originale
+                    }
                 }
-            }
-            // System.out.println(invulnerableTimer);
-            if(invulnerableTimer == invulnerableSec*60){  // quando finisce il timer
-                System.out.println("Finita invulnerabilita");
-                invulnerable = false;  // finisce l'invulnerabilità
-                // resetta le immagini originali per sicurezza
-                for(int dir=0; dir<4; dir++){
-                    imageList[dir] = ogImage[dir];
+                if (invulnerableTimer%d==0){
+                    for(int dir=0; dir<4; dir++){
+                        imageList[dir] = ogImage[dir];
+                    }
                 }
-                invulnerableTimer = 0;  // resetta il timer
-                //setStatus(invulnerable, died, extinguished, speed);
+                // System.out.println(invulnerableTimer);
+                if(invulnerableTimer == invulnerableSec*60){  // quando finisce il timer
+                    System.out.println("Finita invulnerabilita");
+                    invulnerable = false;  // finisce l'invulnerabilità
+                    // resetta le immagini originali per sicurezza
+                    for(int dir=0; dir<4; dir++){
+                        imageList[dir] = ogImage[dir];
+                    }
+                    invulnerableTimer = 0;  // resetta il timer
+                    //setStatus(invulnerable, died, extinguished, speed);
+                }
+                notifyObservers();
             }
-            notifyObservers();
         }
-        
     }
 }

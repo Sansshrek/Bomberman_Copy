@@ -9,6 +9,7 @@ public class MouseBehaviour implements EntityMovementBehaviour{
         
         int mouseTileNumCol = (entity.mouseX - 72) / entity.gp.tileSize;
         int mouseTileNumRow = (entity.mouseY - 120) / entity.gp.tileSize;
+        // System.out.println("Mouse Row: "+mouseTileNumRow+" Mouse Col: "+mouseTileNumCol);
 
         if(entity.getTileNumCol() != mouseTileNumCol || entity.getTileNumRow() != mouseTileNumRow || !entity.fullyInsideTile()){
             Point findP = new Point(mouseTileNumCol, mouseTileNumRow);  // prendo la pos del player
@@ -34,6 +35,7 @@ public class MouseBehaviour implements EntityMovementBehaviour{
             }
 
             if((entity.getTileNumCol() == mouseTileNumCol && entity.getTileNumRow() == mouseTileNumRow && entity.fullyInsideTile()) || path.size() <= 0){
+                // se è 
                 entity.collisionOn = true;
             }
             

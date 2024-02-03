@@ -44,7 +44,7 @@ public class StartMenu {
             optionSettingsStringImage = ImageIO.read(getClass().getResourceAsStream("../res/startMenu/Settings.png"));
             optionDataStringImage = ImageIO.read(getClass().getResourceAsStream("../res/startMenu/Data.png"));
             pointerImage = ImageIO.read(getClass().getResourceAsStream("../res/startMenu/Pointer.png"));
-            transitionImage = ImageIO.read(getClass().getResourceAsStream("../res/startMenu/transiton.png"));
+            // transitionImage = ImageIO.read(getClass().getResourceAsStream("../res/startMenu/transiton.png"));
         } catch (Exception e) {
             e.printStackTrace();
         }

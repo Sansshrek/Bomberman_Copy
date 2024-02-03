@@ -16,7 +16,6 @@ public class StupidEntity implements EntityMovementBehaviour{
             
             if(entity.collisionOn && entity.gp.cChecker.canMove(entity)){  // se in quella direzione non si puo muovere
                 ArrayList<String> directions = entity.gp.cChecker.validDirections(entity);  // prende ogni posizione in cui si puo muovere
-                System.out.println(directions.size());
                 directions.remove(entity.direction);  // rimuove dalla lista la direzione in cui sta andando perche collide
                 Collections.shuffle(directions);
                 if(directions.size() > 0)

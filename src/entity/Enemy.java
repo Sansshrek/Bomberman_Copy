@@ -37,6 +37,7 @@ public class Enemy extends Entity{
         this.offsetY = type.offsetY*gp.scale; // dove parte hitbox dell' enemy (12 pixel sotto rispetto a dove parte l'immagine)
         this.startX = type.startX;
         this.startY = type.startY;
+        this.reverseAnimation = type.reverseAnimation;
 
         this.invulnerableSec = 2;
         this.tileSize = gp.getTileSize();
@@ -153,16 +154,22 @@ public class Enemy extends Entity{
 
             spriteCounter++;
             if(spriteCounter > 15){  // ogni 15/60 volte al secondo 
-                if(endAnimation)  // se è finita l'animazione
-                    spriteNum--;  // ristampa gli sprite in reverse
-                else
-                    spriteNum++;  // altrimenti li stampa in modo normale
+                if(reverseAnimation){  // se il tipo di nemico ha gli sprite che tornano al contrario quando finisce l'animazione
+                    if(endAnimation)  // se è finita l'animazione
+                        spriteNum--;  // ristampa gli sprite in reverse
+                    else
+                        spriteNum++;  // altrimenti li stampa in modo normale
 
-                if(spriteNum == maxSpriteNum-1)
-                    endAnimation = true;
-                else if(spriteNum == 0)
-                    endAnimation = false;
-                
+                    if(spriteNum == maxSpriteNum-1)
+                        endAnimation = true;
+                    else if(spriteNum == 0)
+                        endAnimation = false;
+                }else{
+                    spriteNum++;
+                    if(spriteNum == maxSpriteNum)
+                        spriteNum = 0;
+                }
+                        
                 spriteCounter = 0;  // e resetta il counter
             }
             notifyObservers();

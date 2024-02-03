@@ -9,6 +9,7 @@ public class PlayerDrawBehaviour implements EntityDrawBehaviour{
         entity.image = null;
         
         if(!entity.died){
+            
             entity.invincibleCheck();
             switch(entity.direction){  // in base alla direzione, la variabile image prende il valore dell'immagine inserita
                 case "up":

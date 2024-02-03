@@ -64,6 +64,7 @@ public class GamePanel extends JPanel implements Runnable{
     public int enemyNum;
     // Stato di Gioco
     public final int menuState = 5;
+    public boolean pauseGame=false;
 
     // test da eliminare
     boolean checkSetup, checkGameOn;
@@ -189,7 +190,7 @@ public class GamePanel extends JPanel implements Runnable{
 
     public void update(){
         player.updateKey();
-        if(checkGameOn && !player.pauseGame){  // se il gioco puo partire e il player non ha fermato il gioco
+        if(checkGameOn && !pauseGame){  // se il gioco puo partire e il player non ha fermato il gioco
             hud.updateTime();
             player.update();
             for(Enemy entity: enemy){
@@ -263,6 +264,8 @@ public class GamePanel extends JPanel implements Runnable{
                 enemy.remove(entity);  // rimuove dalla lista originale l'enemy morto
             }
             drawHUD(g2);
+
+            //disegno transizione
 
             g2.dispose();  // rimuove il contesto grafico e rilascia ogni risorsa di sistema che sta usando
         }

@@ -19,9 +19,15 @@ public class Main {
         public void mouseEntered(MouseEvent me) { }
         public void mouseExited(MouseEvent me) { }
         public void mouseClicked(MouseEvent me) { 
-          int x = me.getX()-7;
-          int y = me.getY()-30;
-          gamePanel.player.updateMousePosition(x, y);
+			if (me.getButton() == MouseEvent.BUTTON1){
+				System.out.println("Left button clicked");
+				int x = me.getX()-7;
+				int y = me.getY()-30;
+				gamePanel.player.updateMousePosition(x, y);
+			} else if (me.getButton() == MouseEvent.BUTTON3) {
+				System.out.println("Right button clicked");
+				gamePanel.player.createBomb();
+			} 
         }
         });
 

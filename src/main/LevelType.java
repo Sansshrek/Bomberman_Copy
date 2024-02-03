@@ -6,7 +6,7 @@ import java.util.Arrays;
 import entity.EnemyType;
 
 public enum LevelType{
-    LEVEL1(EnemyType.PAKUPA),
+    LEVEL1(EnemyType.CUPPEN, EnemyType.PUROPEN, EnemyType.PUROPEN),
     LEVEL2(EnemyType.PUROPEN, EnemyType.PUROPEN, EnemyType.PUROPEN, EnemyType.PAKUPA, EnemyType.PAKUPA),
     LEVEL3(EnemyType.PUROPEN, EnemyType.PUROPEN, EnemyType.PAKUPA, EnemyType.PAKUPA, EnemyType.UFO, EnemyType.UFO);
 

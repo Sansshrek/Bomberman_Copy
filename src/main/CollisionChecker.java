@@ -228,7 +228,9 @@ public class CollisionChecker implements EntityObserver{
                     if(!(gp.obj[row][col] instanceof Bomb)){
                         if(entityHitboxCheck.intersects(objHitboxCheck)){  // controlla se l'hitbox del player interseca l'hitbox dell'oggetto
                             if(gp.obj[row][col].collision){  // se puo essere scontrato setta la collisione del player a true
-                                entity.collisionOn = true;
+                                if(entity.type != "cuppen"){
+                                    entity.collisionOn = true;
+                                }
                             }
                             if(entity instanceof Player){ // se è il player a toccare l'oggetto allora ritorna l'indice
                                 return new Point(col, row);
@@ -398,12 +400,19 @@ public class CollisionChecker implements EntityObserver{
     
     private boolean isValid(int row, int col, GamePanel gp, String entityType) {
         // se è dentro la mappa e non è un blocco/palazzo allora torna true
-        if(entityType != "pakupa"){  // se non è il pakupa faccio il controllo con tutti i tipi di blocchi
+        if(entityType != "pakupa" && entityType != "cuppen" && entityType != "player"){  // se non è il pakupa/cuppen/player faccio il controllo con tutti i tipi di blocchi
             return row >= 0 && row < gp.maxGameRow && col >= 0 && col < gp.maxGameCol
                 && !(gp.obj[row][col] instanceof Block) && !(gp.obj[row][col] instanceof Bomb) && gp.tileM.houseTileNum[row][col] != 3 && gp.tileM.houseTileNum[row][col] == 0;
-        }else{  // se è il pakupa fa il controllo senza le bombe
+        }else if(entityType == "pakupa") {  // se è il pakupa fa il controllo senza le bombe
             return row >= 0 && row < gp.maxGameRow && col >= 0 && col < gp.maxGameCol
                 && !(gp.obj[row][col] instanceof Block) && gp.tileM.houseTileNum[row][col] != 3;
+        }else if(entityType == "cuppen"){  // se è il cuppen fa il controllo senza i blocchi
+            return row >= 0 && row < gp.maxGameRow && col >= 0 && col < gp.maxGameCol
+                && !(gp.obj[row][col] instanceof Bomb) && gp.tileM.houseTileNum[row][col] != 3 && gp.tileM.houseTileNum[row][col] == 0;
+        }else{  // se è il player con mouseBehaviour allora controlla solo che non esce dalla mappa soltanto
+            return row >= 0 && row < gp.maxGameRow && col >= 0 && col < gp.maxGameCol
+                && !(gp.obj[row][col] instanceof Block) && !(gp.obj[row][col] instanceof Bomb) && gp.tileM.houseTileNum[row][col] != 3 && gp.tileM.houseTileNum[row][col] == 0;
+            // da rivedere, per ora si comporta solo come un enemy normale (non cuppen/pakupa)
         }
     }
 

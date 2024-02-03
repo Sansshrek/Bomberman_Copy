@@ -44,10 +44,10 @@ public class SearchBomb implements EntityMovementBehaviour{
                 }
             }else{  // comportamento idiota
                 entity.gp.cChecker.checkTile(entity);
-                System.out.println("Collision: " + entity.collisionOn + " Entity.x: " + (entity.hitbox.y + entity.hitboxHeight));
+                // System.out.println("Collision: " + entity.collisionOn + " Entity.x: " + (entity.hitbox.y + entity.hitboxHeight));
                 entity.gp.cChecker.checkObj(entity);
-                System.out.println("Direction: " + entity.direction);
-                System.out.println("Collision: " + entity.collisionOn + " Entity.x: " + (entity.hitbox.y + entity.hitboxHeight));
+                // System.out.println("Direction: " + entity.direction);
+                // System.out.println("Collision: " + entity.collisionOn + " Entity.x: " + (entity.hitbox.y + entity.hitboxHeight));
                 if(entity.collisionOn){
                     ArrayList<String> directions = entity.gp.cChecker.validDirections(entity);  // prende ogni posizione in cui si puo muovere
                     Collections.shuffle(directions);  
@@ -55,8 +55,8 @@ public class SearchBomb implements EntityMovementBehaviour{
                         entity.collisionOn = false;  // resettiamo la collisione
                         entity.direction = dir;  // impostiamo la posizione per l'entity
                         entity.gp.cChecker.checkTile(entity);  // se in quella posizione si puo muovere allora entity.collision resta false
-                        System.out.println("Direction: " + entity.direction);
-                        System.out.println("Collision: " + entity.collisionOn);
+                        // System.out.println("Direction: " + entity.direction);
+                        // System.out.println("Collision: " + entity.collisionOn);
                         if(!entity.collisionOn){  // se si puo muovere
                             entity.notifyObservers();
                             break;  // esce dal ciclo e lascia la direzione inserita come quella scelta

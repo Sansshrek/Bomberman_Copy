@@ -23,7 +23,6 @@ public class Player extends Entity{
     
     //larghezza e altezza dell' hitbox
     public int bombNumber, lifeNumber, score;
-    public boolean pauseGame;
     int spriteDeathCounter = 0;
 
     public Player(GamePanel gp, KeyHandler keyH){
@@ -33,6 +32,7 @@ public class Player extends Entity{
         this.tileSize = gp.getTileSize();
         this. maxSpriteNum = 3;
         this.invulnerableSec = 12;
+        this.type = "player";
 
         this.image=null;
 
@@ -163,13 +163,10 @@ public class Player extends Entity{
     public void updateMousePosition(int mouseX, int mouseY){
         this.mouseX = mouseX;
         this.mouseY = mouseY;
-        // da spostare in mouseBehaviour
-        // eseguo gli stessi calcoli del getTileNumCol e getTileNumRow ma con i valori del mouse
-        int tileNumCol = (mouseX - 72) / gp.tileSize;
-        int tileNumRow = (mouseY - 120) / gp.tileSize;
-        if(gp.tileM.houseTileNum[tileNumRow][tileNumCol] != 3 && gp.obj[tileNumRow][tileNumCol] == null)
-            System.out.println("VALID POS");
-        System.out.println("mouseX: "+tileNumCol+" mouseY: "+tileNumRow);
+    }
+
+    public void createBomb(){
+        gp.bombH.createBomb(getTileX(), getTileY(), getTileNumRow(), getTileNumCol(), firePower);
     }
 
     public void update(){  // update viene chiamato 60 volte al secondo
@@ -181,6 +178,15 @@ public class Player extends Entity{
             }
 
             movementBehaviour.updateMovement(this);
+
+            if(keyH.bombPressed){ // se preme il tasto P (bomba)
+                // BombHandler bomb = new BombHandler(getPlayerCenterCol()*gp.tileSize+(gp.tileSize/2), getPlayerCenterRow()*gp.tileSize+(24 * gp.scale), firePower, g2, gp.tileSize);
+                createBomb();
+                // gp.cChecker.checkBomb(this);
+                // BombHandler bomb = new BombHandler(x, y, firePower, g2, gp.tileSize);
+                // gp.bombs.add(bomb);
+                // gp.obj.add(bomb);
+            }
 
             if(keyH.statsPressed){ // tasto L da eliminare
                 System.out.println("\nFire "+firePower);
@@ -208,10 +214,10 @@ public class Player extends Entity{
 
     public void updateKey(){
         if(keyH.pausePressed){ //se viene premuto Enter
-            if(pauseGame){  // se il gioco è gia in pausa fa ricominciare il gioco
-                pauseGame = false;
+            if(gp.pauseGame){  // se il gioco è gia in pausa fa ricominciare il gioco
+                gp.pauseGame = false;
             }else{  // se il gioco non è in pausa allora lo ferma
-                pauseGame = true;
+                gp.pauseGame = true;
             }
             keyH.pausePressed = false;
         }
