@@ -83,7 +83,7 @@ public class Enemy extends Entity{
             hittableHitbox = new Rectangle(imageP.x, imageP.y, width, height);
         }
         this.collisionOn = true;
-        this.speed = 0;
+        this.speed = 1;
         this.direction = "down";
         // gp.cChecker.checkTile(this);
         notifyObservers();

@@ -2,6 +2,8 @@ package main;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.awt.BasicStroke;
 import java.awt.Color;
 
 import javax.imageio.ImageIO;
@@ -12,8 +14,10 @@ import entity.MouseBehaviour;
 public class OptionMenu implements Panel{
     KeyHandler keyH = KeyHandler.getInstance(); 
     
-    BufferedImage backgroundImage, ballonImage, cloudImage, optionStartImage, optionSettingsImage, optionScoreImage, pointerImage;
-    int titleX, titleY, titleWidth, titleHeight, optionX, optionY, startPointerY, pointerX, pointerY, pointerIndex = 0, pointerWidth, pointerHeight, optionWidth, optionHeight, optionDistance, totOptionNumber;
+    BufferedImage backgroundImage, optionStartImage, optionSettingsImage, optionScoreImage, pointerImage;
+    int titleX, titleY, titleWidth, titleHeight, optionX, optionY, startPointerY, pointerX, pointerY, difficultyIndex = 0, pointerIndex = 0, pointerWidth, pointerHeight, optionWidth, optionHeight, optionDistance, totOptionNumber;
+    ArrayList<BufferedImage> difficultyImage = new ArrayList<>();
+    boolean difficultySelect = false;
     //Salvo nella lista options a seconda dell'opzione optionX, optionY
     /*options = new int[3][4]; 
     options[0][0] = 400;//optionWidth
@@ -34,7 +38,7 @@ public class OptionMenu implements Panel{
         titleY = 11*gp.scale;
         titleWidth = 205*gp.scale;
         titleHeight = 136*gp.scale;
-        optionWidth = 111*gp.scale;
+        optionWidth = 55*gp.scale; //111*gp.scale
         optionHeight = 10*gp.scale;
         optionX = (gp.screenWidth - optionWidth)/2;
         optionY = (gp.screenHeight - optionHeight)/2 - 140;
@@ -52,6 +56,9 @@ public class OptionMenu implements Panel{
             optionSettingsImage = ImageIO.read(getClass().getResourceAsStream("../res/menu/Settings.png"));
             optionScoreImage = ImageIO.read(getClass().getResourceAsStream("../res/menu/Score.png"));
             pointerImage = ImageIO.read(getClass().getResourceAsStream("../res/menu/pointer.png"));
+            difficultyImage.add(ImageIO.read(getClass().getResourceAsStream("../res/menu/Background.png")));
+            difficultyImage.add(ImageIO.read(getClass().getResourceAsStream("../res/menu/Start.png")));
+            difficultyImage.add(ImageIO.read(getClass().getResourceAsStream("../res/menu/Settings.png")));
             // transitionImage = ImageIO.read(getClass().getResourceAsStream("../res/menu/transiton.png"));
         } catch (Exception e) {
             e.printStackTrace();
@@ -63,13 +70,19 @@ public class OptionMenu implements Panel{
         g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);  // disegna il background
         g2.drawImage(backgroundImage, 0, 0, gp.screenWidth, gp.screenHeight, null);
         g2.drawImage(optionStartImage, optionX, optionY, optionWidth, optionHeight, null);
-        g2.drawImage(optionSettingsImage, optionX, optionY+optionDistance, optionWidth, optionHeight, null);
+        g2.drawImage(optionSettingsImage, optionX+optionWidth+3*gp.scale, optionY, optionWidth, optionHeight, null);
         g2.drawImage(optionScoreImage, optionX, optionY+optionDistance*2, optionWidth, optionHeight, null);
         g2.drawImage(pointerImage, pointerX, pointerY, pointerWidth, pointerHeight, null);
+        if (difficultySelect){
+            //disegna un rettangolo rosso
+            g2.setColor(new Color(255, 0, 0, 255));
+            g2.setStroke(new BasicStroke(4)); // Imposta lo spessore del bordo a 3
+            g2.drawRect(optionX+optionWidth+3*gp.scale, optionY, optionWidth, optionHeight);
+        }
     }
 
     public void chooseOptions(GamePanel gp){
-        if(keyH.downPressed){
+        if(keyH.downPressed && !difficultySelect){
                 pointerIndex+=1;
                 if (pointerIndex == totOptionNumber){
                     pointerIndex=0;
@@ -79,7 +92,7 @@ public class OptionMenu implements Panel{
                 }
                 keyH.downPressed = false;
             }
-            else if(keyH.upPressed){
+            else if(keyH.upPressed && !difficultySelect){
                 pointerIndex-=1;
                 if (pointerIndex<0){
                     pointerIndex=totOptionNumber-1;
@@ -89,15 +102,32 @@ public class OptionMenu implements Panel{
                 }
                 keyH.upPressed = false;
             }
-            
+            if(keyH.downPressed && difficultySelect){
+                difficultyIndex+=1;
+                if (difficultyIndex == 3){
+                    difficultyIndex=0;
+                }
+                System.out.println("Difficoltà: "+ difficultyIndex);
+                keyH.downPressed = false;
+            }
+            else if(keyH.upPressed && difficultySelect){
+                difficultyIndex-=1;
+                if (difficultyIndex<0){
+                    difficultyIndex=2;
+                }
+                System.out.println("Difficoltà: "+ difficultyIndex);
+                keyH.upPressed = false;
+            }
             if(keyH.pausePressed && pointerIndex==0){
                 System.out.println("INVIOOOOOO");
-
-                if(!gp.checkGameOn){
-                    //disegna transizione
+                if (difficultySelect){
+                difficultySelect = false;
                 }
-                gp.setupGame();
-                //gp.currentPanel = null;
+                else{
+                difficultySelect = true;
+                }
+                keyH.pausePressed = false;
+
             }
             if(keyH.pausePressed && pointerIndex==1){
                 //disegna transizione
