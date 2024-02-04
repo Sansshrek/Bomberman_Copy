@@ -163,14 +163,11 @@ public class Main {
 
     public void nextLevel(){
         if(enemyNum == 0){  // se sono finiti i nemici sulla mappa
-            checkSetup = false;  // reimposta i valori di setup
-            checkGameOn = false;
             levelIndex++;  // vai al prossimo livello
             if(levelIndex == listaLivelli.length){  // per ora quando finisce i livelli resetta il gioco
                 levelIndex = 0;
-                resetLevel();
             }
-            setupGame();  // per ora lascio che resetta il livello
+            closingTransition();
         }
     }
 
