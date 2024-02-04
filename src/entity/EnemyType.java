@@ -3,6 +3,7 @@ package entity;
 public enum EnemyType {
 
     //Tipi diversi di nemici
+    KNIGHT(1, 100, new KnightBoss(), 1, "knight", 80, 80, 80, 80, 32, 64, -1, -1, false),
     PUROPEN(1, 100, new StupidEntity(), 4, "puropen", 16, 24, 16, 24, 0, 8, -1, -1, false),
     UFO(2, 3200, new SearchEntity(), 4, "ufo", 16, 16, 16, 16, 0, 0, -1, -1, true),
     PAKUPA(3, 300, new SearchBomb(), 6, "pakupa", 16, 16, 16, 16, 0, 0, -1, -1, true),

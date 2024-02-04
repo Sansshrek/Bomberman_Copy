@@ -58,7 +58,9 @@ public class GamePanel extends JPanel implements Runnable{
     public SuperObject obj[][];
     public ArrayList<Enemy> enemy = new ArrayList<>();
     public int entityCounter;
-    public LevelType[] listaLivelli= {LevelType.LEVEL1, LevelType.LEVEL2, LevelType.LEVEL3};
+    public LevelType[] levelListEasy = {LevelType.Level1Easy, LevelType.Level2Easy, LevelType.Level2Easy};
+    public LevelType[] levelListNormal = {LevelType.Level1, LevelType.Level2, LevelType.Level3};
+    public LevelType[] levelListHard = {LevelType.Level1Hard, LevelType.Level2Hard, LevelType.Level3Hard};
     int levelIndex = 0;
     public int enemyNum;
     // Stato di Gioco
@@ -101,8 +103,14 @@ public class GamePanel extends JPanel implements Runnable{
             System.out.println("Caricando i blocchi distruttibili");  // da eliminare
             aSetter.setMatrixBlocks();
             enemy.clear();  // resetto la lista dei nemici
-            LevelType livello = listaLivelli[levelIndex];
-            ArrayList<EnemyType> listaNemici = livello.getEnemyList(gameDifficulty);
+            ArrayList<EnemyType> listaNemici = new ArrayList<>();
+            if(gameDifficulty == "easy")
+                listaNemici = levelListEasy[levelIndex].getEnemyList(gameDifficulty);
+            else if(gameDifficulty == "normal")
+                listaNemici = levelListNormal[levelIndex].getEnemyList(gameDifficulty);
+            else if(gameDifficulty == "hard")
+                listaNemici = levelListHard[levelIndex].getEnemyList(gameDifficulty);
+            // ArrayList<EnemyType> listaNemici = livello.getEnemyList(gameDifficulty);
             enemyNum = listaNemici.size();
             entityCounter = 1;
             int counter = 0;
@@ -164,7 +172,7 @@ public class Main {
     public void nextLevel(){
         if(enemyNum == 0){  // se sono finiti i nemici sulla mappa
             levelIndex++;  // vai al prossimo livello
-            if(levelIndex == listaLivelli.length){  // per ora quando finisce i livelli resetta il gioco
+            if(levelIndex == levelListNormal.length){  // per ora quando finisce i livelli resetta il gioco
                 levelIndex = 0;
             }
             closingTransition();

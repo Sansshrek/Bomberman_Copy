@@ -40,7 +40,7 @@ public class Entity implements EntityObservable{
 
     //Condizioni delle entità
     public boolean collisionOn = false, died = false, extinguished = false, bombExitHitbox = false, invulnerable = false, endAnimation = false;
-    public boolean checkDeathJump = false, checkDeathFall = false, reverseAnimation = false;
+    public boolean checkDeathJump = false, checkDeathFall = false, reverseAnimation = false, startAttack = false;
     
 
     //Controlli per i vari tipi di nemici
