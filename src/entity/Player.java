@@ -55,6 +55,7 @@ public class Player extends Entity{
         System.out.println("Caricando il player");  // da eliminare
         gp.bombH.addBombNumber();  // aggiunge la prima bomba al player
         gp.bombH.addBombNumber();  // aggiunge la prima bomba al player
+        gp.bombH.addBombNumber();
         setPlayerDefaultValues();
         getPlayerImage();
         notifyObservers();
@@ -78,6 +79,7 @@ public class Player extends Entity{
         int hitboxY = (0*tileSize) + 2*tileSize + offsetY;    // posizione y del player IN ALTO A SINISTRA
         this.hitbox = new Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
         this.imageP = new Point(hitboxX-offsetX, hitboxY-offsetY);
+        this.hittableHitbox = new Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
         speed = 2;
         direction = "down";
         firePower = 1;
@@ -112,6 +114,7 @@ public class Player extends Entity{
             int hitboxY = (0*tileSize) + 2*tileSize + offsetY;    // posizione y del player IN ALTO A SINISTRA
             this.hitbox = new Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
             this.imageP = new Point(hitboxX-offsetX, hitboxY-offsetY);
+            this.hittableHitbox = new Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
             direction = "down";
             invulnerable = true;
             died = false;
@@ -301,6 +304,11 @@ public class Player extends Entity{
     public void draw(){
         
         drawBehaviour.draw(this);
+
+        g2.setColor(Color.GREEN);
+        g2.draw(hittableHitbox);
+        g2.setColor(Color.BLUE);
+        g2.draw(hitbox);
 
     }
 }

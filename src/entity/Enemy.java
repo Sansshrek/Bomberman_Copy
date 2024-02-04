@@ -20,7 +20,7 @@ public class Enemy extends Entity{
     EntityMovementBehaviour stupidBehaviour = new StupidEntity();
     EntityMovementBehaviour searchBehaviour = new SearchEntity();
     //largezza e altezza dell' immagine del player
-    public int score, startX, startY;
+    public int imageWidth, imageHeight,score, startX, startY;
 
     public Enemy(GamePanel gp, int uniCode, EnemyType type){
         super(gp);
@@ -33,6 +33,8 @@ public class Enemy extends Entity{
         this.type = type.type;
         this.width = type.width*gp.scale; // larghezza dell' enemy
         this.height = type.height*gp.scale; // altezza dell' enemy 
+        this.imageWidth = type.imageWidth*gp.scale;
+        this.imageHeight = type.imageHeight*gp.scale;
         this.offsetX = type.offsetX*gp.scale;// dove parte hitbox dell' enemy (0 pixel a destra rispetto a dove parte l'immagine)
         this.offsetY = type.offsetY*gp.scale; // dove parte hitbox dell' enemy (12 pixel sotto rispetto a dove parte l'immagine)
         this.startX = type.startX;
@@ -72,12 +74,16 @@ public class Enemy extends Entity{
             int hitboxYAv = (avPos.y*tileSize) + (2*tileSize+tileSize/2);   // posizione y dell'enemy IN ALTO A SINISTRA
             hitbox = new Rectangle(hitboxXAv, hitboxYAv, hitboxWidth, hitboxHeight);
             this.imageP = new Point(hitboxXAv-offsetX, hitboxYAv-offsetY);
+            hittableHitbox = new Rectangle(imageP.x, imageP.y, width, height);
         }else{
-            startX = startX*tileSize;
-            startY = startY*tileSize;
+            startX = (startX*tileSize) + (tileSize+tileSize/2);
+            startY = (startY*tileSize) + (2*tileSize+tileSize/2);
+            hitbox = new Rectangle(startX, startY, hitboxWidth, hitboxHeight);
+            this.imageP = new Point(startX-offsetX, startY-offsetY);
+            hittableHitbox = new Rectangle(imageP.x, imageP.y, width, height);
         }
         this.collisionOn = true;
-        this.speed = 1;
+        this.speed = 0;
         this.direction = "down";
         // gp.cChecker.checkTile(this);
         notifyObservers();
@@ -189,6 +195,10 @@ public class Enemy extends Entity{
 
             g2.setColor(Color.GREEN);
             g2.drawRect(getTileX(), getTileY(), tileSize, tileSize);  */
+            g2.setColor(Color.GREEN);
+            g2.draw(hittableHitbox);
+            g2.setColor(Color.BLUE);
+            g2.draw(hitbox);
         }
     }
 }

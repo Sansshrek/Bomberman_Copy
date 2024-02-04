@@ -32,7 +32,7 @@ public class Entity implements EntityObservable{
 
     public int firePower, spriteCounter, spriteNum, maxSpriteNum, invulnerableStart, invulnerableSec, invulnerableTimer = 0, lifeNumber = 1, heartNumber = 1, width, height, spriteDeathNum = 0, startDeathY;
 
-    public Rectangle hitbox;
+    public Rectangle hitbox, hittableHitbox;
     public int offsetX, offsetY, hitboxWidth, hitboxHeight, mouseX, mouseY;
     public boolean collisionOn = false, died = false, extinguished = false, bombExitHitbox = false, invulnerable = false, endAnimation = false;
     public boolean checkDeathJump = false, checkDeathFall = false, reverseAnimation = false;
@@ -116,27 +116,32 @@ public class Entity implements EntityObservable{
                 case "up": 
                     imageP.y -= speed;
                     hitbox.y -= speed;
+                    hittableHitbox.y -= speed;
                     break;  // la posizione Y diminuisce della velocita del player
                 case "down": 
                     imageP.y += speed;
                     hitbox.y += speed;
+                    hittableHitbox.y += speed;
                     break;
                 case "left": 
                     imageP.x -= speed; 
                     hitbox.x -= speed;
+                    hittableHitbox.x -= speed;
                     break;
                 case "right": 
                     imageP.x += speed; 
                     hitbox.x += speed;
+                    hittableHitbox.x += speed;
                     break;
             }
         }
     }
 
     //set Method
-    public void setEntityVar(Point imageP, Rectangle hitbox, boolean invulnerable, boolean died, boolean extinguished, double speed){
+    public void setEntityVar(Point imageP, Rectangle hitbox, Rectangle hittableHitbox, boolean invulnerable, boolean died, boolean extinguished, double speed){
         this.imageP = imageP;
-        this.hitbox = hitbox; 
+        this.hitbox = hitbox;
+        this.hittableHitbox=hittableHitbox;
         this.invulnerable = invulnerable;
         this.died = died;
         this.extinguished = extinguished;

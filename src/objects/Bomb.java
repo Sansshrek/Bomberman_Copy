@@ -135,12 +135,12 @@ public class Bomb extends SuperObject{
         // Draw the horizontal line of the explosion
 
         Rectangle hitboxCenter = new Rectangle(x, y, gp.tileSize, gp.tileSize);
-            if(gp.player.hitbox.intersects(hitboxCenter) && !gp.player.invulnerable){  // se il player non è invulnerabile
+            if(gp.player.hittableHitbox.intersects(hitboxCenter) && !gp.player.invulnerable){  // se il player non è invulnerabile
                 System.out.println("ESPLOSO");
                 gp.player.kill();
             }
             for(Entity ent: gp.enemy){  // controllo se colpisce un enemy
-                if(ent.hitbox.intersects(hitboxCenter) && !ent.invulnerable)
+                if(ent.hittableHitbox.intersects(hitboxCenter) && !ent.invulnerable)
                     ent.kill();
             }
 
@@ -157,7 +157,10 @@ public class Bomb extends SuperObject{
 
             // per le pos a SX dobbiamo fare tileCol-i
             if(tileCol-i >= 0) {  // check se la posizione è nell'array
-
+                
+                if(gp.obj[tileRow][tileCol-i] instanceof Bomb){
+                                    ((Bomb)gp.obj[tileRow][tileCol-i]).exploded = true;
+                                }
                 // System.out.print("SX ");  // da eliminare
                 if(gp.tileM.isHouse(x-i*bombWidth, y)){  // se in quella pos. del fuoco c'è una casa 
                     // System.out.println("X "+(x-i*bombWidth)+" Y "+y+" Collision SX true");
@@ -168,10 +171,11 @@ public class Bomb extends SuperObject{
                     gp.obj[tileRow][tileCol-i].destroy();  // inizia l'animazione dell'esplosione del blocco
                     // gp.obj.set(positionSx, gp.obj.get(positionSx).power);
                     stopIndexSx = i;  // salva la posizione del fuoco cosi che non vada oltre al blocco distrutto
+                    break;
                 }
                 //controllo se colpisce un entita
                 Rectangle hitboxFire = new Rectangle(x - i*bombWidth, y, gp.tileSize, gp.tileSize);
-                if(gp.player.hitbox.intersects(hitboxFire) && !gp.player.invulnerable){  // se il player non è invulnerabile
+                if(gp.player.hittableHitbox.intersects(hitboxFire) && !gp.player.invulnerable){  // se il player non è invulnerabile
                     System.out.println("ESPLOSO");
                     gp.player.kill();
                 }
@@ -179,9 +183,7 @@ public class Bomb extends SuperObject{
                     if(ent.hitbox.intersects(hitboxFire) && !ent.invulnerable)
                         ent.kill();
                 }
-                if(gp.obj[tileRow][tileCol-i] instanceof Bomb){
-                    ((Bomb)gp.obj[tileRow][tileCol-i]).exploded = true;
-                }
+                
                 
                 // Draw the middle part of the explosion
                 if (i < firePower) { 
@@ -208,7 +210,9 @@ public class Bomb extends SuperObject{
             // per le pos a DX dobbiamo fare tileCol+i
             if(tileCol+i < 13){
 
-                
+                if(gp.obj[tileRow][tileCol+i] instanceof Bomb){
+                    ((Bomb)gp.obj[tileRow][tileCol+i]).exploded = true;
+                }
                 // System.out.print("DX ");  // da eliminare
                 if(gp.tileM.isHouse(x+i*bombWidth, y)){
                     // System.out.println("X "+(x+i*bombWidth)+" Y "+y+" Collision DX true");
@@ -220,20 +224,19 @@ public class Bomb extends SuperObject{
                     // System.out.println(gp.obj[tileRow][tileCol+i].name);
                     gp.obj[tileRow][tileCol+i].destroy();
                     stopIndexDx = i;
+                    break;
                 }
                 //controllo se colpisce un entita
                 Rectangle hitboxFire = new Rectangle(x + i*bombWidth, y, gp.tileSize, gp.tileSize);
-                if(gp.player.hitbox.intersects(hitboxFire) && !gp.player.invulnerable){
+                if(gp.player.hittableHitbox.intersects(hitboxFire) && !gp.player.invulnerable){
                     System.out.println("ESPLOSO");
                     gp.player.kill();
                 }
                 for(Entity ent: gp.enemy){
-                    if(ent.hitbox.intersects(hitboxFire) && !ent.invulnerable)
+                    if(ent.hittableHitbox.intersects(hitboxFire) && !ent.invulnerable)
                         ent.kill();
                 }
-                if(gp.obj[tileRow][tileCol+i] instanceof Bomb){
-                    ((Bomb)gp.obj[tileRow][tileCol+i]).exploded = true;
-                }
+                
 
                 if (i < firePower){
                     if((x+i*bombWidth) < gp.gameBorderRightX)
@@ -256,7 +259,9 @@ public class Bomb extends SuperObject{
 
             // per le pos a UP dobbiamo fare tileRow-i
             if(tileRow-i >= 0){
-                
+                if(gp.obj[tileRow-i][tileCol] instanceof Bomb){
+                    ((Bomb)gp.obj[tileRow-i][tileCol]).exploded = true;
+                }
                 // System.out.print("UP ");  // da eliminare
                 if(gp.tileM.isHouse(x, y-i*bombWidth)){
                     // System.out.println("X "+x+" Y "+(y-i*bombWidth)+" Collision UP true");
@@ -268,20 +273,19 @@ public class Bomb extends SuperObject{
                     // System.out.println(gp.obj[tileRow-i][tileCol].name);
                     gp.obj[tileRow-i][tileCol].destroy();
                     stopIndexUp = i;
+                    break;
                 }
                 //controllo se colpisce un entita
                 Rectangle hitboxFire = new Rectangle(x, y - i*bombWidth, gp.tileSize, gp.tileSize);
-                if(gp.player.hitbox.intersects(hitboxFire) && !gp.player.invulnerable){
+                if(gp.player.hittableHitbox.intersects(hitboxFire) && !gp.player.invulnerable){
                     System.out.println("ESPLOSO");
                     gp.player.kill();
                 }
                 for(Entity ent: gp.enemy){
-                    if(ent.hitbox.intersects(hitboxFire) && !ent.invulnerable)
+                    if(ent.hittableHitbox.intersects(hitboxFire) && !ent.invulnerable)
                         ent.kill();
                 }
-                if(gp.obj[tileRow-i][tileCol] instanceof Bomb){
-                    ((Bomb)gp.obj[tileRow-i][tileCol]).exploded = true;
-                }
+                
 
                 if (i < firePower){
                     // System.out.println("y "+(y-i*bombWidth)+ " game "+gp.gameBorderUpY);
@@ -309,7 +313,9 @@ public class Bomb extends SuperObject{
             if(tileRow+i < 11){
                 
                 // System.out.println("X "+x+" Y "+(y+i*bombWidth)+ " calc x:"+ (((x - (gp.tileSize+gp.tileSize/2)))/gp.tileSize)+ " y:"+(((y+i*bombWidth) - (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize ));
-                
+                if(gp.obj[tileRow+i][tileCol] instanceof Bomb){
+                    ((Bomb)gp.obj[tileRow+i][tileCol]).exploded = true;
+                }
                 // System.out.print("DW ");  // da eliminare
                 if(gp.tileM.isHouse(x, y+i*bombWidth)){
                     // System.out.println("X "+x+" Y "+(y+i*bombWidth)+" Collision DW true");
@@ -320,22 +326,20 @@ public class Bomb extends SuperObject{
                     // System.out.println(gp.obj[tileRow+i][tileCol].name);
                     gp.obj[tileRow+i][tileCol].destroy();
                     stopIndexDw = i;
+                    break;
                 }
                 // else if(gp.obj[tileRow+i][tileCol] != null && gp.obj.ge){  // è un powerUp
                 //     gp.obj.set(positionDw, null);
                 // }
                 //controllo se colpisce un entita
                 Rectangle hitboxFire = new Rectangle(x, y + i*bombWidth, gp.tileSize, gp.tileSize);
-                if(gp.player.hitbox.intersects(hitboxFire) && !gp.player.invulnerable){
+                if(gp.player.hittableHitbox.intersects(hitboxFire) && !gp.player.invulnerable){
                     System.out.println("ESPLOSO");
                     gp.player.kill();
                 }
                 for(Entity ent: gp.enemy){
-                    if(ent.hitbox.intersects(hitboxFire) && !ent.invulnerable)
+                    if(ent.hittableHitbox.intersects(hitboxFire) && !ent.invulnerable)
                         ent.kill();
-                }
-                if(gp.obj[tileRow+i][tileCol] instanceof Bomb){
-                    ((Bomb)gp.obj[tileRow+i][tileCol]).exploded = true;
                 }
 
                 if (i < firePower){
