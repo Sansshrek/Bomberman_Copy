@@ -28,6 +28,7 @@ public class Player extends Entity{
     public Player(GamePanel gp){
         super(gp);
         this.keyH = KeyHandler.getInstance();
+        // this.keyH = gp.keyH;
         int scale = gp.getScale();
         this.tileSize = gp.getTileSize();
         this. maxSpriteNum = 3;
@@ -73,27 +74,26 @@ public class Player extends Entity{
     }
     */
 	public void setPlayerDefaultValues(){
-        int x=0;
-        int y=0;
-        x = (x*tileSize) + (tileSize+tileSize/2);   // posizione x del player IN ALTO A SINISTRA
-        y = (y*tileSize) + 2*tileSize;    // posizione y del player IN ALTO A SINISTRA
-        this.imageP = new Point(x, y);
+        int hitboxX = (0*tileSize) + (tileSize+tileSize/2) + offsetX;   // posizione x del player IN ALTO A SINISTRA
+        int hitboxY = (0*tileSize) + 2*tileSize + offsetY;    // posizione y del player IN ALTO A SINISTRA
+        this.hitbox = new Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
+        this.imageP = new Point(hitboxX-offsetX, hitboxY-offsetY);
         speed = 2;
         direction = "down";
         firePower = 1;
         lifeNumber = 5;
         heartNumber = 1;
         score = 0;
-        invulnerable = true;
+        resetInvincibility();
         died = false;
         extinguished = false;
         checkDeathJump = false;
         checkDeathFall = false;
         spriteDeathCounter = 0;
         spriteNum = 0;
-        mouseX = x;
-        mouseY = y;
-        this.hitbox = new Rectangle(offsetX+imageP.x, offsetY+imageP.y, hitboxWidth, hitboxHeight);
+        mouseX = 0;
+        mouseY = 0;
+        // this.hitbox = new Rectangle(offsetX+imageP.x, offsetY+imageP.y, hitboxWidth, hitboxHeight);
         //setEntityVar(imageP, hitbox, invulnerable, died, extinguished, speed);
         notifyObservers();
     }
@@ -108,11 +108,10 @@ public class Player extends Entity{
             }
         }
         if(extinguished){  // quando è completamente morto resetta i valori
-            int x=0;
-            int y=0;
-            x = (0*tileSize) + (tileSize+tileSize/2);   // posizione x del player IN ALTO A SINISTRA
-            y = (y*tileSize) + 2*tileSize;    // posizione y del player IN ALTO A SINISTRA
-            this.imageP = new Point(x, y);
+            int hitboxX = (0*tileSize) + (tileSize+tileSize/2) + offsetX;   // posizione x del player IN ALTO A SINISTRA
+            int hitboxY = (0*tileSize) + 2*tileSize + offsetY;    // posizione y del player IN ALTO A SINISTRA
+            this.hitbox = new Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
+            this.imageP = new Point(hitboxX-offsetX, hitboxY-offsetY);
             direction = "down";
             invulnerable = true;
             died = false;
@@ -124,9 +123,8 @@ public class Player extends Entity{
             spriteNum = 0;
             lifeNumber -= 1;  // diminuisce di 1 la vita
             heartNumber = 1;
-            mouseX = x;
-            mouseY = y;
-            this.hitbox = new Rectangle(offsetX+imageP.x, offsetY+imageP.y, hitboxWidth, hitboxHeight);
+            mouseX = 0;
+            mouseY = 0;
             gp.hud.resetTimer();
             //setEntityVar(imageP, hitbox, invulnerable, died, extinguished, speed);
         }

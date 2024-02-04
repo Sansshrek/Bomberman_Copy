@@ -19,8 +19,6 @@ import objects.Bomb;
 public class TileManager {
     GamePanel gp;
     public Tile[] tile;  // array di tiles che indica all'immagine 
-    int wallsNum = 43;
-    int contHouse = 0;
     public Rectangle houseHitbox[][];
     public int houseTileNum[][];
     public int groundTileNum[][];  // dove viene salvata la mappa in stile numerico per indicare a quale tiles si riferisce
@@ -28,7 +26,7 @@ public class TileManager {
 
     public TileManager(GamePanel gp){ 
         this.gp = gp;
-        tile = new Tile[20]; // array di 10 tile 
+        tile = new Tile[20]; // array di 20 tile 
         wallsTileNum = new int[gp.maxScreenRow][gp.maxScreenCol];  // mapTileNum salva la matrice di numeri della txt della mappa 
         groundTileNum = new int[gp.maxScreenRow][gp.maxScreenCol];  // mapTileNum salva la matrice di numeri della txt della mappa 
         houseTileNum = new int[gp.maxScreenRow][gp.maxScreenCol];
@@ -46,7 +44,6 @@ public class TileManager {
                 houseTileNum[row][col] = 0;  // tile trasparente
             }
         }
-        contHouse = 0;  // resetto il contatore delle case
         
         System.out.println("Caricando la mappa delle mura"); // da eliminare
         loadMap("../res/map/walls01.txt", "walls");
@@ -171,6 +168,7 @@ public class TileManager {
             for(int col=0; col<gp.maxGameCol; col++){
                 if((row%2) != 0 && (col%2) != 0){  // se row e col sono dispari crea una casa (grid base di bomberman)
                     houseTileNum[row][col] = 3;  // creo la casa
+                    houseHitbox[row][col] = new Rectangle(col* gp.tileSize + 72, row* gp.tileSize + 120, gp.tileSize, gp.tileSize);  // aggiungo la sua hitbox
                 }else if(row+col != 0 && row+col != 1){  // se non è vicino alla posizione default del player
                     randomHouse.add(new Point(col, row));  // aggiungo la casa alle posizioni disponibili per quelle random
                 }
@@ -181,6 +179,7 @@ public class TileManager {
         for(int i=0; i<8; i++){  // numero di case fuori dal grid normale
             Point housePoint = randomHouse.get(i);  // prendo la posizione disponibile della casa
             houseTileNum[housePoint.y][housePoint.x] = 3;  // e la creo
+            houseHitbox[housePoint.y][housePoint.x] = new Rectangle(housePoint.x* gp.tileSize + 72, housePoint.y* gp.tileSize + 120, gp.tileSize, gp.tileSize);  // aggiungo la sua hitbox
             if(housePoint.y+1 < gp.maxGameRow){ // se la posizione sotto la casa non esce dalla mappa giocabile
                 groundTileNum[housePoint.y+1][housePoint.x] = 2;  // allora rende il blocco sulla mappa ground sotto la casa come un tile "pavimento con ombra"
             }
@@ -219,11 +218,7 @@ public class TileManager {
                 tileNum = wallsTileNum[row][col];  // salviamo il numero della matrice del muro
 
             g2.drawImage(tile[tileNum].image, x, y, gp.tileSize, gp.tileSize, null);
-            if(tileNum == 3 && contHouse <= wallsNum){  // se è un palazzo
-                houseHitbox[row][col] = new Rectangle(x, y, gp.tileSize, gp.tileSize);  // aggiungo la sua hitbox
-                // System.out.println("Cont "+cont);
-                contHouse++;
-            }
+    
             x += gp.tileSize; // aumenta di 16 la posizione di partenza di dove disegna il blocco
             col++;
             if(col == gp.maxScreenCol){  // appena raggiunge la fine della riga da disegnare

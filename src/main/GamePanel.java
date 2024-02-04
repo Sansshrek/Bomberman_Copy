@@ -6,8 +6,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
 import java.awt.Point;
+import java.util.concurrent.*;
 
 import javax.swing.JPanel;
 
@@ -40,7 +40,6 @@ public class GamePanel extends JPanel implements Runnable{
     public final int gameBorderRightX = gameBorderLeftX + 13*tileSize;
     public final int gameBorderUpY = (tileSize/2)+hudHeight;
     public final int gameBorderDownY = gameBorderUpY + 11*tileSize;
-    int gameLevel = 1;
 
     // World Settings
 
@@ -49,7 +48,8 @@ public class GamePanel extends JPanel implements Runnable{
     public HUD hud = new HUD(this);
     public CollisionChecker cChecker = new CollisionChecker(this);
     public TileManager tileM = new TileManager(this);
-    KeyHandler keyH = KeyHandler.getInstance();
+    // KeyHandler keyH = KeyHandler.getInstance();
+    public KeyHandler keyH = KeyHandler.getInstance();
     Thread gameThread;
     public BombHandler bombH = new BombHandler(this, tileSize);
     public Player player = new Player(this);
@@ -62,10 +62,10 @@ public class GamePanel extends JPanel implements Runnable{
     int levelIndex = 0;
     public int enemyNum;
     // Stato di Gioco
-    public final int menuState = 5;
     public boolean pauseGame = false;
-    public String currentPanelType = "start";
     public Panel currentPanel = new StartMenu(this);
+    boolean startTransition = false, closeTransition = false;
+    int alphaVal = 255;
 
     // test da eliminare
     boolean checkSetup, checkGameOn;
@@ -80,7 +80,7 @@ public class GamePanel extends JPanel implements Runnable{
         checkSetup = false;
         checkGameOn = false;
         
-        //setupGame();
+        // setupGame();
     }
 
     public void setupGame(){  // imposto il gioco da capo
@@ -111,24 +111,60 @@ public class GamePanel extends JPanel implements Runnable{
                 enemy.get(counter).registerObserver(cChecker);
                 counter++;
             }
-            checkGameOn = true;
+            // startTransition = true;
+            // senza il delay di 1 secondo parte direttamente il gioco senza far vedere la transizione
+            ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);  // crea una nuova pool di thread di una grandezza
+            Runnable task = () -> startingTransition();  // crea una nuova funzione eseguibile che setta checkGameOn a true
+        
+            executor.schedule(task, 1, TimeUnit.SECONDS);  // esegue la task dopo 2 secondi in parallelo col programma
+            executor.shutdown();  // chiude la pool di thread 
+            // checkGameOn = true;
         }
     }
     public void Test(){
         System.out.println("---DIOCANE__--");
+    }/*
+    import java.util.concurrent.*;
+
+public class Main {
+    public static void main(String[] args) {
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+
+        Runnable task = () -> System.out.println("Esecuzione ritardata!");
+
+        int delay = 5;
+        executor.schedule(task, delay, TimeUnit.SECONDS);
+        executor.shutdown();
+    }
+}*/
+
+    public void startingTransition(){
+        alphaVal = 255;  // reimposta l'alphaVal
+        startTransition = true;
+        checkGameOn = false;
+    }
+    public void closingTransition(){
+        alphaVal = 0;  // reimposta l'alphaVal
+        closeTransition = true;
+        // checkSetup = false;
+        checkGameOn = false;
+    }
+
+    public void drawTransition(Graphics2D g2){
+        System.out.println("Drawing "+alphaVal+" transition "+startTransition+ " "+closeTransition);
+        g2.setColor(new Color(0, 0, 0, alphaVal));  // setta il colore con alpha
+        g2.fillRect(0, 0, screenWidth, screenHeight);  // disegna il background
     }
 
     public void resetLevel(){
-        checkSetup = false;
-        checkGameOn = false;
-        setupGame();  // per ora lascio che resetta il livello
+        closingTransition();
     }
 
     public void nextLevel(){
-        if(enemyNum == 0){
-            checkSetup = false;
+        if(enemyNum == 0){  // se sono finiti i nemici sulla mappa
+            checkSetup = false;  // reimposta i valori di setup
             checkGameOn = false;
-            levelIndex++;
+            levelIndex++;  // vai al prossimo livello
             if(levelIndex == listaLivelli.length){  // per ora quando finisce i livelli resetta il gioco
                 levelIndex = 0;
                 resetLevel();
@@ -202,10 +238,23 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     public void update(){
-        updateKey();
-        if(!checkGameOn){
-            System.out.println("UPDATEEEE PANEEELL  !!!!!!");
+        if(!checkGameOn && currentPanel != null){
             currentPanel.chooseOptions(this);
+        }else{
+            updateKey();
+        }
+        if(startTransition && alphaVal>0){  // se è partita la transizione diminuisce l'alphaVal per la trasparenza
+            alphaVal -= 5;
+        }else if(startTransition && alphaVal==0){  // se è finita la transizione
+            startTransition = false;  // reimposta la transizione
+            checkGameOn = true;  // fa partire il gioco
+        }
+        if(closeTransition && alphaVal<255){  // se è partita la transizione di chiusura
+            alphaVal += 5;  // aumenta l'alphaVal per la trasparenza
+        }else if(closeTransition && alphaVal==255){  // se è finita la transizione di chiusura
+            closeTransition = false;
+            checkSetup = false;  // ripristina le variabili del setup
+            setupGame();  // per ora lascio che resetta il livello
         }
         
         if(checkGameOn && !pauseGame){  // se il gioco puo partire e il player non ha fermato il gioco
@@ -230,9 +279,17 @@ public class GamePanel extends JPanel implements Runnable{
     public void paintComponent(Graphics g){
         super.paintComponent(g);  // utilizza il metodo della classe parente di GamePanel quindi JPanel (GamePanel extends JPanel)
         Graphics2D g2 = (Graphics2D) g;  // estende la classe Graphics per aggiungere piu controlli sulla geometria, trasformazione delle cordinate, gestione colori e layout di testo
-        if(checkGameOn){  // se è partito il gioco
+        if(checkSetup){  // se ha inizializzato il gioco
             paintGame(g2);
-        }if (!checkGameOn){
+            if(!checkGameOn) // se non è ancora partito il gioco
+                drawTransition(g2);  // disegna la transizione
+        }
+        if(!checkGameOn && closeTransition){
+            drawTransition(g2);
+        }
+        // if(startTransition || closeTransition) // se non è ancora partito il gioco
+            // drawTransition(g2);  // disegna la transizione
+        if (!checkGameOn && currentPanel != null){
             currentPanel.drawPanel(g2, this);
         }
         g2.dispose();  // rimuove il contesto grafico e rilascia ogni risorsa di sistema che sta usando
@@ -255,14 +312,14 @@ public class GamePanel extends JPanel implements Runnable{
         tileM.drawMap(g2, 24*this.scale, this.hudHeight+(8*this.scale), "house");  // poi i palazzi
         tileM.drawMap(g2, -8*this.scale, this.hudHeight-(8*this.scale), "walls");  // poi le mura
 
-        /*
+        
         g2.setColor(Color.RED);  // da eliminare
         for(int row=0; row<maxGameRow; row++){
             for(int col=0; col<maxGameCol; col++){
                 if(tileM.houseHitbox[row][col] != null)
                     g2.draw(tileM.houseHitbox[row][col]);
             }
-        }  */
+        }
 
         for(int row=0; row < maxGameRow; row++){
             for(int col=0; col < maxGameCol; col++){

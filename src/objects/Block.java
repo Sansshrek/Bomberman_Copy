@@ -26,7 +26,7 @@ public class Block extends SuperObject {
         try {  // apro le 4 sprites del blocco
             
            
-            img1 = ImageIO.read(getClass().getResourceAsStream("../res/tiles/destructible/alarm01.png"));
+            image = img1 = ImageIO.read(getClass().getResourceAsStream("../res/tiles/destructible/alarm01.png"));
             img2 = ImageIO.read(getClass().getResourceAsStream("../res/tiles/destructible/alarm02.png"));
             img3 = ImageIO.read(getClass().getResourceAsStream("../res/tiles/destructible/alarm03.png"));
             img4 = ImageIO.read(getClass().getResourceAsStream("../res/tiles/destructible/alarm04.png"));

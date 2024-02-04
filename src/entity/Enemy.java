@@ -79,7 +79,7 @@ public class Enemy extends Entity{
         this.collisionOn = true;
         this.speed = 1;
         this.direction = "down";
-        gp.cChecker.checkTile(this);
+        // gp.cChecker.checkTile(this);
         notifyObservers();
     }
 
