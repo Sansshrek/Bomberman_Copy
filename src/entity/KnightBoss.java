@@ -36,9 +36,9 @@ public class KnightBoss implements EntityMovementBehaviour{
                 
             }
         }
-        if (underHitbox.intersects(entity.gp.player.hitbox)){
-            System.out.println("Passato sotto");
-            entity.startAttack = true;
+        if (underHitbox.intersects(entity.gp.player.hitbox) && entity.canAttack){  // se puo attaccare e l'hitbox sotto l'entity interseca l'hitbox del player
+            // System.out.println("Passato sotto");
+            entity.startAttack = true;  // inizia l'attacco
         }
     }
 }

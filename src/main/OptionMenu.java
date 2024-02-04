@@ -85,7 +85,7 @@ public class OptionMenu implements Panel{
             //disegna un rettangolo rosso
             g2.setColor(new Color(255, 0, 0, 255));
             g2.setStroke(new BasicStroke(4)); // Imposta lo spessore del bordo a 4
-            g2.drawRect(borderX, optionY-borderOffset, optionWidth, borderHeight);
+            // g2.drawRect(borderX, optionY-borderOffset, optionWidth, borderHeight);
             if(selectedMovementIndex == 0)  // se sto alla prima opzione disegna la freccia per andare sotto
                 g2.drawImage(pointerDownImage, choosePointerX, choosePointerDownY, choosePointerWidth, choosePointerHeight, null);
             else if(selectedMovementIndex == 1)  // se sto all'ultima opzione disegna la freccia per andare sopra 
@@ -94,7 +94,7 @@ public class OptionMenu implements Panel{
             //disegna un rettangolo rosso
             g2.setColor(new Color(255, 0, 0, 255));
             g2.setStroke(new BasicStroke(4)); // Imposta lo spessore del bordo a 4
-            g2.drawRect(borderX, optionY-borderOffset+optionDistance, optionWidth, borderHeight);
+            // g2.drawRect(borderX, optionY-borderOffset+optionDistance, optionWidth, borderHeight);
             if(selectedDifficultyIndex != 0)  // se mi trovo in una posizione diversa dalla prima disegna la freccia per andare sopra
                 g2.drawImage(pointerUpImage, choosePointerX, choosePointerUpY+optionDistance, choosePointerWidth, choosePointerHeight, null);
             if(selectedDifficultyIndex != 2)  // se mi trovo in una posizione diversa dall'ultima disegna la freccia per andare sotto

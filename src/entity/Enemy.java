@@ -26,6 +26,7 @@ public class Enemy extends Entity{
         this.uniCode = uniCode;  // inizializza uniCode
         
         this.movementBehaviour = type.movementBehaviour;  // inizializza movementBehaviour
+        this.drawBehaviour = type.drawBehaviour;  // inizializza drawBehaviour
         this.maxSpriteNum = type.maxSpriteNum;  // inizializza maxSpriteNum
         this.heartNumber = type.startingLives;  // inizializza heartNumber
         this.score = type.startingScore;
@@ -47,7 +48,7 @@ public class Enemy extends Entity{
 
         this.hitboxWidth = gp.tileSize; //DIMENSIONE DI UNA TILE
         this.hitboxHeight = gp.tileSize;  //DIMENSIONE DI UNA TILE
-        this.drawBehaviour = new EnemyDrawBehaviour();
+        // this.drawBehaviour = new EnemyDrawBehaviour();
 
         setEnemyDefaultValues();
         getEnemyImage();
@@ -162,25 +163,27 @@ public class Enemy extends Entity{
             // controlla se colpiamo qualche blocco
                 // CONTROLLA COLLISIONE OBJECT
 
-            spriteCounter++;
-            if(spriteCounter > 15){  // ogni 15/60 volte al secondo 
-                if(reverseAnimation){  // se il tipo di nemico ha gli sprite che tornano al contrario quando finisce l'animazione
-                    if(endAnimation)  // se è finita l'animazione
-                        spriteNum--;  // ristampa gli sprite in reverse
-                    else
-                        spriteNum++;  // altrimenti li stampa in modo normale
+            if(type != "knight"){  // il knight non ha bisogno di modificare le sprite
+                spriteCounter++;
+                if(spriteCounter > 15){  // ogni 15/60 volte al secondo 
+                    if(reverseAnimation){  // se il tipo di nemico ha gli sprite che tornano al contrario quando finisce l'animazione
+                        if(endAnimation)  // se è finita l'animazione
+                            spriteNum--;  // ristampa gli sprite in reverse
+                        else
+                            spriteNum++;  // altrimenti li stampa in modo normale
 
-                    if(spriteNum == maxSpriteNum-1)
-                        endAnimation = true;
-                    else if(spriteNum == 0)
-                        endAnimation = false;
-                }else{
-                    spriteNum++;
-                    if(spriteNum == maxSpriteNum)
-                        spriteNum = 0;
+                        if(spriteNum == maxSpriteNum-1)
+                            endAnimation = true;
+                        else if(spriteNum == 0)
+                            endAnimation = false;
+                    }else{
+                        spriteNum++;
+                        if(spriteNum == maxSpriteNum)
+                            spriteNum = 0;
+                    }
+                            
+                    spriteCounter = 0;  // e resetta il counter
                 }
-                        
-                spriteCounter = 0;  // e resetta il counter
             }
             notifyObservers();
         }
