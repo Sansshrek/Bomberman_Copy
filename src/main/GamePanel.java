@@ -66,6 +66,7 @@ public class GamePanel extends JPanel implements Runnable{
     public Panel currentPanel = new StartMenu(this);
     boolean startTransition = false, closeTransition = false;
     int alphaVal = 255;
+    public String gameDifficulty = "normal";
 
     // test da eliminare
     boolean checkSetup, checkGameOn;
@@ -101,7 +102,7 @@ public class GamePanel extends JPanel implements Runnable{
             aSetter.setMatrixBlocks();
             enemy.clear();  // resetto la lista dei nemici
             LevelType livello = listaLivelli[levelIndex];
-            ArrayList<EnemyType> listaNemici = livello.enemyList;
+            ArrayList<EnemyType> listaNemici = livello.getEnemyList(gameDifficulty);
             enemyNum = listaNemici.size();
             entityCounter = 1;
             int counter = 0;

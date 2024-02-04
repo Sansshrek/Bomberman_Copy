@@ -16,19 +16,18 @@ import javax.imageio.ImageIO;
 import main.GamePanel;
 
 public class Enemy extends Entity{
-    boolean playerCollision = false;
-    EntityMovementBehaviour stupidBehaviour = new StupidEntity();
-    EntityMovementBehaviour searchBehaviour = new SearchEntity();
+    boolean playerCollision = false;  // se c'è una collisione con il player
     //largezza e altezza dell' immagine del player
-    public int imageWidth, imageHeight,score, startX, startY;
+    public int imageWidth, imageHeight, score, startX, startY; // Aggiungiamo delle variabili specifiche per la scelta della posizione di partenza dell'enemy 
+    //e per la grandezza variabile dell'immagine e per il rilascio di punti al player
 
     public Enemy(GamePanel gp, int uniCode, EnemyType type){
-        super(gp);
-        this.uniCode = uniCode;
+        super(gp);  // chiama il costruttore della classe madre
+        this.uniCode = uniCode;  // inizializza uniCode
         
         this.movementBehaviour = type.movementBehaviour;  // inizializza movementBehaviour
-        this.maxSpriteNum = type.maxSpriteNum;
-        this.heartNumber = type.startingLives;
+        this.maxSpriteNum = type.maxSpriteNum;  // inizializza maxSpriteNum
+        this.heartNumber = type.startingLives;  // inizializza heartNumber
         this.score = type.startingScore;
         this.type = type.type;
         this.width = type.width*gp.scale; // larghezza dell' enemy
@@ -55,6 +54,7 @@ public class Enemy extends Entity{
     }
 
 
+    //Metodo di notifica ed aggiornamento degli observer
     @Override
     public void notifyObservers(){
         for (int i = 0; i < observers.size(); i++) {
@@ -66,6 +66,7 @@ public class Enemy extends Entity{
         }
     }
 
+    //Metodo di impostazioni delle variabili di default dell'enemy che utilizza o la posizione di partenza impostata (!-1) o una posizione disponibile
 	public void setEnemyDefaultValues(){
         if(startX == -1){  // se la pos di partenza è quella di default allora la cambia
             Point avPos = findAvStartPos();  // trova una posizione disponibile sulla mappa
@@ -89,6 +90,7 @@ public class Enemy extends Entity{
         notifyObservers();
     }
 
+    //Metodo per trovare una posizione disponibile sulla mappa
     public Point findAvStartPos(){
         ArrayList<Point> avPos = new ArrayList<>();  // array di posizioni disponibili
         for(int row=0; row<gp.maxGameRow; row++){ 
@@ -102,6 +104,7 @@ public class Enemy extends Entity{
         return avPos.get(0);  // ritorno la prima pos disponibile
     }
 
+    //Metodo per ottenere l'immagine dell'enemy
     public void getEnemyImage(){
         try{  // prova a caricare le immagini nelle variabili
             for(int dir=0; dir<4; dir++){
@@ -130,6 +133,7 @@ public class Enemy extends Entity{
         }
     }
 
+    //Metodo per quando un enemy viene colpita
     public void kill(){
         heartNumber--;
         System.out.println(heartNumber);
@@ -146,7 +150,7 @@ public class Enemy extends Entity{
         notifyObservers();
     }
 
-
+    //Metodo per aggiornare e spostare l'enemy
     public void update(){  // update viene chiamato 60 volte al secondo
 
         if(!died){  // se non è morto
@@ -182,6 +186,7 @@ public class Enemy extends Entity{
         }
     }
 
+    //Metodo per disegnare l'enemy
     public void draw(){
 
         drawBehaviour.draw(this);

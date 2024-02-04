@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.Rectangle;
 
 public class PlayerDrawBehaviour implements EntityDrawBehaviour{
-
+    // classe che implementa l'interfaccia EntityDrawBehaviour, che permette di disegnare il player
     public void draw(Entity entity){
         entity.image = null;
         

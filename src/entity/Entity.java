@@ -12,37 +12,47 @@ import main.KeyHandler;
 import main.GamePanel;
 
 public class Entity implements EntityObservable{
-    ArrayList<EntityObserver> observers = new ArrayList<>();
+    ArrayList<EntityObserver> observers = new ArrayList<>();  // lista degli osservatori dell'entita'
 
-    public EntityMovementBehaviour movementBehaviour;  // interfaccia movement behaviour
-    public EntityDrawBehaviour drawBehaviour; //interfaccia draw behaviour
-    KeyHandler keyH;
-    GamePanel gp;
-    int tileSize;
-    public Graphics2D g2;
+    public EntityMovementBehaviour movementBehaviour;  // interfaccia movement behaviour (Strategy Pattern)
+    public EntityDrawBehaviour drawBehaviour; //interfaccia draw behaviour (Strategy Pattern)
+    KeyHandler keyH;  // oggetto keyHandler per la gestione degli input da tastiera
+    GamePanel gp;  // oggetto GamePanel per accedere a variabili e metodi del gioco
+    int tileSize;  // dimensione di un tile del livello
+    public Graphics2D g2; // oggetto grafico per disegnare l'entita'
     // public int x, y;  // le coordinate nel mondo
     public Point imageP;  // le coordinate in alto a sinistra dell'immagine
-    public Point findP;
-    public double speed;
-    public EntityEnum name;  // definisce il comportamento dell'entita in base al tipo
-    public int uniCode;  // codice univoco dell'entita per la ricerca dentro la lista delle entita
-    public BufferedImage image;
-    public String direction;
-    public ArrayList<Node> pathSearch; 
+    public Point findP;  // le coordinate di un reachingPoint
+    public double speed;  // la velocita' dell'entita'
+    public int uniCode;  // codice univoco dell'entita per la ricerca attraverso chiave dentro la l'concurrentHashSet(Observable) delle entita 
+    public BufferedImage image;  // immagine dell'entita'che viene disegnata e cambia a seconda della direzione e dello spriteCounter
+    public String direction;  // direzione dell'entita'
+    public ArrayList<Node> pathSearch; //percorso di ricerca utilizzato a seconda del comportamento dell'entita' (Utilizzato insieme al findP)
 
+    //Proprietà delle entità
     public int firePower, spriteCounter, spriteNum, maxSpriteNum, invulnerableStart, invulnerableSec, invulnerableTimer = 0, lifeNumber = 1, heartNumber = 1, width, height, spriteDeathNum = 0, startDeathY;
 
+    //Hitbox per il controllo delle collisioni 
     public Rectangle hitbox, hittableHitbox;
+
+    //Proprietà per il controllo delle collisioni e l'inizializzazione delle immagini e delle hitbox
     public int offsetX, offsetY, hitboxWidth, hitboxHeight, mouseX, mouseY;
+
+    //Condizioni delle entità
     public boolean collisionOn = false, died = false, extinguished = false, bombExitHitbox = false, invulnerable = false, endAnimation = false;
     public boolean checkDeathJump = false, checkDeathFall = false, reverseAnimation = false;
+    
+
+    //Controlli per i vari tipi di nemici
     public String type;
 
+    //Array di immagini per le animazioni a seconda delle condizioni
     ArrayList<BufferedImage>[] imageList = new ArrayList[4];
     ArrayList<BufferedImage>[] ogImage = new ArrayList[4];
     ArrayList<BufferedImage>[] whiteImage = new ArrayList[4];
     ArrayList<BufferedImage> deathImage = new ArrayList<>();
     
+    //Costruttore dell'entità
     public Entity(GamePanel gp){
         this.gp=gp;
         this.tileSize = gp.tileSize;
@@ -51,8 +61,10 @@ public class Entity implements EntityObservable{
         setEntityDefaultValues();
     }
 
+    //Metodo per quando un entità viene colpita
     public void kill(){}
 
+    //Metodo per impostare i campi comuni a tutte le entità
     public void setEntityDefaultValues(){
         this.direction = "down";
         this.died = false;
@@ -64,44 +76,60 @@ public class Entity implements EntityObservable{
         this.spriteNum = 0;
     }
 
+    //Metodo per ottenere il centro sull'asse x preciso al pixel dell'entità
     public int getCenterX(){
         // calcola la media del punto centrale della x
         return (hitbox.x + hitbox.x + hitbox.width) / 2;
     }
+
+    //Metodo per ottenere il centro sull'asse y preciso al pixel dell'entità
     public int getCenterY(){
         return (hitbox.y + hitbox.y + hitbox.height) / 2;
     }
+
+    //Metodo per ottenere il centro sull'asse x approssimato al tile dell'entità
     public int getTileNumCol() {
         int adjustedX = getCenterX() - 72; // Spostamento a sinistra
         // prende il centro del player meno la distanza da dove parte a sinistra la mappa (gp.gameBorderLeftX)
         return adjustedX / gp.tileSize;
     }
+
+    //Metodo per ottenere il centro sull'asse y approssimato al tile dell'entità
     public int getTileNumRow() {
         int adjustedY = getCenterY() - 120; // Spostamento verso l'alto
         // prende il centro del player meno la distanza da dove parte sopra la mappa (gp.gameBorderUpY)
         return adjustedY / gp.tileSize;
     }
+
+    //Metodo per ottenere il punto in alto a sinistra della tile di appartenenza dell'entità
     public int getTileX() {
         return getTileNumCol() * gp.tileSize + 72; // TilePlayerX*48 + lo spostamento a sinistra
     }
+
+    //Metodo per ottenere il punto in alto a sinistra della tile di appartenenza dell'entità
     public int getTileY() {
         return getTileNumRow() * gp.tileSize + 120; // TilePlayerY*48 + lo spostamento verso l'alto
     }
+
+    //Metodo per controllare se l'entita si trova all'interno interamente a un altra hitbox
     public boolean fullyInsideTile(){  // se l'hitbox del player è completamente all'interno della hitbox del blocco in cui sta allora ritorna true
         Rectangle tileHitbox = new Rectangle(getTileX(), getTileY(), gp.tileSize, gp.tileSize);
         return tileHitbox.contains(hitbox);
     }
 
+    //Metodo per l'aggiunta di un osservatore alla lista degli osservatori dell'entità
     @Override
     public void registerObserver(EntityObserver observer) {
         observers.add(observer);
     }
 
+    //Metodo per la rimozione di un osservatore dalla lista degli osservatori dell'entità
     @Override
     public void removeObserver(EntityObserver observer){
         observers.remove(observer);
     }
     
+    //Metodo per notificare tutti gli osservatori dell'entità
     @Override
     public void notifyObservers(){
         for (int i = 0; i < observers.size(); i++) {
@@ -110,6 +138,7 @@ public class Entity implements EntityObservable{
         }
     }
     
+    //Metodo per il movimento dell'entità
     public void changeSpriteDirection(){
         if(!collisionOn){ // se si puo muovere
             switch(direction){

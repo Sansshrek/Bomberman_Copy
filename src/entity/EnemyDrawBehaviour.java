@@ -4,9 +4,9 @@ import java.awt.Color;
 
 public class EnemyDrawBehaviour implements EntityDrawBehaviour{
 
+    // disegna l'enemy
     public void draw(Entity entity){
         entity.image = null;
-
         if(!entity.died){  // se ancora non è stato colpito dalla bomba allora disegna l'enemy normale
             entity.invincibleCheck();
             switch(entity.direction){  // in base alla direzione, la variabile image prende il valore dell'immagine inserita

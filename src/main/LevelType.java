@@ -15,4 +15,8 @@ public enum LevelType{
     LevelType(EnemyType... enemies) {
         enemyList = new ArrayList<>(Arrays.asList(enemies));
     }
+
+    public ArrayList<EnemyType> getEnemyList(String gameDifficulty) {
+        return enemyList;
+    }
 }

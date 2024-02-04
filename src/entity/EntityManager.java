@@ -2,13 +2,20 @@ package entity;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+//L'EntityManager è un singleton che gestisce tutte le entità del gioco.
 public class EntityManager implements EntityObserver { //EntityManagerObservable
-    
-    private ConcurrentHashMap<Integer, Entity> entityMap;
+    private static EntityManager instance = null;
+
+    public static EntityManager getInstance() {
+        if(instance == null){
+            instance = new EntityManager();}
+        return instance;
+    }
+    private ConcurrentHashMap<Integer, Entity> entityMap;  // Mappa 
     //private List<EntityObserver> observers;
 
     public EntityManager() {
-        this.entityMap = new ConcurrentHashMap<>();
+        this.entityMap = new ConcurrentHashMap<>();  //
         //observers = new ArrayList<>();
     }
 
