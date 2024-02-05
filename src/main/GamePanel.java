@@ -5,10 +5,12 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.awt.Point;
 import java.util.concurrent.*;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 import entity.Enemy;
@@ -61,6 +63,9 @@ public class GamePanel extends JPanel implements Runnable{
     public LevelType[] levelListEasy = {LevelType.Level1Easy, LevelType.Level2Easy, LevelType.Level2Easy};
     public LevelType[] levelListNormal = {LevelType.Level1, LevelType.Level2, LevelType.Level3};
     public LevelType[] levelListHard = {LevelType.Level1Hard, LevelType.Level2Hard, LevelType.Level3Hard};
+    public BufferedImage[] levelNumberImages;
+    int levelNumberX = -screenWidth;  // posizione iniziale del numero del livello 
+    boolean canDrawLevelNumber = false;
     int levelIndex = 0;
     public int enemyNum;
     // Stato di Gioco
@@ -80,6 +85,7 @@ public class GamePanel extends JPanel implements Runnable{
         this.addKeyListener(keyH);
         this.setFocusable(true);  // cosi il GamePanel è "concentrato" a ricevere input di tastiera
         this.obj = new SuperObject[maxGameRow][maxGameCol]; 
+        getLevelImage();
         checkSetup = false;
         checkGameOn = false;
         
@@ -88,7 +94,9 @@ public class GamePanel extends JPanel implements Runnable{
 
     public void setupGame(){  // imposto il gioco da capo
         if(!checkSetup){
+            canDrawLevelNumber = true;  // fa partire l'animazione del numero del livello
             checkSetup = true;
+            pauseGame = false;
             hud.resetTimer();
             player.registerObserver(cChecker);
             player.setPlayerDefaultValues();
@@ -121,13 +129,25 @@ public class GamePanel extends JPanel implements Runnable{
                 counter++;
             }
             // startTransition = true;
-            // senza il delay di 1 secondo parte direttamente il gioco senza far vedere la transizione
+            // senza il delay parte direttamente il gioco senza far vedere la transizione
             ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);  // crea una nuova pool di thread di una grandezza
             Runnable task = () -> startingTransition();  // crea una nuova funzione eseguibile che setta checkGameOn a true
         
-            executor.schedule(task, 1, TimeUnit.SECONDS);  // esegue la task dopo 2 secondi in parallelo col programma
+            executor.schedule(task, 3, TimeUnit.SECONDS);  // esegue la task dopo 2 secondi in parallelo col programma
             executor.shutdown();  // chiude la pool di thread 
             // checkGameOn = true;
+        }
+    }
+
+    public void getLevelImage(){
+        levelNumberImages = new BufferedImage[3];
+        try {
+            // attack1 = ImageIO.read(getClass().getResourceAsStream("../res/enemies/knight/attack1.png"));
+            for(int levelI=1; levelI<4; levelI++){  // per quante sprite ci stanno in una direzione
+                levelNumberImages[levelI-1] = ImageIO.read(getClass().getResourceAsStream("../res/menu/level "+String.valueOf(levelI)+".png"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
     public void Test(){
@@ -167,6 +187,11 @@ public class Main {
 
     public void resetLevel(){
         closingTransition();
+    }
+    public void playerDeath(){  // viene chiamato quando il player perde tutte le vite
+        pauseGame = true;
+        checkGameOn = false;
+        currentPanel = new DeathPanel(this);
     }
 
     public void nextLevel(){
@@ -260,7 +285,7 @@ public class Main {
         }else if(closeTransition && alphaVal==255){  // se è finita la transizione di chiusura
             closeTransition = false;
             checkSetup = false;  // ripristina le variabili del setup
-            setupGame();  // per ora lascio che resetta il livello
+            setupGame();  // fa partire il setup del gioco
         }
         
         if(checkGameOn && !pauseGame){  // se il gioco puo partire e il player non ha fermato il gioco
@@ -289,14 +314,27 @@ public class Main {
             paintGame(g2);
             if(!checkGameOn) // se non è ancora partito il gioco
                 drawTransition(g2);  // disegna la transizione
+                
+            if(canDrawLevelNumber){  // se può disegnare il numero del livello
+                g2.drawImage(levelNumberImages[levelIndex], levelNumberX, 0, screenWidth, screenHeight, null);  // disegna il numero del livello corrente
+                if(levelNumberX != 0){  // finche non è precisamente al centro dello schermo
+                    levelNumberX += 10;  // sposta a destra di 10 pixel il numero del livello per l'animazione
+                }else{  // altrimenti ferma il disegno del numero del livello
+                    // e lo fa ripartire dopo 1 secondi spostando nuovamente di 1 pixel lo sprite del livello sbloccando quindi il ciclo normale che sposta lo sprite
+                    ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);  // crea una nuova pool di thread di una grandezza
+                    Runnable task = () -> levelNumberX += 1;  // crea una nuova funzione eseguibile che setta checkGameOn a true
+                
+                    executor.schedule(task, 1, TimeUnit.SECONDS);  // esegue la task dopo 2 secondi in parallelo col programma
+                    executor.shutdown();  // chiude la pool di thread 
+                }
+                if(levelNumberX > screenWidth){  // se il numero del livello è fuori dallo schermo
+                    levelNumberX = -screenWidth;  // resetta la posizione di partenza
+                    canDrawLevelNumber = false;  // e non può piu disegnare il numero del livello
+                }
+            }
         }
-        if(!checkGameOn && closeTransition){
-            drawTransition(g2);
-        }
-        // if(startTransition || closeTransition) // se non è ancora partito il gioco
-            // drawTransition(g2);  // disegna la transizione
-        if (!checkGameOn && currentPanel != null){
-            currentPanel.drawPanel(g2, this);
+        if (!checkGameOn && currentPanel != null){  // se il gioco non è ancora partito e c'è un pannello corrente
+            currentPanel.drawPanel(g2, this);  // disegna il pannello corrente
         }
         g2.dispose();  // rimuove il contesto grafico e rilascia ogni risorsa di sistema che sta usando
     }

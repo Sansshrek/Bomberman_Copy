@@ -6,17 +6,17 @@ import java.util.Arrays;
 import entity.EnemyType;
 
 public enum LevelType{
-    Level1(EnemyType.KNIGHT, EnemyType.PUROPEN, EnemyType.PUROPEN),
+    Level1(EnemyType.PUROPEN, EnemyType.PUROPEN, EnemyType.DENKYUN),
     Level2(EnemyType.PUROPEN, EnemyType.PUROPEN, EnemyType.PUROPEN, EnemyType.PAKUPA, EnemyType.PAKUPA),
     Level3(EnemyType.PUROPEN, EnemyType.PUROPEN, EnemyType.PAKUPA, EnemyType.PAKUPA, EnemyType.UFO, EnemyType.UFO),
     // easy
-    Level1Easy(EnemyType.CUPPEN, EnemyType.PUROPEN, EnemyType.PUROPEN),
-    Level2Easy(EnemyType.PUROPEN, EnemyType.PUROPEN, EnemyType.PUROPEN, EnemyType.PAKUPA, EnemyType.PAKUPA),
-    Level3Easy(EnemyType.PUROPEN, EnemyType.PUROPEN, EnemyType.PAKUPA, EnemyType.PAKUPA, EnemyType.UFO, EnemyType.UFO),
+    Level1Easy(EnemyType.PUROPEN, EnemyType.PUROPEN),
+    Level2Easy(EnemyType.PUROPEN, EnemyType.DENKYUN, EnemyType.PAKUPA),
+    Level3Easy(EnemyType.PUROPEN, EnemyType.DENKYUN, EnemyType.PAKUPA, EnemyType.UFO),
     // hard
-    Level1Hard(EnemyType.CUPPEN, EnemyType.PUROPEN, EnemyType.PUROPEN),
-    Level2Hard(EnemyType.PUROPEN, EnemyType.PUROPEN, EnemyType.PUROPEN, EnemyType.PAKUPA, EnemyType.PAKUPA),
-    Level3Hard(EnemyType.PUROPEN, EnemyType.PUROPEN, EnemyType.PAKUPA, EnemyType.PAKUPA, EnemyType.UFO, EnemyType.UFO);
+    Level1Hard(EnemyType.DENKYUN, EnemyType.DENKYUN, EnemyType.PUROPEN, EnemyType.PUROPEN),
+    Level2Hard(EnemyType.PUROPEN, EnemyType.DENKYUN, EnemyType.DENKYUN, EnemyType.PAKUPA, EnemyType.PAKUPA, EnemyType.UFO),
+    Level3Hard(EnemyType.DENKYUN, EnemyType.DENKYUN, EnemyType.PAKUPA, EnemyType.PAKUPA, EnemyType.UFO, EnemyType.UFO);
 
     ArrayList<EnemyType> enemyList;
 

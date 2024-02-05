@@ -1,6 +1,7 @@
 package entity;
 
 import java.awt.Color;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -12,6 +13,7 @@ public class KnightDrawBehaviour implements EntityDrawBehaviour{
 
     BufferedImage[] attackImage = new BufferedImage[4];
     public KnightDrawBehaviour(){
+        // carico le sprite dell'attacco
         try {
             // attack1 = ImageIO.read(getClass().getResourceAsStream("../res/enemies/knight/attack1.png"));
             for(int sprite=1; sprite<=4; sprite++){  // per quante sprite ci stanno in una direzione
@@ -21,10 +23,11 @@ public class KnightDrawBehaviour implements EntityDrawBehaviour{
             e.printStackTrace();
         }
     }
+
     // disegna l'enemy
     public void draw(Entity entity){
         entity.image = null;
-        System.out.println(entity.startAttack);
+        // System.out.println(entity.startAttack);
         if(!entity.died){  // se ancora non è stato colpito dalla bomba allora disegna l'enemy normale
             entity.invincibleCheck();
 
@@ -36,7 +39,12 @@ public class KnightDrawBehaviour implements EntityDrawBehaviour{
                         entity.spriteNum = 0;
                         entity.startAttack = false;  // finisce l'attacco
                         entity.canAttack = false;  // e non può più attaccare per un po'
+                        // controlla se la hitbox del martello colpisce il player
+                        Rectangle hammerHitbox = new Rectangle(entity.hitbox.x, entity.hitbox.y, entity.hitbox.width, entity.hitbox.height*4);  // l'hitbox del martello)
+                        if(hammerHitbox.intersects(entity.gp.player.hitbox))
+                            entity.gp.player.kill();  // e se il player viene colpito allora muore
 
+                        // in parallelo dopo 3 secondi dalla fine dell'attacco reimpostiamo canAttack a true cosi il boss puo attaccare 
                         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);  // crea una nuova pool di thread di una grandezza
                         Runnable task = () -> entity.canAttack = true;  // crea una nuova funzione eseguibile che setta canAttack a true
                     
@@ -50,7 +58,7 @@ public class KnightDrawBehaviour implements EntityDrawBehaviour{
                 entity.image = entity.imageList[0].get(0);  // lo sprite del movimento del knight è uno solo quindi non serve fare lo switch per le direzioni
             }
         }else{  // altrimenti se l'enemy è stato colpito dalla bomba allora disegna l'esplosione
-            System.out.println("DEATH");
+            // System.out.println("DEATH");
         }
 
         if(!entity.extinguished){

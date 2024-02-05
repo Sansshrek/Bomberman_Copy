@@ -181,7 +181,6 @@ public class Enemy extends Entity{
                         if(spriteNum == maxSpriteNum)
                             spriteNum = 0;
                     }
-                            
                     spriteCounter = 0;  // e resetta il counter
                 }
             }
@@ -195,7 +194,7 @@ public class Enemy extends Entity{
         drawBehaviour.draw(this);
         
         if(!extinguished){  // se l'enemy non è esploso totalmente disegna l'immagine
-            g2.drawImage(image, imageP.x, imageP.y, width, height, null);  // disegna lo sprite del personaggio (image) nella posizione x,y di grandezza tileSize
+            g2.drawImage(image, imageP.x, imageP.y, imageWidth, imageHeight, null);  // disegna lo sprite del personaggio (image) nella posizione x,y di grandezza tileSize
             //da eliminare
             /*
             g2.setColor(Color.BLUE);

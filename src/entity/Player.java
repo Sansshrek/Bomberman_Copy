@@ -108,6 +108,7 @@ public class Player extends Entity{
                 startDeathY = imageP.y;  // inizia lo sprite della morte
                 died = true;  // imposta la morte a true
             }
+            System.out.println("PRIOPRIO MORTO");
         }
         if(extinguished){  // quando è completamente morto resetta i valori
             int hitboxX = (0*tileSize) + (tileSize+tileSize/2) + offsetX;   // posizione x del player IN ALTO A SINISTRA
@@ -175,7 +176,7 @@ public class Player extends Entity{
             kill();
         if(!died){ // se non è morto allora puo eseguire l'update
             if(lifeNumber == 0){
-                gp.resetLevel();
+                gp.playerDeath();
             }
 
             movementBehaviour.updateMovement(this);

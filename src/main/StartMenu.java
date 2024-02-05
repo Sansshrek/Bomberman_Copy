@@ -11,8 +11,6 @@ public class StartMenu implements Panel{
     
     KeyHandler keyH = KeyHandler.getInstance();
     BufferedImage backgroundImage, ballonImage, cloudImage, optionStartImage, optionSettingsImage, optionScoreImage, pointerImage, title;
-    //Salvo nella lista options a seconda dell'opzione optionX, optionY
-    int[][] options = new int[3][4];
     int alphaVal, titleX, titleY, titleWidth, titleHeight, optionX, optionY, startPointerY, pointerX, pointerY, pointerIndex = 0, pointerWidth, pointerHeight, optionWidth, optionHeight, optionDistance, totOptionNumber;
     boolean optionMenu = false, scoreMenu = false, startGame = false;
     public StartMenu(GamePanel gp){
@@ -69,13 +67,13 @@ public class StartMenu implements Panel{
         g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);  // disegna il background
         g2.drawImage(backgroundImage, 0, 0, gp.screenWidth, gp.screenHeight, null);
         g2.drawImage(title, titleX, titleY, titleWidth, titleHeight, null);
-        if(!optionMenu && !scoreMenu){
+        if(!optionMenu && !scoreMenu && !scoreMenu){
             g2.drawImage(optionStartImage, optionX, optionY, optionWidth, optionHeight, null);
             g2.drawImage(optionSettingsImage, optionX, optionY+optionDistance, optionWidth, optionHeight, null);
             g2.drawImage(optionScoreImage, optionX, optionY+optionDistance*2, optionWidth, optionHeight, null);
             g2.drawImage(pointerImage, pointerX, pointerY, pointerWidth, pointerHeight, null);
         }
-        if(startGame && alphaVal<255){  // se il gioco è partito
+        if((startGame || scoreMenu)&& alphaVal<255){  // se il gioco è partito
             alphaVal += 5;  // aumenta il valore alpha per la transizione
         }
         closingTransition(g2, gp);  // e disegna la transizione
@@ -90,6 +88,7 @@ public class StartMenu implements Panel{
         // System.out.println("pointer index:" + pointerIndex);
         // System.out.println(pointerY);
         if(startGame && alphaVal==255){  // quando è partito il gioco e finisce la transizione
+            gp.alphaVal = 255;
             gp.setupGame();
             gp.currentPanel = null;
         }
@@ -131,7 +130,7 @@ public class StartMenu implements Panel{
                 gp.currentPanel = new ScoreMenu();
                 keyH.pausePressed = false;
             }
-        }else if(!startGame){
+        }else if(!startGame && optionMenu){
             titleY -= 11;
             if(titleHeight+titleY<0){
                 gp.currentPanel = new OptionMenu(gp);

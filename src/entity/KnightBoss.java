@@ -9,9 +9,10 @@ import java.awt.Rectangle;
 
 public class KnightBoss implements EntityMovementBehaviour{
     EntityMovementBehaviour stupidBehaviour = new StupidEntity();
+    boolean hitboxHitCheck = false;
     
     public void updateMovement(Entity entity){
-        Rectangle underHitbox = new Rectangle(entity.hitbox.x, entity.hitbox.y, entity.hitbox.width, entity.hitbox.height*3);
+        Rectangle hammerHitbox = new Rectangle(entity.hitbox.x, entity.hitbox.y, entity.hitbox.width, entity.hitbox.height*4);  // l'hitbox del martello
         if(entity.startAttack)  // se inizia l'attacco allora ferma l'entity
             entity.collisionOn = true;
         if(entity.hitbox.x == entity.getTileX() && entity.hitbox.y == entity.getTileY()){
@@ -36,9 +37,11 @@ public class KnightBoss implements EntityMovementBehaviour{
                 
             }
         }
-        if (underHitbox.intersects(entity.gp.player.hitbox) && entity.canAttack){  // se puo attaccare e l'hitbox sotto l'entity interseca l'hitbox del player
+        if (hammerHitbox.intersects(entity.gp.player.hitbox)){  // se l'hitbox sotto l'entity interseca l'hitbox del player
             // System.out.println("Passato sotto");
-            entity.startAttack = true;  // inizia l'attacco
+            if(entity.canAttack)  // se puo attaccare inizia l'attacco
+                entity.startAttack = true;  // inizia l'attacco
+            
         }
     }
 }

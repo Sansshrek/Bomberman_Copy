@@ -3,7 +3,8 @@ package entity;
 public enum EnemyType {
 
     //Tipi diversi di nemici
-    KNIGHT(5, 100, new KnightBoss(), new KnightDrawBehaviour(), 1, "knight", 80, 80, 80, 80, 32, 64, -1, -1, false),
+    KNIGHT(5, 100, new KnightBoss(), new KnightDrawBehaviour(), 1, "knight", 80, 80, 80, 152, 32, 80, -1, -1, false),
+    DENKYUN(2, 200, new StupidEntity(), new EnemyDrawBehaviour(), 6, "denkyun", 16, 24, 16, 24, 0, 8, -1, -1, true),
     PUROPEN(1, 100, new StupidEntity(), new EnemyDrawBehaviour(), 4, "puropen", 16, 24, 16, 24, 0, 8, -1, -1, false),
     UFO(2, 3200, new SearchEntity(), new EnemyDrawBehaviour(), 4, "ufo", 16, 16, 16, 16, 0, 0, -1, -1, true),
     PAKUPA(3, 300, new SearchBomb(), new EnemyDrawBehaviour(), 6, "pakupa", 16, 16, 16, 16, 0, 0, -1, -1, true),
