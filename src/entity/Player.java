@@ -38,12 +38,12 @@ public class Player extends Entity{
         this.image=null;
 
         //largezza e altezza dell' immagine del player
-        this.width = 16*scale; // larghezza del player
-        this.height = 29*scale; // altezza del player 
+        this.hittableWidth = 16*scale; // larghezza del player
+        this.hittableHeight = 29*scale; // altezza del player 
 
         //codinate top left dell' hitbox
-        this.offsetX = 2*scale;// dove parte hitbox del player (2 pixel a destra rispetto a dove parte l'immagine)
-        this.offsetY = 10*scale; // dove parte hitbox del player (12 pixel sotto rispetto a dove parte l'immagine)
+        this.offsetImageX = 2*scale;// dove parte hitbox del player (2 pixel a destra rispetto a dove parte l'immagine)
+        this.offsetImageY = 10*scale; // dove parte hitbox del player (12 pixel sotto rispetto a dove parte l'immagine)
         
         //larghezza e altezza dell' hitbox
         this.hitboxWidth = 12*scale;// larghezza dell'hitbox del player
@@ -75,10 +75,10 @@ public class Player extends Entity{
     }
     */
 	public void setPlayerDefaultValues(){
-        int hitboxX = (0*tileSize) + (tileSize+tileSize/2) + offsetX;   // posizione x del player IN ALTO A SINISTRA
-        int hitboxY = (0*tileSize) + 2*tileSize + offsetY;    // posizione y del player IN ALTO A SINISTRA
+        int hitboxX = (0*tileSize) + (tileSize+tileSize/2) + offsetImageX;   // posizione x del player IN ALTO A SINISTRA
+        int hitboxY = (0*tileSize) + 2*tileSize + offsetImageY;    // posizione y del player IN ALTO A SINISTRA
         this.hitbox = new Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
-        this.imageP = new Point(hitboxX-offsetX, hitboxY-offsetY);
+        this.imageP = new Point(hitboxX-offsetImageX, hitboxY-offsetImageY);
         this.hittableHitbox = new Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
         speed = 2;
         direction = "down";
@@ -111,10 +111,10 @@ public class Player extends Entity{
             System.out.println("PRIOPRIO MORTO");
         }
         if(extinguished){  // quando è completamente morto resetta i valori
-            int hitboxX = (0*tileSize) + (tileSize+tileSize/2) + offsetX;   // posizione x del player IN ALTO A SINISTRA
-            int hitboxY = (0*tileSize) + 2*tileSize + offsetY;    // posizione y del player IN ALTO A SINISTRA
+            int hitboxX = (0*tileSize) + (tileSize+tileSize/2) + offsetImageX;   // posizione x del player IN ALTO A SINISTRA
+            int hitboxY = (0*tileSize) + 2*tileSize + offsetImageY;    // posizione y del player IN ALTO A SINISTRA
             this.hitbox = new Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
-            this.imageP = new Point(hitboxX-offsetX, hitboxY-offsetY);
+            this.imageP = new Point(hitboxX-offsetImageX, hitboxY-offsetImageY);
             this.hittableHitbox = new Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
             direction = "down";
             invulnerable = true;
@@ -291,8 +291,8 @@ public class Player extends Entity{
                     score += 1000;
                 break;
                 case "exit":
-                    if(getTileNumCol() == gp.obj[index.y][index.x].tileCol && getTileNumRow() == gp.obj[index.y][index.x].tileRow)
-                        gp.nextLevel();
+                    if(getTileNumCol() == gp.obj[index.y][index.x].tileCol && getTileNumRow() == gp.obj[index.y][index.x].tileRow)  // se entra a meta corpo nel tile dell'uscita
+                        gp.nextLevel();  // va al prossimo livello
                 break;
                 case "nothing":
                 break;
@@ -303,13 +303,6 @@ public class Player extends Entity{
     
 
     public void draw(){
-        
         drawBehaviour.draw(this);
-
-        g2.setColor(Color.GREEN);
-        g2.draw(hittableHitbox);
-        g2.setColor(Color.BLUE);
-        g2.draw(hitbox);
-
     }
 }

@@ -14,7 +14,7 @@ public class KeyHandler implements KeyListener {
         return instance;
     }
 
-    public boolean upPressed, downPressed, leftPressed, rightPressed, bombPressed, pausePressed;
+    public boolean upPressed, downPressed, leftPressed, rightPressed, bombPressed, pausePressed, nextLevelPressed;
     public boolean statsPressed, firePressed, resetPressed, debugPressed;  // da eliminare
     
     @Override
@@ -38,6 +38,9 @@ public class KeyHandler implements KeyListener {
         }
         if(code == KeyEvent.VK_P){  // se preme il tast P (bomba)
             bombPressed = true;
+        }
+        if(code == KeyEvent.VK_N){
+            nextLevelPressed = true;  // se preme il tasto N (prossimo livello)
         }
         if(code == KeyEvent.VK_ENTER){  // preme il tasto Enter (Pausa)
             pausePressed = true;
@@ -71,6 +74,9 @@ public class KeyHandler implements KeyListener {
         }
         if(code == KeyEvent.VK_P){  // se preme il tast P (bomba)
             bombPressed = false;
+        }
+        if(code == KeyEvent.VK_N){
+            nextLevelPressed = false;  // se preme il tasto N (prossimo livello)
         }
         if(code == KeyEvent.VK_ENTER)
             pausePressed = false;

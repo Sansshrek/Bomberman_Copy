@@ -18,33 +18,43 @@ import objects.Bomb;
 
 public class TileManager {
     GamePanel gp;
-    public Tile[] tile;  // array di tiles che indica all'immagine 
+    public ArrayList<Tile> currentTiles, firstWorld, firstBoss, secondWorld;  // array di tiles che indica all'immagine 
     public Rectangle houseHitbox[][];
     public int houseTileNum[][];
     public int groundTileNum[][];  // dove viene salvata la mappa in stile numerico per indicare a quale tiles si riferisce
     public int wallsTileNum[][];  // dove viene salvata la mappa in stile numerico per indicare a quale tiles si riferisce
+    int drawScreenCol;
 
     public TileManager(GamePanel gp){ 
         this.gp = gp;
-        tile = new Tile[20]; // array di 20 tile 
-        wallsTileNum = new int[gp.maxScreenRow][gp.maxScreenCol];  // mapTileNum salva la matrice di numeri della txt della mappa 
-        groundTileNum = new int[gp.maxScreenRow][gp.maxScreenCol];  // mapTileNum salva la matrice di numeri della txt della mappa 
-        houseTileNum = new int[gp.maxScreenRow][gp.maxScreenCol];
+        firstWorld = getTileImage("firstWorld");
+        secondWorld = getTileImage("secondWorld");
+        firstBoss = getTileImage("firstBoss");
+        // poiche la stampa delle mura avviene mezzo blocco fuori dal jpanel sia a destra che a sinistra allora hanno un blocco in piu per il disegno
+        drawScreenCol = gp.maxScreenCol+1;
+        currentTiles = new ArrayList<>(firstWorld);  // inizializza l'array con la prima mappa inizialmente
+        wallsTileNum = new int[gp.maxScreenRow][drawScreenCol];  // mapTileNum salva la matrice di numeri della txt della mappa 
+        groundTileNum = new int[gp.maxScreenRow][drawScreenCol];  // mapTileNum salva la matrice di numeri della txt della mappa 
+        houseTileNum = new int[gp.maxScreenRow][drawScreenCol];
         houseHitbox = new Rectangle[gp.maxGameRow][gp.maxGameCol];
-
-        System.out.println("Prendendo l'immagine dei Tiles");  // da eliminare
-        getTileImage();
-
     }
 
     public void setupTile(){
+        // resetta le hitbox delle case e i numeri delle case
         for(int row=0; row<gp.maxGameRow; row++){  // 13 è il massimo dei tiles della mappa per la x
             for(int col=0; col<gp.maxGameCol; col++){  // 10 è il massimo dei tiles della mappa per la y
                 houseHitbox[row][col] = null;
                 houseTileNum[row][col] = 0;  // tile trasparente
             }
         }
-        
+        if(gp.levelType == "firstWorld"){
+            currentTiles = firstWorld;  // inizializza l'array con la prima mappa
+        }else if(gp.levelType == "firstBoss"){
+            currentTiles = firstBoss;  // inizializza l'array con la mappa del primo boss
+        }else if(gp.levelType == "secondWorld"  || gp.levelType == "secondBoss"){
+            currentTiles = secondWorld;  // inizializza l'array con la seconda mappa
+        }
+    
         System.out.println("Caricando la mappa delle mura"); // da eliminare
         loadMap("../res/map/walls01.txt", "walls");
         System.out.println("Caricando la mappa del pavimento"); // da eliminare
@@ -53,75 +63,52 @@ public class TileManager {
         generateHouse();  // genera le case random 
     }
 
-    public void getTileImage(){
+    public ArrayList<Tile> getTileImage(String resourceDir){
+        System.out.println("Prendendo l'immagine dei Tiles di "+resourceDir);  // da eliminare
+        ArrayList<Tile> tileGetter = new ArrayList<>();
         try {
-            tile[0] = new Tile();  //  transparent tile
-            tile[0].setImage(ImageIO.read(getClass().getResourceAsStream("../res/tiles/wall/empty.png")), gp.scale);
+            //  transparent tile (0)
+            tileGetter.add(new Tile(ImageIO.read(getClass().getResourceAsStream("../res/tiles/"+resourceDir+"/wall/empty.png")), gp.tileSize, false));
+            // pavimento (1)
+            tileGetter.add(new Tile(ImageIO.read(getClass().getResourceAsStream("../res/tiles/"+resourceDir+"/floor01.png")), gp.tileSize, false));
+            // pavimento con ombra (2)
+            tileGetter.add(new Tile(ImageIO.read(getClass().getResourceAsStream("../res/tiles/"+resourceDir+"/floor02.png")), gp.tileSize, false));
+            // palazzo indistruttibile (3)  si potrebbe eliminare
+            tileGetter.add(new Tile(ImageIO.read(getClass().getResourceAsStream("../res/tiles/"+resourceDir+"/building.png")), gp.tileSize, true));
 
-            tile[1] = new Tile();
-            tile[1].setImage(ImageIO.read(getClass().getResourceAsStream("../res/tiles/floor01.png")), gp.scale);  // pavimento
+            // mura sopra (4, 5, 6)
+            tileGetter.add(new Tile(ImageIO.read(getClass().getResourceAsStream("../res/tiles/"+resourceDir+"/wall/wall_up01.png")), gp.tileSize, true));
+            tileGetter.add(new Tile(ImageIO.read(getClass().getResourceAsStream("../res/tiles/"+resourceDir+"/wall/wall_up02.png")), gp.tileSize, true));
+            tileGetter.add(new Tile(ImageIO.read(getClass().getResourceAsStream("../res/tiles/"+resourceDir+"/wall/wall_up03.png")), gp.tileSize, true));
 
-            tile[2] = new Tile();
-            tile[2].setImage(ImageIO.read(getClass().getResourceAsStream("../res/tiles/floor02.png")), gp.scale);  // pavimento con ombra
+            // mura sotto (7, 8, 9)
+            tileGetter.add(new Tile(ImageIO.read(getClass().getResourceAsStream("../res/tiles/"+resourceDir+"/wall/wall_dw01.png")), gp.tileSize, true));
+            tileGetter.add(new Tile(ImageIO.read(getClass().getResourceAsStream("../res/tiles/"+resourceDir+"/wall/wall_dw02.png")), gp.tileSize, true));
+            tileGetter.add(new Tile(ImageIO.read(getClass().getResourceAsStream("../res/tiles/"+resourceDir+"/wall/wall_dw03.png")), gp.tileSize, true));
 
-            tile[3] = new Tile();
-            tile[3].setImage(ImageIO.read(getClass().getResourceAsStream("../res/tiles/building.png")), gp.scale);  // palazzo indistruttibile
-            // tile[3].setImage(ImageIO.read(getClass().getResourceAsStream("../res/tiles/test.png")), gp.scale);  // blocco indistruttibile
-            tile[3].collision = true;
+            // mura sinistra (10, 11, 12)
+            tileGetter.add(new Tile(ImageIO.read(getClass().getResourceAsStream("../res/tiles/"+resourceDir+"/wall/wall_sx01.png")), gp.tileSize, true));
+            tileGetter.add(new Tile(ImageIO.read(getClass().getResourceAsStream("../res/tiles/"+resourceDir+"/wall/wall_sx02.png")), gp.tileSize, true));
+            tileGetter.add(new Tile(ImageIO.read(getClass().getResourceAsStream("../res/tiles/"+resourceDir+"/wall/wall_sx03.png")), gp.tileSize, true));
 
-            tile[4] = new Tile();
-            tile[4].setImage(ImageIO.read(getClass().getResourceAsStream("../res/tiles/wall/wall_up01.png")), gp.scale);  // mura sopra
-            tile[4].collision = true;
+            // mura destra (13, 14, 15)
+            tileGetter.add(new Tile(ImageIO.read(getClass().getResourceAsStream("../res/tiles/"+resourceDir+"/wall/wall_dx01.png")), gp.tileSize, true));
+            tileGetter.add(new Tile(ImageIO.read(getClass().getResourceAsStream("../res/tiles/"+resourceDir+"/wall/wall_dx02.png")), gp.tileSize, true));
+            tileGetter.add(new Tile(ImageIO.read(getClass().getResourceAsStream("../res/tiles/"+resourceDir+"/wall/wall_dx03.png")), gp.tileSize, true));
 
-            tile[5] = new Tile();
-            tile[5].setImage(ImageIO.read(getClass().getResourceAsStream("../res/tiles/wall/wall_up02.png")), gp.scale);
-            tile[5].collision = true;
+            // blocco oggetto (16)
+            tileGetter.add(new Tile(null, gp.tileSize, true));
+            // test mura dx (17, 18)
+            tileGetter.add(new Tile(ImageIO.read(getClass().getResourceAsStream("../res/tiles/"+resourceDir+"/wall/wall_dx04.png")), gp.tileSize, true));
+            tileGetter.add(new Tile(ImageIO.read(getClass().getResourceAsStream("../res/tiles/"+resourceDir+"/wall/wall_dx05.png")), gp.tileSize, true));
+            // test mura sx (19, 20)
+            tileGetter.add(new Tile(ImageIO.read(getClass().getResourceAsStream("../res/tiles/"+resourceDir+"/wall/wall_sx04.png")), gp.tileSize, true));
+            tileGetter.add(new Tile(ImageIO.read(getClass().getResourceAsStream("../res/tiles/"+resourceDir+"/wall/wall_sx05.png")), gp.tileSize, true));
 
-            tile[6] = new Tile();
-            tile[6].setImage(ImageIO.read(getClass().getResourceAsStream("../res/tiles/wall/wall_up03.png")), gp.scale);
-            tile[6].collision = true;
-
-            tile[7] = new Tile();
-            tile[7].setImage(ImageIO.read(getClass().getResourceAsStream("../res/tiles/wall/wall_dw01.png")), gp.scale);  // mura sotto
-            tile[7].collision = true;
-
-            tile[8] = new Tile();
-            tile[8].setImage(ImageIO.read(getClass().getResourceAsStream("../res/tiles/wall/wall_dw02.png")), gp.scale);
-            tile[8].collision = true;
-
-            tile[9] = new Tile();
-            tile[9].setImage(ImageIO.read(getClass().getResourceAsStream("../res/tiles/wall/wall_dw03.png")), gp.scale);
-            tile[9].collision = true;
-
-            tile[10] = new Tile();
-            tile[10].setImage(ImageIO.read(getClass().getResourceAsStream("../res/tiles/wall/wall_sx01.png")), gp.scale);  // mura sinistra
-            tile[10].collision = true;
-
-            tile[11] = new Tile();
-            tile[11].setImage(ImageIO.read(getClass().getResourceAsStream("../res/tiles/wall/wall_sx02.png")), gp.scale);
-            tile[11].collision = true;
-
-            tile[12] = new Tile();
-            tile[12].setImage(ImageIO.read(getClass().getResourceAsStream("../res/tiles/wall/wall_sx03.png")), gp.scale);
-            tile[12].collision = true;
-
-            tile[13] = new Tile();
-            tile[13].setImage(ImageIO.read(getClass().getResourceAsStream("../res/tiles/wall/wall_dx01.png")), gp.scale);  // mura destra
-            tile[13].collision = true;
-
-            tile[14] = new Tile();
-            tile[14].setImage(ImageIO.read(getClass().getResourceAsStream("../res/tiles/wall/wall_dx02.png")), gp.scale);
-            tile[14].collision = true;
-
-            tile[15] = new Tile();
-            tile[15].setImage(ImageIO.read(getClass().getResourceAsStream("../res/tiles/wall/wall_dx03.png")), gp.scale);
-            tile[15].collision = true;
-
-            tile[16] = new Tile();  // blocco oggetto
-            tile[16].collision = true;
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return tileGetter;
     }
 
     public void loadMap(String filePath, String type){
@@ -134,23 +121,22 @@ public class TileManager {
             int col = 0;
             int row = 0;
 
-            while(col < gp.maxScreenCol && row < gp.maxScreenRow){
+            while(col < drawScreenCol && row < gp.maxScreenRow){
                 String line = br.readLine();  // leggiamo una singola riga
 
-                while(col < gp.maxScreenCol){
+                while(col < drawScreenCol){
                     if(line != null){  // è uno spazio disponibile (no casa/nemico/spazio player)
                         String numbers[] = line.split(" "); // dividiamo la stringa della riga in un'array di numeri
                         int num = Integer.parseInt(numbers[col]);
                         if(type == "ground"){
                             groundTileNum[row][col] = num;  // salviamo il numero nella matrice della pavimento
-                        
                         }
                         if(type == "walls")
                             wallsTileNum[row][col] = num;  // salviamo il numero nella matrice del muro
                     }
                     col++;
                 }
-                if(col == gp.maxScreenCol){
+                if(col == drawScreenCol){
                     col = 0;
                     row++;
                 }
@@ -174,14 +160,16 @@ public class TileManager {
                 }
             }
         }
-
-        Collections.shuffle(randomHouse); // randomizziamo dove possono stare i palazzi
-        for(int i=0; i<8; i++){  // numero di case fuori dal grid normale
-            Point housePoint = randomHouse.get(i);  // prendo la posizione disponibile della casa
-            houseTileNum[housePoint.y][housePoint.x] = 3;  // e la creo
-            houseHitbox[housePoint.y][housePoint.x] = new Rectangle(housePoint.x* gp.tileSize + 72, housePoint.y* gp.tileSize + 120, gp.tileSize, gp.tileSize);  // aggiungo la sua hitbox
-            if(housePoint.y+1 < gp.maxGameRow){ // se la posizione sotto la casa non esce dalla mappa giocabile
-                groundTileNum[housePoint.y+1][housePoint.x] = 2;  // allora rende il blocco sulla mappa ground sotto la casa come un tile "pavimento con ombra"
+        
+        if(gp.levelType == "firstWorld" || gp.levelType == "secondWorld"){  // se sono il prmo o il secondo mondo settiamo le case random
+            Collections.shuffle(randomHouse); // randomizziamo dove possono stare i palazzi
+            for(int i=0; i<8; i++){  // numero di case fuori dal grid normale
+                Point housePoint = randomHouse.get(i);  // prendo la posizione disponibile della casa
+                houseTileNum[housePoint.y][housePoint.x] = 3;  // e la creo
+                houseHitbox[housePoint.y][housePoint.x] = new Rectangle(housePoint.x* gp.tileSize + 72, housePoint.y* gp.tileSize + 120, gp.tileSize, gp.tileSize);  // aggiungo la sua hitbox
+                if(housePoint.y+1 < gp.maxGameRow){ // se la posizione sotto la casa non esce dalla mappa giocabile
+                    groundTileNum[housePoint.y+1][housePoint.x] = 2;  // allora rende il blocco sulla mappa ground sotto la casa come un tile "pavimento con ombra"
+                }
             }
         }
     }
@@ -191,7 +179,7 @@ public class TileManager {
         int xBlock = (((x - (gp.tileSize+gp.tileSize/2)))/gp.tileSize);
         int yBlock = ((y - (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize );
         // System.out.print("x: "+xBlock+" y: "+yBlock); // da eliminare
-        if (xBlock >= 0 && xBlock < gp.maxScreenCol && yBlock >= 0 && yBlock < gp.maxScreenRow) {
+        if (xBlock >= 0 && xBlock < drawScreenCol && yBlock >= 0 && yBlock < gp.maxScreenRow) {
             // System.out.println(" block "+blockTileNum[xBlock][yBlock]);  // da eliminare
             if(houseTileNum[yBlock][xBlock] == 3){
                 return true; // Restituisci true se il tile corrispondente alla posizione (x, y) è un palazzo
@@ -207,7 +195,7 @@ public class TileManager {
         int y = startHeight;
 
 
-        while(col < gp.maxScreenCol && row < gp.maxScreenRow){
+        while(col < drawScreenCol && row < gp.maxScreenRow){
             int tileNum = 0;
 
             if(type == "ground")
@@ -217,11 +205,11 @@ public class TileManager {
             if(type == "walls")
                 tileNum = wallsTileNum[row][col];  // salviamo il numero della matrice del muro
 
-            g2.drawImage(tile[tileNum].image, x, y, gp.tileSize, gp.tileSize, null);
+            g2.drawImage(currentTiles.get(tileNum).image, x, y, gp.tileSize, gp.tileSize, null);
     
             x += gp.tileSize; // aumenta di 16 la posizione di partenza di dove disegna il blocco
             col++;
-            if(col == gp.maxScreenCol){  // appena raggiunge la fine della riga da disegnare
+            if(col == drawScreenCol){  // appena raggiunge la fine della riga da disegnare
                 col = 0;
                 x = startWidth;
                 row++;

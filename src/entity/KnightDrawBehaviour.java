@@ -26,6 +26,7 @@ public class KnightDrawBehaviour implements EntityDrawBehaviour{
 
     // disegna l'enemy
     public void draw(Entity entity){
+
         entity.image = null;
         // System.out.println(entity.startAttack);
         if(!entity.died){  // se ancora non è stato colpito dalla bomba allora disegna l'enemy normale
@@ -35,21 +36,10 @@ public class KnightDrawBehaviour implements EntityDrawBehaviour{
                 entity.spriteCounter++;
                 if(entity.spriteCounter > 15){  // ogni 15/60 volte al secondo 
                     entity.spriteNum++;
-                    if(entity.spriteNum == 4){
-                        entity.spriteNum = 0;
-                        entity.startAttack = false;  // finisce l'attacco
-                        entity.canAttack = false;  // e non può più attaccare per un po'
-                        // controlla se la hitbox del martello colpisce il player
-                        Rectangle hammerHitbox = new Rectangle(entity.hitbox.x, entity.hitbox.y, entity.hitbox.width, entity.hitbox.height*4);  // l'hitbox del martello)
-                        if(hammerHitbox.intersects(entity.gp.player.hitbox))
-                            entity.gp.player.kill();  // e se il player viene colpito allora muore
-
-                        // in parallelo dopo 3 secondi dalla fine dell'attacco reimpostiamo canAttack a true cosi il boss puo attaccare 
-                        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);  // crea una nuova pool di thread di una grandezza
-                        Runnable task = () -> entity.canAttack = true;  // crea una nuova funzione eseguibile che setta canAttack a true
-                    
-                        executor.schedule(task, 3, TimeUnit.SECONDS);  // esegue la task dopo 3 secondi in parallelo col programma
-                        executor.shutdown();  // chiude la pool di thread
+                    if(entity.spriteNum == 4){  // quando finisce l'animazione dell'attacco
+                        entity.spriteNum = 0;  // resetta lo sprite dell'attacco
+                        entity.startAttack = false;  // disattiva il controllo dell'inizio attacco
+                        entity.finishAttack = true;  // attiva il controllo della fine attacco
                     }
                     entity.spriteCounter = 0;  // e resetta il counter
                 }
@@ -58,7 +48,8 @@ public class KnightDrawBehaviour implements EntityDrawBehaviour{
                 entity.image = entity.imageList[0].get(0);  // lo sprite del movimento del knight è uno solo quindi non serve fare lo switch per le direzioni
             }
         }else{  // altrimenti se l'enemy è stato colpito dalla bomba allora disegna l'esplosione
-            // System.out.println("DEATH");
+            System.out.println("DEATH");
+            entity.extinguished = true;  // per ora lo elimina
         }
 
         if(!entity.extinguished){

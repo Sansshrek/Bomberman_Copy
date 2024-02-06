@@ -53,8 +53,11 @@ public class CollisionChecker implements EntityObserver{
             Entity entity = entry.getValue();
             entity.collisionOn = false;
             // imposta il collisionOn nelle prossime funzioni
-            checkTile(entity);
-            Point objPoint = checkObj(entity);
+            Point objPoint = new Point(999, 999);  // punto default
+            if(entity.type != "clown"){
+                checkTile(entity);
+                objPoint = checkObj(entity);
+            }
             if(!(entity instanceof Player)){  // se è un nemico
                 if(!entityMap.get(0).died){
                     checkPlayerCollision(entity, entityMap.get(0));  // controlla se colpisce il player
@@ -164,9 +167,11 @@ public class CollisionChecker implements EntityObserver{
                     if(entity.direction == "up" || entity.direction == "down"){  // se la dir è verso l'alto/basso sposta verso destra
                         entity.imageP.x += entity.speed;
                         entity.hitbox.x += entity.speed;
+                        entity.hittableHitbox.x += entity.speed;
                     }else{  // se la dir è verso destra/sinistra sposta verso il basso
                         entity.imageP.y += entity.speed;
                         entity.hitbox.y += entity.speed;
+                        entity.hittableHitbox.y += entity.speed;
                     }
                 }else
                     entity.collisionOn = true;  // altrimenti non passa
@@ -175,9 +180,11 @@ public class CollisionChecker implements EntityObserver{
                     if(entity.direction == "up" || entity.direction == "down"){  // se la dir è verso l'alto/basso sposta verso sinistra
                         entity.imageP.x -= entity.speed;
                         entity.hitbox.x -= entity.speed;
+                        entity.hittableHitbox.x -= entity.speed;
                     }else{  // se la dir è verso l'alto/basso sposta verso l'alto
                         entity.imageP.y -= entity.speed;
                         entity.hitbox.y -= entity.speed;
+                        entity.hittableHitbox.y -= entity.speed;
                     }
                 }else
                     entity.collisionOn = true;
@@ -400,19 +407,18 @@ public class CollisionChecker implements EntityObserver{
     
     private boolean isValid(int row, int col, GamePanel gp, String entityType) {
         // se è dentro la mappa e non è un blocco/palazzo allora torna true
-        if(entityType != "pakupa" && entityType != "cuppen" && entityType != "player"){  // se non è il pakupa/cuppen/player faccio il controllo con tutti i tipi di blocchi
-            return row >= 0 && row < gp.maxGameRow && col >= 0 && col < gp.maxGameCol
-                && !(gp.obj[row][col] instanceof Block) && !(gp.obj[row][col] instanceof Bomb) && gp.tileM.houseTileNum[row][col] != 3 && gp.tileM.houseTileNum[row][col] == 0;
-        }else if(entityType == "pakupa") {  // se è il pakupa fa il controllo senza le bombe
+        if(entityType == "pakupa") {  // se è il pakupa fa il controllo senza le bombe
             return row >= 0 && row < gp.maxGameRow && col >= 0 && col < gp.maxGameCol
                 && !(gp.obj[row][col] instanceof Block) && gp.tileM.houseTileNum[row][col] != 3;
         }else if(entityType == "cuppen"){  // se è il cuppen fa il controllo senza i blocchi
             return row >= 0 && row < gp.maxGameRow && col >= 0 && col < gp.maxGameCol
                 && !(gp.obj[row][col] instanceof Bomb) && gp.tileM.houseTileNum[row][col] != 3 && gp.tileM.houseTileNum[row][col] == 0;
-        }else{  // se è il player con mouseBehaviour allora controlla solo che non esce dalla mappa soltanto
+        }else if(entityType == "clown"){  // se è il player con mouseBehaviour allora controlla solo che non esce dalla mappa soltanto
+            return row >= 0 && row < gp.maxGameRow && col >= 0 && col < gp.maxGameCol;
+            // da rivedere, per ora si comporta solo come un enemy normale (non cuppen/pakupa)
+        }else{
             return row >= 0 && row < gp.maxGameRow && col >= 0 && col < gp.maxGameCol
                 && !(gp.obj[row][col] instanceof Block) && !(gp.obj[row][col] instanceof Bomb) && gp.tileM.houseTileNum[row][col] != 3 && gp.tileM.houseTileNum[row][col] == 0;
-            // da rivedere, per ora si comporta solo come un enemy normale (non cuppen/pakupa)
         }
     }
 

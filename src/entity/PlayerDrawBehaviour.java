@@ -60,7 +60,7 @@ public class PlayerDrawBehaviour implements EntityDrawBehaviour{
                 entity.image = entity.deathImage.get(entity.spriteNum);
             }
         }
-        entity.g2.drawImage(entity.image, entity.imageP.x, entity.imageP.y, entity.gp.player.width, entity.gp.player.height, null);  // disegna lo sprite del personaggio (image) nella posizione x,y di grandezza tileSize
+        entity.g2.drawImage(entity.image, entity.imageP.x, entity.imageP.y, entity.gp.player.hittableWidth, entity.gp.player.hittableHeight, null);  // disegna lo sprite del personaggio (image) nella posizione x,y di grandezza tileSize
 
         entity.notifyObservers();
         
@@ -99,6 +99,7 @@ public class PlayerDrawBehaviour implements EntityDrawBehaviour{
         Rectangle hitboxUpDx = new Rectangle(hitboxCenterX, entity.hitbox.y, hitboxWidthHalf, hitboxHeightHalf);
         Rectangle hitboxDwSx = new Rectangle(entity.hitbox.x, hitboxCenterY, hitboxWidthHalf, hitboxHeightHalf);
         Rectangle hitboxDwDx = new Rectangle(hitboxCenterX, hitboxCenterY, hitboxWidthHalf, hitboxHeightHalf);
+        /*
         entity.g2.setColor(Color.PINK);
         entity.g2.draw(hitboxDwDx);
         entity.g2.setColor(Color.RED);
@@ -107,6 +108,12 @@ public class PlayerDrawBehaviour implements EntityDrawBehaviour{
         entity.g2.draw(hitboxUpDx);
         entity.g2.setColor(Color.YELLOW);
         entity.g2.draw(hitboxUpSx);
+        */
+        entity.g2.setColor(Color.GREEN);
+        entity.g2.draw(entity.hittableHitbox);
+        
+        entity.g2.setColor(Color.BLUE);
+        entity.g2.draw(entity.hitbox);
     }
 
     

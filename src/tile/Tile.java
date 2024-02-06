@@ -8,7 +8,13 @@ public class Tile {
     public boolean collision = false;
     public int width;
     public int height;
-    public Rectangle hitbox;
+
+    public Tile(BufferedImage img, int size, boolean collision){
+        this.image = img;
+        this.width = size;
+        this.height = size;
+        this.collision = collision;
+    }
 
     public void setImage(BufferedImage img, int scale){
         this.image = img;

@@ -5,6 +5,9 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.PriorityQueue;
+
+import entity.projectiles.ProjectileHandler;
+
 import java.awt.Graphics2D;
 import java.awt.Point;
 import main.KeyHandler;
@@ -30,17 +33,18 @@ public class Entity implements EntityObservable{
     public ArrayList<Node> pathSearch; //percorso di ricerca utilizzato a seconda del comportamento dell'entita' (Utilizzato insieme al findP)
 
     //Proprietà delle entità
-    public int firePower, spriteCounter, spriteNum, maxSpriteNum, invulnerableStart, invulnerableSec, invulnerableTimer = 0, lifeNumber = 1, heartNumber = 1, width, height, spriteDeathNum = 0, startDeathY;
+    public int firePower, spriteCounter, spriteNum, maxSpriteNum, invulnerableSec, invulnerableTimer = 0, lifeNumber = 1, heartNumber = 1, spriteDeathNum = 0, startDeathY;
 
     //Hitbox per il controllo delle collisioni 
     public Rectangle hitbox, hittableHitbox;
 
     //Proprietà per il controllo delle collisioni e l'inizializzazione delle immagini e delle hitbox
-    public int offsetX, offsetY, hitboxWidth, hitboxHeight, mouseX, mouseY;
+    public int offsetImageX, offsetImageY, offsetHittableX, offsetHittableY, hitboxWidth, hitboxHeight, hittableWidth, hittableHeight, mouseX, mouseY;
 
     //Condizioni delle entità
     public boolean collisionOn = false, died = false, extinguished = false, bombExitHitbox = false, invulnerable = false, endAnimation = false;
-    public boolean checkDeathJump = false, checkDeathFall = false, reverseAnimation = false, startAttack = false, canAttack = true;
+    public boolean checkDeathJump = false, checkDeathFall = false, reverseAnimation = false, startAttack = false, finishAttack = false, canAttack = false;
+    public ProjectileHandler projectileHandler;
     
 
     //Controlli per i vari tipi di nemici

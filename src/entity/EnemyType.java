@@ -3,35 +3,39 @@ package entity;
 public enum EnemyType {
 
     //Tipi diversi di nemici
-    KNIGHT(5, 100, new KnightBoss(), new KnightDrawBehaviour(), 1, "knight", 80, 80, 80, 152, 32, 80, -1, -1, false),
-    DENKYUN(2, 200, new StupidEntity(), new EnemyDrawBehaviour(), 6, "denkyun", 16, 24, 16, 24, 0, 8, -1, -1, true),
-    PUROPEN(1, 100, new StupidEntity(), new EnemyDrawBehaviour(), 4, "puropen", 16, 24, 16, 24, 0, 8, -1, -1, false),
-    UFO(2, 3200, new SearchEntity(), new EnemyDrawBehaviour(), 4, "ufo", 16, 16, 16, 16, 0, 0, -1, -1, true),
-    PAKUPA(3, 300, new SearchBomb(), new EnemyDrawBehaviour(), 6, "pakupa", 16, 16, 16, 16, 0, 0, -1, -1, true),
-    CUPPEN(1, 400, new StupidEntityRandom(), new EnemyDrawBehaviour(), 8, "cuppen", 16, 16, 16, 16, 0, 0, -1, -1, false);
+    KNIGHT(10, 1000, 1, new KnightBoss(), new KnightDrawBehaviour(), 1, "knight", 80, 80, 80, 152, 32, 80, 0, 24, 5, 6, false),
+    CLOWN(10, 1000, 1, new ClownBoss(), new ClownDrawBehaviour(), 1, "clown", 80, 80, 80, 152, 32, 80, 0, 24, 5, 6, false),
+    DENKYUN(2, 200, 1, new StupidEntity(), new EnemyDrawBehaviour(), 6, "denkyun", 16, 24, 16, 24, 0, 8, 0, 0, -1, -1, true),
+    PUROPEN(1, 100, 1, new StupidEntity(), new EnemyDrawBehaviour(), 4, "puropen", 16, 24, 16, 24, 0, 8, 0, 0, -1, -1, false),
+    UFO(2, 3200, 1, new SearchEntity(), new EnemyDrawBehaviour(), 4, "ufo", 16, 16, 16, 16, 0, 0, 0, 0, -1, -1, true),
+    PAKUPA(3, 300, 1, new SearchBomb(), new EnemyDrawBehaviour(), 6, "pakupa", 16, 16, 16, 16, 0, 0, 0, 0, -1, -1, true),
+    CUPPEN(1, 400, 1, new StupidEntityRandom(), new EnemyDrawBehaviour(), 8, "cuppen", 16, 16, 16, 16, 0, 0, 0, 0, -1, -1, false);
 
     //Creazione campi per interfacce di movimento
     EntityMovementBehaviour movementBehaviour;
     EntityDrawBehaviour drawBehaviour;
     String type; //Tipo di nemico
-    int width, height, imageWidth, imageHeight, startingLives, startingScore, maxSpriteNum, offsetX, offsetY, startX, startY;  //Proprieta da decidere a seconda del tipo di nemico
+    int hittableWidth, hittableHeight, imageWidth, imageHeight, startingLives, startingScore, maxSpriteNum, offsetImageX, offsetImageY, offsetHittableX, offsetHittableY, startRow, startCol, speed;  //Proprieta da decidere a seconda del tipo di nemico
     boolean reverseAnimation;  //Utilizzo un controllo per eseguire a specchio le animazioni
 
-    EnemyType(int startingLives, int startingScore, EntityMovementBehaviour movementBehaviour, EntityDrawBehaviour drawBehaviour, int maxSpriteNum, String type, int width, int height, int imageWidth, int imageHeight, int offsetX, int offsetY, int startX, int startY, boolean reverseAnimation) {
+    EnemyType(int startingLives, int startingScore, int speed, EntityMovementBehaviour movementBehaviour, EntityDrawBehaviour drawBehaviour, int maxSpriteNum, String type, int hittableWidth, int hittableHeight, int imageWidth, int imageHeight, int offsetImageX, int offsetImageY, int offsetHittableX, int offsetHittableY, int startRow, int startCol, boolean reverseAnimation) {
         this.startingLives = startingLives;
         this.startingScore = startingScore;
+        this.speed = speed;
         this.movementBehaviour = movementBehaviour;
         this.drawBehaviour = drawBehaviour;
         this.maxSpriteNum = maxSpriteNum;
         this.type = type;
-        this.width = width;
-        this.height = height;
+        this.hittableWidth = hittableWidth;
+        this.hittableHeight = hittableHeight;
         this.imageWidth = imageWidth;
         this.imageHeight = imageHeight;
-        this.offsetX = offsetX;
-        this.offsetY = offsetY;
-        this.startX = startX;
-        this.startY = startY;
+        this.offsetImageX = offsetImageX;
+        this.offsetImageY = offsetImageY;
+        this.offsetHittableX = offsetHittableX;
+        this.offsetHittableY = offsetHittableY;
+        this.startRow = startRow;
+        this.startCol = startCol;
         this.reverseAnimation = reverseAnimation;
     }
 }

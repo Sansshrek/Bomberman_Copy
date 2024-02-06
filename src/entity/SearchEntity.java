@@ -33,8 +33,8 @@ public class SearchEntity implements EntityMovementBehaviour{
                 }
             }else{  // comportamento idiota
                 
-                entity.gp.cChecker.checkTile(entity);
-                entity.gp.cChecker.checkObj(entity);
+                // entity.gp.cChecker.checkTile(entity);
+                // entity.gp.cChecker.checkObj(entity);
                 if(entity.collisionOn){
                     ArrayList<String> directions = entity.gp.cChecker.validDirections(entity);  // prende ogni posizione in cui si puo muovere
                     Collections.shuffle(directions);  

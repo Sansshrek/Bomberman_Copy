@@ -29,16 +29,19 @@ public class Enemy extends Entity{
         this.drawBehaviour = type.drawBehaviour;  // inizializza drawBehaviour
         this.maxSpriteNum = type.maxSpriteNum;  // inizializza maxSpriteNum
         this.heartNumber = type.startingLives;  // inizializza heartNumber
+        this.speed = type.speed;  // inizializza speed
         this.score = type.startingScore;
         this.type = type.type;
-        this.width = type.width*gp.scale; // larghezza dell' enemy
-        this.height = type.height*gp.scale; // altezza dell' enemy 
+        this.hittableWidth = type.hittableWidth*gp.scale; // larghezza dell' enemy
+        this.hittableHeight = type.hittableHeight*gp.scale; // altezza dell' enemy 
         this.imageWidth = type.imageWidth*gp.scale;
         this.imageHeight = type.imageHeight*gp.scale;
-        this.offsetX = type.offsetX*gp.scale;// dove parte hitbox dell' enemy (0 pixel a destra rispetto a dove parte l'immagine)
-        this.offsetY = type.offsetY*gp.scale; // dove parte hitbox dell' enemy (12 pixel sotto rispetto a dove parte l'immagine)
-        this.startX = type.startX;
-        this.startY = type.startY;
+        this.offsetImageX = type.offsetImageX*gp.scale;// dove parte hitbox dell' enemy 
+        this.offsetImageY = type.offsetImageY*gp.scale; // dove parte hitbox dell' enemy 
+        this.offsetHittableX = type.offsetHittableX*gp.scale;// dove parte hitbox dell' enemy 
+        this.offsetHittableY = type.offsetHittableY*gp.scale; // dove parte hitbox dell' enemy 
+        this.startX = type.startCol;
+        this.startY = type.startRow;
         this.reverseAnimation = type.reverseAnimation;
 
         this.invulnerableSec = 2;
@@ -69,23 +72,21 @@ public class Enemy extends Entity{
 
     //Metodo di impostazioni delle variabili di default dell'enemy che utilizza o la posizione di partenza impostata (!-1) o una posizione disponibile
 	public void setEnemyDefaultValues(){
+        int hitboxXAv, hitboxYAv;
         if(startX == -1){  // se la pos di partenza è quella di default allora la cambia
             Point avPos = findAvStartPos();  // trova una posizione disponibile sulla mappa
             // Point avPos = new Point(1, 0);
-            int hitboxXAv = (avPos.x*tileSize) + (tileSize+tileSize/2);   // posizione x dell'enemy IN ALTO A SINISTRA
-            int hitboxYAv = (avPos.y*tileSize) + (2*tileSize+tileSize/2);   // posizione y dell'enemy IN ALTO A SINISTRA
-            hitbox = new Rectangle(hitboxXAv, hitboxYAv, hitboxWidth, hitboxHeight);
-            this.imageP = new Point(hitboxXAv-offsetX, hitboxYAv-offsetY);
-            hittableHitbox = new Rectangle(imageP.x, imageP.y, width, height);
+            hitboxXAv = (avPos.x*tileSize) + (tileSize+tileSize/2);   // posizione x dell'enemy IN ALTO A SINISTRA
+            hitboxYAv = (avPos.y*tileSize) + (2*tileSize+tileSize/2);   // posizione y dell'enemy IN ALTO A SINISTRA
+            
         }else{
-            startX = (startX*tileSize) + (tileSize+tileSize/2);
-            startY = (startY*tileSize) + (2*tileSize+tileSize/2);
-            hitbox = new Rectangle(startX, startY, hitboxWidth, hitboxHeight);
-            this.imageP = new Point(startX-offsetX, startY-offsetY);
-            hittableHitbox = new Rectangle(imageP.x, imageP.y, width, height);
+            hitboxXAv = (startX*tileSize) + (tileSize+tileSize/2);
+            hitboxYAv = (startY*tileSize) + (2*tileSize+tileSize/2);
         }
+        this.hitbox = new Rectangle(hitboxXAv, hitboxYAv, hitboxWidth, hitboxHeight);
+        this.imageP = new Point(hitboxXAv-offsetImageX, hitboxYAv-offsetImageY);
+        this.hittableHitbox = new Rectangle(imageP.x+offsetHittableX, imageP.y+offsetHittableY, hittableWidth, hittableHeight);
         this.collisionOn = true;
-        this.speed = 1;
         this.direction = "down";
         // gp.cChecker.checkTile(this);
         notifyObservers();
@@ -145,7 +146,7 @@ public class Enemy extends Entity{
             System.out.println("Enemy morto");
             gp.enemyNum--;
             
-            height = 32*gp.scale;
+            hittableHeight = 32*gp.scale;
             imageP.y -= 16*gp.scale;
         }
         notifyObservers();
@@ -159,11 +160,12 @@ public class Enemy extends Entity{
 
             movementBehaviour.updateMovement(this);
             //System.out.println("Collision:" + collisionOn + "  Row:" + getTileNumRow() + "  Col:" + getTileNumCol() + "  Direction:" + direction);
+           
             changeSpriteDirection();
             // controlla se colpiamo qualche blocco
                 // CONTROLLA COLLISIONE OBJECT
 
-            if(type != "knight"){  // il knight non ha bisogno di modificare le sprite
+            if(type != "knight" && type != "clown"){  // il knight non ha bisogno di modificare le sprite
                 spriteCounter++;
                 if(spriteCounter > 15){  // ogni 15/60 volte al secondo 
                     if(reverseAnimation){  // se il tipo di nemico ha gli sprite che tornano al contrario quando finisce l'animazione
@@ -195,6 +197,8 @@ public class Enemy extends Entity{
         
         if(!extinguished){  // se l'enemy non è esploso totalmente disegna l'immagine
             g2.drawImage(image, imageP.x, imageP.y, imageWidth, imageHeight, null);  // disegna lo sprite del personaggio (image) nella posizione x,y di grandezza tileSize
+            if(type == "knight" || type == "clown")
+                projectileHandler.drawProjectiles(g2);  // disegna i proiettili
             //da eliminare
             /*
             g2.setColor(Color.BLUE);

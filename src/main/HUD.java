@@ -10,7 +10,7 @@ public class HUD {
     public GamePanel gp;
     public int tileSize;
     public int scale;
-    public BufferedImage image;
+    public BufferedImage image, pauseImage;
     public int hudHeight;
     private BufferedImage[] numberImages, timerHandImage;
     int numberWidth, numberHeight;
@@ -43,6 +43,7 @@ public class HUD {
         this.timerHeight = 3*scale;
         try {
             image = ImageIO.read(getClass().getResourceAsStream("../res/HUD/HUD.png"));
+            pauseImage = ImageIO.read(getClass().getResourceAsStream("../res/HUD/pause.png"));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -53,11 +54,11 @@ public class HUD {
     }
 
     public void resetTimer(){
-        this.clockLeft = 28;
+        this.clockLeft = 29;
         this.timerTick = 0;
         this.timerHand = 0;
         this.timerX = 10*scale;
-        this.timerWidth = 228*scale;
+        this.timerWidth = 236*scale;
     }
 
     public void loadClockImages(){
@@ -109,8 +110,8 @@ public class HUD {
         // per disegnare il timer crea un rettangolo bianco al di sotto dell'HUD e ad ogni diminuzione del timer (clockLeft) cambia la x di dove parte il rettangolo aggiungendo 
         // la distanza tra l'inizio di un blocco all'inizio di quello dopo e diminuisce della stessa distanza la larghezza del rettangolo cosi che restringa il rettangolo solo da sinistra verso destra
         timerTick++;  // contatore che aumenta indipendentemente a ogni update dell'orologio 
-        if(timerTick == 90){  // per ogni tot. tick dell'update  (modificare qui per cambiare il tempo che ci mette )
-        // 90(tick) * 8 (giri lancetta) = 720 tick totali -> 720/60 (FPS) = 12 secondi (durata di un giro totale di orologio)
+        if(timerTick == 45){  // per ogni tot. tick dell'update  (modificare qui per cambiare il tempo che ci mette )
+        // 45(tick) * 8 (giri lancetta) = 360 tick totali -> 360/60 (FPS) = 6 secondi (durata di un giro totale di orologio)
             timerHand++;  // gira la lancetta dell'orologio di 1
             timerTick = 0;  // resetta il contatore dei tick a 0
         }

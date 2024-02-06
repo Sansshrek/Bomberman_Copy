@@ -88,9 +88,7 @@ public class StartMenu implements Panel{
         // System.out.println("pointer index:" + pointerIndex);
         // System.out.println(pointerY);
         if(startGame && alphaVal==255){  // quando è partito il gioco e finisce la transizione
-            gp.alphaVal = 255;
-            gp.setupGame();
-            gp.currentPanel = null;
+            gp.resetGamePanel();
         }
         if(!optionMenu && !scoreMenu){
             if(keyH.downPressed){

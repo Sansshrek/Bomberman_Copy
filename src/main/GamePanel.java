@@ -19,6 +19,7 @@ import entity.Entity;
 import entity.EntityManager;
 import entity.EntityObserver;
 import entity.Player;
+import entity.projectiles.ProjectileHandler;
 import objects.Bomb;
 import objects.BombHandler;
 import objects.SuperObject;
@@ -29,11 +30,10 @@ public class GamePanel extends JPanel implements Runnable{
     final int originalTileSize = 16;  //16x16 tile
     public final int scale = 3;
     
-
     public final int tileSize = originalTileSize * scale;  // 48x48 tile (è public cosi la classe Player puo accedere al valore)
     public final int maxScreenCol = 16;
     public final int maxScreenRow = 14;
-    public final int screenWidth = tileSize * maxScreenCol-tileSize;  // 720 pixels
+    public final int screenWidth = tileSize * maxScreenCol;  // 720 pixels
     public final int screenHeight = tileSize * maxScreenRow;  // 672 pixels
     public final int hudHeight = 32*scale;
     public final int maxGameCol = 13;
@@ -61,12 +61,12 @@ public class GamePanel extends JPanel implements Runnable{
     public ArrayList<Enemy> enemy = new ArrayList<>();
     public int entityCounter;
     public LevelType[] levelListEasy = {LevelType.Level1Easy, LevelType.Level2Easy, LevelType.Level2Easy};
-    public LevelType[] levelListNormal = {LevelType.Level1, LevelType.Level2, LevelType.Level3};
+    public LevelType[] levelListNormal = {LevelType.Level1, LevelType.Level2, LevelType.Level3, LevelType.Level4, LevelType.Level5, LevelType.Level6, LevelType.Level7, LevelType.Level8};
     public LevelType[] levelListHard = {LevelType.Level1Hard, LevelType.Level2Hard, LevelType.Level3Hard};
     public BufferedImage[] levelNumberImages;
     int levelNumberX = -screenWidth;  // posizione iniziale del numero del livello 
     boolean canDrawLevelNumber = false;
-    int levelIndex = 0;
+    public int levelIndex = 0;
     public int enemyNum;
     // Stato di Gioco
     public boolean pauseGame = false;
@@ -74,6 +74,9 @@ public class GamePanel extends JPanel implements Runnable{
     boolean startTransition = false, closeTransition = false;
     int alphaVal = 255;
     public String gameDifficulty = "normal";
+    public String levelType = "firstWorld";  // inizializza il tipo di livello al primo mondo
+
+    EnemyType test = EnemyType.PUROPEN;
 
     // test da eliminare
     boolean checkSetup, checkGameOn;
@@ -92,6 +95,15 @@ public class GamePanel extends JPanel implements Runnable{
         // setupGame();
     }
 
+    void resetGamePanel(){  // funzione che resetta i valori basici del gamePanel per esempio quando si chiama dallo startMenu
+        checkSetup = false;
+        checkGameOn = false;
+        levelIndex = 0;  // resetta al primo livello del gioco
+        levelType = "firstWorld";
+        currentPanel = null;  // resetta il pannello corrente
+        setupGame();  // esegue il setup del gioco
+    }
+
     public void setupGame(){  // imposto il gioco da capo
         if(!checkSetup){
             canDrawLevelNumber = true;  // fa partire l'animazione del numero del livello
@@ -108,22 +120,30 @@ public class GamePanel extends JPanel implements Runnable{
                 }
             }
 
-            System.out.println("Caricando i blocchi distruttibili");  // da eliminare
-            aSetter.setMatrixBlocks();
+            if(levelType != "firstBoss" && levelType != "secondBoss"){  // se non è un boss carica i blocchi distruttibili
+                System.out.println("Caricando i blocchi distruttibili");  // da eliminare
+                aSetter.setMatrixBlocks();
+            }
             enemy.clear();  // resetto la lista dei nemici
             ArrayList<EnemyType> listaNemici = new ArrayList<>();
             if(gameDifficulty == "easy")
-                listaNemici = levelListEasy[levelIndex].getEnemyList(gameDifficulty);
+                listaNemici = levelListEasy[levelIndex].getEnemyList();
             else if(gameDifficulty == "normal")
-                listaNemici = levelListNormal[levelIndex].getEnemyList(gameDifficulty);
+                listaNemici = levelListNormal[levelIndex].getEnemyList();
             else if(gameDifficulty == "hard")
-                listaNemici = levelListHard[levelIndex].getEnemyList(gameDifficulty);
+                listaNemici = levelListHard[levelIndex].getEnemyList();
             // ArrayList<EnemyType> listaNemici = livello.getEnemyList(gameDifficulty);
             enemyNum = listaNemici.size();
             entityCounter = 1;
             int counter = 0;
             for(EnemyType enemyType: listaNemici){
-                enemy.add(new Enemy(this, entityCounter, enemyType));  // aggiungo 3 nemici
+                Enemy newEnemy = new Enemy(this, entityCounter, enemyType);
+                // imposta i projectileHandler per i boss
+                if(newEnemy.type == "knight")
+                    newEnemy.projectileHandler = new ProjectileHandler(this, "knight");
+                else if(newEnemy.type == "clown")
+                    newEnemy.projectileHandler = new ProjectileHandler(this, "clown");
+                enemy.add(newEnemy);  // aggiungo i nemici
                 entityCounter++;
                 enemy.get(counter).registerObserver(cChecker);
                 counter++;
@@ -140,32 +160,15 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     public void getLevelImage(){
-        levelNumberImages = new BufferedImage[3];
+        levelNumberImages = new BufferedImage[8];
         try {
-            // attack1 = ImageIO.read(getClass().getResourceAsStream("../res/enemies/knight/attack1.png"));
-            for(int levelI=1; levelI<4; levelI++){  // per quante sprite ci stanno in una direzione
+            for(int levelI=1; levelI<8; levelI++){  // per quante sprite ci stanno in una direzione
                 levelNumberImages[levelI-1] = ImageIO.read(getClass().getResourceAsStream("../res/menu/level "+String.valueOf(levelI)+".png"));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    public void Test(){
-        System.out.println("---DIOCANE__--");
-    }/*
-    import java.util.concurrent.*;
-
-public class Main {
-    public static void main(String[] args) {
-        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-
-        Runnable task = () -> System.out.println("Esecuzione ritardata!");
-
-        int delay = 5;
-        executor.schedule(task, delay, TimeUnit.SECONDS);
-        executor.shutdown();
-    }
-}*/
 
     public void startingTransition(){
         alphaVal = 255;  // reimposta l'alphaVal
@@ -180,7 +183,7 @@ public class Main {
     }
 
     public void drawTransition(Graphics2D g2){
-        System.out.println("Drawing "+alphaVal+" transition "+startTransition+ " "+closeTransition);
+        // System.out.println("Drawing "+alphaVal+" transition "+startTransition+ " "+closeTransition);
         g2.setColor(new Color(0, 0, 0, alphaVal));  // setta il colore con alpha
         g2.fillRect(0, 0, screenWidth, screenHeight);  // disegna il background
     }
@@ -197,8 +200,18 @@ public class Main {
     public void nextLevel(){
         if(enemyNum == 0){  // se sono finiti i nemici sulla mappa
             levelIndex++;  // vai al prossimo livello
+            if(levelIndex < 3){
+                levelType = "firstWorld";
+            }else if(levelIndex == 3){  // se arriva al livello del primo boss
+                levelType = "firstBoss";
+            }else if(levelIndex > 3 && levelIndex < 7){  // se sono i primi 3 livelli del secondo mondo
+                levelType = "secondWorld";
+            }else if(levelIndex == 7){  // se arriva al livello del secondo boss
+                levelType = "secondBoss";
+            }
             if(levelIndex == levelListNormal.length){  // per ora quando finisce i livelli resetta il gioco
                 levelIndex = 0;
+                currentPanel = new StartMenu(this);
             }
             closingTransition();
         }
@@ -212,6 +225,12 @@ public class Main {
                 pauseGame = true;
             }
             keyH.pausePressed = false;
+        }
+        if(keyH.nextLevelPressed){  // se viene premuto N
+            enemyNum = 0;  // imposta il numero di nemici sulla mappa a 0 cosi puo andare al prossimo livello
+
+            nextLevel();  // va al prossimo livello
+            keyH.nextLevelPressed = false;
         }
     }
 
@@ -255,16 +274,20 @@ public class Main {
     }
 
     public void drawHUD(Graphics2D g2){
-        hud.drawTime(g2);
-        g2.drawImage(hud.image, 0, 0, 256*scale, hudHeight, null);  // poi l'HUD
-        hud.drawClock(g2);
+        if(!pauseGame){
+            hud.drawTime(g2);  // disegna la barra bianca del timer
+            g2.drawImage(hud.image, 0, 0, 256*scale, hudHeight, null);  // poi l'HUD
+            hud.drawClock(g2);
 
-        // Stampa il punteggio
-        hud.drawScore(g2, player.score);
-        hud.drawLife(g2, player.lifeNumber);
-        if(hud.clockLeft == 1){  // se finisce il tempo
-            System.out.println("---Finito il tempo---\n\n");
-            resetLevel();  // resetta il gioco
+            // Stampa il punteggio
+            hud.drawScore(g2, player.score);
+            hud.drawLife(g2, player.lifeNumber);
+            if(hud.clockLeft == 1){  // se finisce il tempo
+                System.out.println("---Finito il tempo---\n\n");
+                resetLevel();  // resetta il gioco
+            }
+        }else{
+            g2.drawImage(hud.pauseImage, 0, 0, 256*scale, hudHeight, null);  // disegna l'immagine di pausa
         }
     }
 
@@ -314,15 +337,15 @@ public class Main {
             paintGame(g2);
             if(!checkGameOn) // se non è ancora partito il gioco
                 drawTransition(g2);  // disegna la transizione
-                
+
             if(canDrawLevelNumber){  // se può disegnare il numero del livello
                 g2.drawImage(levelNumberImages[levelIndex], levelNumberX, 0, screenWidth, screenHeight, null);  // disegna il numero del livello corrente
                 if(levelNumberX != 0){  // finche non è precisamente al centro dello schermo
-                    levelNumberX += 10;  // sposta a destra di 10 pixel il numero del livello per l'animazione
+                    levelNumberX += 12;  // sposta a destra di 10 pixel il numero del livello per l'animazione
                 }else{  // altrimenti ferma il disegno del numero del livello
                     // e lo fa ripartire dopo 1 secondi spostando nuovamente di 1 pixel lo sprite del livello sbloccando quindi il ciclo normale che sposta lo sprite
                     ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);  // crea una nuova pool di thread di una grandezza
-                    Runnable task = () -> levelNumberX += 1;  // crea una nuova funzione eseguibile che setta checkGameOn a true
+                    Runnable task = () -> levelNumberX += 12;  // crea una nuova funzione eseguibile che setta checkGameOn a true
                 
                     executor.schedule(task, 1, TimeUnit.SECONDS);  // esegue la task dopo 2 secondi in parallelo col programma
                     executor.shutdown();  // chiude la pool di thread 
@@ -356,7 +379,6 @@ public class Main {
         tileM.drawMap(g2, 24*this.scale, this.hudHeight+(8*this.scale), "house");  // poi i palazzi
         tileM.drawMap(g2, -8*this.scale, this.hudHeight-(8*this.scale), "walls");  // poi le mura
 
-        
         g2.setColor(Color.RED);  // da eliminare
         for(int row=0; row<maxGameRow; row++){
             for(int col=0; col<maxGameCol; col++){
@@ -385,6 +407,9 @@ public class Main {
                 // entity.drawBehaviour.draw(entity);
             }else{
                 enemyDelete.add(entity);  // aggiunge il nemico morto alla lista temporanea dei nemici da eliminare
+                if(entity.type == "knight" || entity.type == "clown"){  // se è uno dei boss allora vai direttamente al prossimo livello
+                    nextLevel();
+                }
             }
         }
         for(Enemy entity: enemyDelete){
