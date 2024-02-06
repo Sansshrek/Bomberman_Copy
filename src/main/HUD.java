@@ -30,11 +30,11 @@ public class HUD {
         this.tileSize = gp.getTileSize();
         this.scale = gp.getScale();
         this.scoreX = 3*tileSize;
-        this.scoreY = 9*scale;
+        this.scoreY = 11*scale;
         this.scoreWidth = 4*tileSize;
         this.scoreHeight = 14*scale;
         this.lifeX = tileSize+tileSize/2;
-        this.lifeY = 9*scale;
+        this.lifeY = 11*scale;
         this.clockHandX = 125*scale;
         this.clockHandY = 15*scale;
         this.clockHandWidth = 7*scale;
@@ -89,7 +89,7 @@ public class HUD {
         String scoreString = Integer.toString(score);  // transformiamo lo score del player in una stringa
         int totalDigits = scoreString.length();
         int startX = scoreX + (scoreWidth-numberWidth) + numberWidth - (totalDigits * numberWidth);  // calcoliamo da dove parte ogni volta lo score
-        int startY = scoreY + (scoreHeight - numberHeight) / 2;  // e l'altezza
+        int startY = scoreY;  // e l'altezza
 
         for(int i=0; i<totalDigits; i++){
             char digitChar = scoreString.charAt(i);  // per ogni cifra dello score

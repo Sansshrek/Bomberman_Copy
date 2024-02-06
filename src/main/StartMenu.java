@@ -15,6 +15,7 @@ public class StartMenu implements Panel{
     boolean optionMenu = false, scoreMenu = false, startGame = false;
     public StartMenu(GamePanel gp){
         // this.keyH = gp.keyH;
+        gp.playMusic(13);  // Theme menu
         alphaVal = 0;
         totOptionNumber = 3;
         titleX = 17*gp.scale;
@@ -92,6 +93,7 @@ public class StartMenu implements Panel{
         }
         if(!optionMenu && !scoreMenu){
             if(keyH.downPressed){
+                gp.playSfx(12);  // sound cursore
                 pointerIndex+=1;
                 if (pointerIndex == totOptionNumber){
                     pointerIndex=0;
@@ -102,6 +104,7 @@ public class StartMenu implements Panel{
                 keyH.downPressed = false;
             }
             else if(keyH.upPressed){
+                gp.playSfx(12);  // sound cursore
                 pointerIndex-=1;
                 if (pointerIndex<0){
                     pointerIndex=totOptionNumber-1;
@@ -113,19 +116,25 @@ public class StartMenu implements Panel{
             }
             
             if(keyH.pausePressed && pointerIndex==0){
+                gp.stopMusic();
+                gp.playSfx(11);  // sound invio selezione
                 System.out.println("INVIOOOOOO");
                 startGame = true;
                 keyH.pausePressed = false;
             }
             if(keyH.pausePressed && pointerIndex==1){
+                gp.stopMusic();
+                gp.playSfx(11);  // sound invio selezione
                 //disegna transizione
                 optionMenu = true;
                 keyH.pausePressed = false;
             }
             if(keyH.pausePressed && pointerIndex==2){
+                gp.stopMusic();
+                gp.playSfx(11);  // sound invio selezione
                 //disegna transizione
                 scoreMenu = true;
-                gp.currentPanel = new ScoreMenu();
+                gp.currentPanel = new ScoreMenu(gp);
                 keyH.pausePressed = false;
             }
         }else if(!startGame && optionMenu){

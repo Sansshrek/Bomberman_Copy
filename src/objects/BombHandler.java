@@ -22,13 +22,18 @@ public class BombHandler{
     public void addBombNumber(){
         bombNumber+=1; 
     }
+    public void setBombNumber(int bombNumber){
+        this.bombNumber = bombNumber;
+    }
 
     public void createBomb(int x, int y, int tileRow, int tileCol, int firePower){
-        if(bombNumber > bombs.size()){
+        if(bombNumber > 0){
             if(gp.obj[tileRow][tileCol] == null){  // se non c'è niente in quella posizione allora puo mettere la bomba 
+                gp.playSfx(5); // sound piazza bomba
                 Bomb newBomb = new Bomb(this.gp, x, y, tileRow, tileCol, firePower, tileSize, g2);
                 bombs.add(newBomb);
                 gp.obj[tileRow][tileCol] = newBomb;  // aggiunge la bomba alla matrice di oggetti sulla mappa
+                bombNumber--;
             }
         }
     }

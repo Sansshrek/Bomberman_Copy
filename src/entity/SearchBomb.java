@@ -5,12 +5,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import main.Node;
 import objects.Bomb;
 
 import java.awt.Point;
 
 public class SearchBomb implements EntityMovementBehaviour{
-    EntityMovementBehaviour stupidBehaviour = new StupidEntity();
     
     public void updateMovement(Entity entity){
         if(entity.hitbox.x == entity.getTileX() && entity.hitbox.y == entity.getTileY()){
@@ -43,12 +43,12 @@ public class SearchBomb implements EntityMovementBehaviour{
                         entity.direction = "right";
                 }
             }else{  // comportamento idiota
-                entity.gp.cChecker.checkTile(entity);
+                // entity.gp.cChecker.checkTile(entity);
                 // System.out.println("Collision: " + entity.collisionOn + " Entity.x: " + (entity.hitbox.y + entity.hitboxHeight));
-                entity.gp.cChecker.checkObj(entity);
+                // entity.gp.cChecker.checkObj(entity);
                 // System.out.println("Direction: " + entity.direction);
                 // System.out.println("Collision: " + entity.collisionOn + " Entity.x: " + (entity.hitbox.y + entity.hitboxHeight));
-                entity.gp.cChecker.checkObj(entity);
+                // entity.gp.cChecker.checkObj(entity);
                 if(entity.collisionOn){
                     ArrayList<String> directions = entity.gp.cChecker.validDirections(entity);  // prende ogni posizione in cui si puo muovere
                     Collections.shuffle(directions);  

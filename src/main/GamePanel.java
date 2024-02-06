@@ -6,7 +6,12 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.awt.Point;
 import java.util.concurrent.*;
 
@@ -26,6 +31,13 @@ import objects.SuperObject;
 import tile.TileManager;
 
 public class GamePanel extends JPanel implements Runnable{
+    // User Settings
+    // public int userNumber = 0;
+    // public UserHandler userH = new UserHandler();
+
+    AudioManager audioM = new AudioManager();
+    AudioManager musicM = new AudioManager();
+
     // Screen Settings
     final int originalTileSize = 16;  //16x16 tile
     public final int scale = 3;
@@ -33,7 +45,7 @@ public class GamePanel extends JPanel implements Runnable{
     public final int tileSize = originalTileSize * scale;  // 48x48 tile (è public cosi la classe Player puo accedere al valore)
     public final int maxScreenCol = 16;
     public final int maxScreenRow = 14;
-    public final int screenWidth = tileSize * maxScreenCol;  // 720 pixels
+    public final int screenWidth = tileSize * maxScreenCol;  // 768 pixels
     public final int screenHeight = tileSize * maxScreenRow;  // 672 pixels
     public final int hudHeight = 32*scale;
     public final int maxGameCol = 13;
@@ -42,6 +54,7 @@ public class GamePanel extends JPanel implements Runnable{
     public final int gameBorderRightX = gameBorderLeftX + 13*tileSize;
     public final int gameBorderUpY = (tileSize/2)+hudHeight;
     public final int gameBorderDownY = gameBorderUpY + 11*tileSize;
+    public final int maxUserNumber = 4;
 
     // World Settings
 
@@ -66,8 +79,8 @@ public class GamePanel extends JPanel implements Runnable{
     public BufferedImage[] levelNumberImages;
     int levelNumberX = -screenWidth;  // posizione iniziale del numero del livello 
     boolean canDrawLevelNumber = false;
-    public int levelIndex = 0;
-    public int enemyNum;
+    public int levelIndex = 0, themeIndex = 0;
+    public int enemyNum, minBlock, maxBlock;
     // Stato di Gioco
     public boolean pauseGame = false;
     public Panel currentPanel = new StartMenu(this);
@@ -96,22 +109,28 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     void resetGamePanel(){  // funzione che resetta i valori basici del gamePanel per esempio quando si chiama dallo startMenu
+        player.gamePlayed ++;  // aumenta il numero di partite giocate
         checkSetup = false;
         checkGameOn = false;
+        minBlock = 30;
+        maxBlock = 35;
         levelIndex = 0;  // resetta al primo livello del gioco
+        themeIndex = 0;
         levelType = "firstWorld";
-        currentPanel = null;  // resetta il pannello corrente
+        currentPanel = null;  // resevtta il pannello corrente
+        player.registerObserver(cChecker);
+        player.setPlayerDefaultValues();
         setupGame();  // esegue il setup del gioco
     }
 
     public void setupGame(){  // imposto il gioco da capo
         if(!checkSetup){
+            playSfx(1);  // sound stage intro
             canDrawLevelNumber = true;  // fa partire l'animazione del numero del livello
             checkSetup = true;
             pauseGame = false;
             hud.resetTimer();
-            player.registerObserver(cChecker);
-            player.setPlayerDefaultValues();
+            player.resetPlayerGameValue();
             tileM.setupTile();
 
             for(int row=0; row<maxGameRow; row++){  // reset obj
@@ -122,9 +141,10 @@ public class GamePanel extends JPanel implements Runnable{
 
             if(levelType != "firstBoss" && levelType != "secondBoss"){  // se non è un boss carica i blocchi distruttibili
                 System.out.println("Caricando i blocchi distruttibili");  // da eliminare
-                aSetter.setMatrixBlocks();
+                aSetter.setMatrixBlocks(minBlock, maxBlock);
             }
             enemy.clear();  // resetto la lista dei nemici
+            cChecker.resetEntities();  // resetta le entita nell'observ
             ArrayList<EnemyType> listaNemici = new ArrayList<>();
             if(gameDifficulty == "easy")
                 listaNemici = levelListEasy[levelIndex].getEnemyList();
@@ -151,7 +171,7 @@ public class GamePanel extends JPanel implements Runnable{
             // startTransition = true;
             // senza il delay parte direttamente il gioco senza far vedere la transizione
             ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);  // crea una nuova pool di thread di una grandezza
-            Runnable task = () -> startingTransition();  // crea una nuova funzione eseguibile che setta checkGameOn a true
+            Runnable task = () -> {startingTransition(); playMusic(themeIndex);};  // crea una nuova funzione eseguibile che setta checkGameOn a true e fa partire il suono dello stage intro
         
             executor.schedule(task, 3, TimeUnit.SECONDS);  // esegue la task dopo 2 secondi in parallelo col programma
             executor.shutdown();  // chiude la pool di thread 
@@ -189,7 +209,9 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     public void resetLevel(){
-        closingTransition();
+        if(checkGameOn){  // se il gioco è avviato puoi resettare il livello
+            closingTransition();
+        }
     }
     public void playerDeath(){  // viene chiamato quando il player perde tutte le vite
         pauseGame = true;
@@ -199,26 +221,40 @@ public class GamePanel extends JPanel implements Runnable{
 
     public void nextLevel(){
         if(enemyNum == 0){  // se sono finiti i nemici sulla mappa
+            stopMusic();
+            playSfx(2); // sound stage clear
             levelIndex++;  // vai al prossimo livello
-            if(levelIndex < 3){
-                levelType = "firstWorld";
-            }else if(levelIndex == 3){  // se arriva al livello del primo boss
-                levelType = "firstBoss";
-            }else if(levelIndex > 3 && levelIndex < 7){  // se sono i primi 3 livelli del secondo mondo
-                levelType = "secondWorld";
-            }else if(levelIndex == 7){  // se arriva al livello del secondo boss
-                levelType = "secondBoss";
+            if(levelIndex < levelListNormal.length){  // se non è finito il gioco
+                minBlock += 2;  // aumenta il numero di blocchi che possono essere sulla mappa
+                maxBlock += 2;
+                
+                if(levelIndex < 3){
+                    levelType = "firstWorld";
+                    themeIndex = 0;  // theme del primo mondo
+                }else if(levelIndex == 3){  // se arriva al livello del primo boss
+                    levelType = "firstBoss";
+                    themeIndex = 15;  // theme del boss
+                }else if(levelIndex > 3 && levelIndex < 7){  // se sono i primi 3 livelli del secondo mondo
+                    levelType = "secondWorld";
+                    themeIndex = 14;  // theme del secondo mondo
+                }else if(levelIndex == 7){  // se arriva al livello del secondo boss
+                    levelType = "secondBoss";
+                    themeIndex = 15;  // theme del boss
+                }
+                closingTransition();
+            }else{  // quando finisce il gioco
+                pauseGame = true;
+                checkSetup = false;
+                checkGameOn = false;
+                currentPanel = new EndPanel(this);
             }
-            if(levelIndex == levelListNormal.length){  // per ora quando finisce i livelli resetta il gioco
-                levelIndex = 0;
-                currentPanel = new StartMenu(this);
-            }
-            closingTransition();
+            
         }
     }
 
     public void updateKey(){
         if(keyH.pausePressed){ //se viene premuto Enter
+            playSfx(3);  // sound pausa
             if(pauseGame){  // se il gioco è gia in pausa fa ricominciare il gioco
                 pauseGame = false;
             }else{  // se il gioco non è in pausa allora lo ferma
@@ -227,9 +263,10 @@ public class GamePanel extends JPanel implements Runnable{
             keyH.pausePressed = false;
         }
         if(keyH.nextLevelPressed){  // se viene premuto N
-            enemyNum = 0;  // imposta il numero di nemici sulla mappa a 0 cosi puo andare al prossimo livello
-
-            nextLevel();  // va al prossimo livello
+            if(checkGameOn){  // s il goico è avviato puoi andare al prossimo livello
+                enemyNum = 0;  // imposta il numero di nemici sulla mappa a 0 cosi puo andare al prossimo livello
+                nextLevel();  // va al prossimo livello
+            }
             keyH.nextLevelPressed = false;
         }
     }
@@ -284,13 +321,52 @@ public class GamePanel extends JPanel implements Runnable{
             hud.drawLife(g2, player.lifeNumber);
             if(hud.clockLeft == 1){  // se finisce il tempo
                 System.out.println("---Finito il tempo---\n\n");
-                resetLevel();  // resetta il gioco
+                // checkGameOn = false;  // ferma il gioco
+                player.kill();  // uccide il player
+                // resetLevel();  // resetta il gioco
+                ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);  // crea una nuova pool di thread di una grandezza
+                Runnable task = () -> resetLevel();  // crea una nuova funzione eseguibile che setta checkGameOn a true
+            
+                executor.schedule(task, 2, TimeUnit.SECONDS);  // esegue la task dopo 2 secondi in parallelo col programma
+                executor.shutdown();  // chiude la pool di thread 
             }
         }else{
             g2.drawImage(hud.pauseImage, 0, 0, 256*scale, hudHeight, null);  // disegna l'immagine di pausa
         }
     }
 
+    public void saveScore(){
+        int level, world;
+        
+        if(levelType == "firstWorld" || levelType == "firstBoss"){
+            world = 1;
+            level = levelIndex+1;  // l'index del primo mondo va da 0 a 3 quindi aggiungiamo 1 per avere un index da 1 a 4
+        }else{
+            world = 2;
+            level = levelIndex-3;  // l'index del secondo mondo va da 4 a 7 quindi rimuoviamo 3 per avere un index da 1 a 4
+        }
+        //legge i valori nel file txt per salvarli temporaneamente
+        try (Scanner scan = new Scanner(new File("./src/res/score.txt"))){
+            while(scan.hasNext()){
+                System.out.println(scan.nextLine());
+            }
+        } catch (IOException e){
+            System.out.println("Errore nella lettura dello score");
+            e.printStackTrace();
+        }
+
+        // riscrive su file i dati aggiornati
+        try (FileWriter writer = new FileWriter("./src/res/score.txt", true); 
+        BufferedWriter bwr = new BufferedWriter(writer);){
+              // scrive lo score del player il mondo e il livello corrente tutti separati da uno spazio e torna a capo
+            bwr.write("S"+player.score+" W"+world+" L"+level+"\n");
+        } catch (IOException e){
+            System.out.println("Errore nel salvataggio dello score");
+            e.printStackTrace();
+        }
+    }
+
+    
     public void update(){
         if(!checkGameOn && currentPanel != null){
             currentPanel.chooseOptions(this);
@@ -308,7 +384,13 @@ public class GamePanel extends JPanel implements Runnable{
         }else if(closeTransition && alphaVal==255){  // se è finita la transizione di chiusura
             closeTransition = false;
             checkSetup = false;  // ripristina le variabili del setup
-            setupGame();  // fa partire il setup del gioco
+            // finisce la musichetta e parte il livello dopo
+            ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);  // crea una nuova pool di thread di una grandezza
+            Runnable task = () -> {setupGame();};  // crea una nuova funzione eseguibile che setta checkGameOn a true e fa partire il suono dello stage intro
+        
+            executor.schedule(task, 2, TimeUnit.SECONDS);  // esegue la task dopo 2 secondi in parallelo col programma
+            executor.shutdown();  // chiude la pool di thread 
+            // setupGame();  // fa partire il setup del gioco
         }
         
         if(checkGameOn && !pauseGame){  // se il gioco puo partire e il player non ha fermato il gioco
@@ -318,7 +400,7 @@ public class GamePanel extends JPanel implements Runnable{
                 if(!entity.extinguished)
                     entity.update();
             }
-            cChecker.checkEntity();
+            cChecker.checkEntities();
             
             for(int row=0; row < maxGameRow; row++){
                 for(int col=0; col < maxGameCol; col++){
@@ -363,6 +445,8 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     public void paintGame(Graphics2D g2){
+        if(g2 == null)
+            System.out.println(g2);
         player.g2 = g2;
 
         for(Enemy entity: enemy){  // itero i nemici
@@ -418,4 +502,17 @@ public class GamePanel extends JPanel implements Runnable{
         drawHUD(g2);
     }
 
+    public void playMusic(int index){  
+        musicM.setAudio(index);  // carica la clip musicale selezionata in base all'index
+        musicM.play();  // fa partire la clip musicale
+        musicM.loop();  // la mette in loop
+    }
+
+    public void stopMusic(){
+        musicM.stop();  // 
+    }
+    public void playSfx(int index){
+        audioM.setAudio(index);
+        audioM.play();
+    }
 }

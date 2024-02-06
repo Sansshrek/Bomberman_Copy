@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import main.Node;
+
 import java.awt.Point;
 
 public class SearchEntity implements EntityMovementBehaviour{
-    EntityMovementBehaviour stupidBehaviour = new StupidEntity();
     
     public void updateMovement(Entity entity){
         if(entity.hitbox.x == entity.getTileX() && entity.hitbox.y == entity.getTileY()){

@@ -11,12 +11,10 @@ import java.awt.Point;
 import java.awt.Rectangle;
 
 public class ClownBoss implements EntityMovementBehaviour{
-    EntityMovementBehaviour stupidBehaviour = new StupidEntity();
-    boolean hitboxHitCheck = false, switchDir = false, attackCheck = true;
+    boolean hitboxHitCheck = false, switchDir = false, attackCheck = true, checkSound = false;
     
     public void updateMovement(Entity entity){
         if(!entity.died){
-            entity.projectileHandler.updateProjectiles();  // aggiorna i proiettili
             
             if(entity.startAttack){  // se inizia l'attacco allora ferma l'entity
                 entity.collisionOn = true;

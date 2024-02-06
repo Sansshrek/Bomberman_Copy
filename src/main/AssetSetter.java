@@ -16,6 +16,7 @@ public class AssetSetter{
     TileManager tileM;
     Random rand = new Random();
     ArrayList<String> powerUp = new ArrayList<>(Arrays.asList(
+    "blockCross", "blockCross", "blockCross",
     "fire", "fire", "fire", "fire", "fire", // 5%
     "bomb", "bomb", "bomb", "bomb", "bomb",  // 5% bomb
     "skate", "skate", "skate", "skate", "skate",  // 5% skate
@@ -44,8 +45,8 @@ public class AssetSetter{
         }
         return avPos;
     }
-    public void setMatrixBlocks(){
-        int numBlock = (int)(Math.random()*(40-33))+33;  // 33-45 blocchi a random
+    public void setMatrixBlocks(int minBlock, int maxBlock){
+        int numBlock = (int)(Math.random()*(maxBlock-minBlock))+minBlock;  // range tra minBlock-maxBlock blocchi a random
         ArrayList<Point> avPos = availablePosMatrix();  // prendiamo le posizioni disponibili
         ArrayList<String> avPowerUp = getPowerUp(numBlock);
           // prendiamo i powerUp disponibili

@@ -11,7 +11,7 @@ import entity.projectiles.ProjectileHandler;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import main.KeyHandler;
-
+import main.Node;
 import main.GamePanel;
 
 public class Entity implements EntityObservable{
@@ -19,6 +19,7 @@ public class Entity implements EntityObservable{
 
     public EntityMovementBehaviour movementBehaviour;  // interfaccia movement behaviour (Strategy Pattern)
     public EntityDrawBehaviour drawBehaviour; //interfaccia draw behaviour (Strategy Pattern)
+    public ProjectileHandler projectileHandler;
     KeyHandler keyH;  // oggetto keyHandler per la gestione degli input da tastiera
     GamePanel gp;  // oggetto GamePanel per accedere a variabili e metodi del gioco
     int tileSize;  // dimensione di un tile del livello
@@ -33,7 +34,7 @@ public class Entity implements EntityObservable{
     public ArrayList<Node> pathSearch; //percorso di ricerca utilizzato a seconda del comportamento dell'entita' (Utilizzato insieme al findP)
 
     //Proprietà delle entità
-    public int firePower, spriteCounter, spriteNum, maxSpriteNum, invulnerableSec, invulnerableTimer = 0, lifeNumber = 1, heartNumber = 1, spriteDeathNum = 0, startDeathY;
+    public int firePower, spriteCounter, spriteNum, maxSpriteNum, invulnerableSec, invulnerableTimer = 0, lifeNumber = 1, heartNumber = 1, spriteDeathNum = 0, startDeathY, imageWidth, imageHeight;
 
     //Hitbox per il controllo delle collisioni 
     public Rectangle hitbox, hittableHitbox;
@@ -42,9 +43,8 @@ public class Entity implements EntityObservable{
     public int offsetImageX, offsetImageY, offsetHittableX, offsetHittableY, hitboxWidth, hitboxHeight, hittableWidth, hittableHeight, mouseX, mouseY;
 
     //Condizioni delle entità
-    public boolean collisionOn = false, died = false, extinguished = false, bombExitHitbox = false, invulnerable = false, endAnimation = false;
+    public boolean collisionOn = false, died = false, extinguished = false, blockCross = false, bombExitHitbox = false, invulnerable = false, endAnimation = false;
     public boolean checkDeathJump = false, checkDeathFall = false, reverseAnimation = false, startAttack = false, finishAttack = false, canAttack = false;
-    public ProjectileHandler projectileHandler;
     
 
     //Controlli per i vari tipi di nemici
@@ -138,7 +138,7 @@ public class Entity implements EntityObservable{
     public void notifyObservers(){
         for (int i = 0; i < observers.size(); i++) {
             EntityObserver observer = (EntityObserver)observers.get(i);
-            observer.updateEntity(this);
+            observer.updateEntities(this);
         }
     }
     

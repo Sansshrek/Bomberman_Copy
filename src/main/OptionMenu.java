@@ -105,6 +105,7 @@ public class OptionMenu implements Panel{
     public void chooseOptions(GamePanel gp){
         if(!difficultySelect && !movementSelect){  // se ancora non ha selezionato nulla
             if(keyH.downPressed){
+                gp.playSfx(12);  // sound cursore
                 pointerIndex+=1;  // aumenta il pointerIndex per andare alla prossima scelta
                 if (pointerIndex == totOptionNumber){  // se supera il numero di scelte
                     pointerIndex=0;  // resetta l'index del puntatore e lo fa tornare alla prima scelta
@@ -114,6 +115,7 @@ public class OptionMenu implements Panel{
                 }
                 keyH.downPressed = false;
             }else if(keyH.upPressed){ 
+                gp.playSfx(12);  // sound cursore
                 pointerIndex-=1;
                 if (pointerIndex<0){
                     pointerIndex=totOptionNumber-1;
@@ -127,12 +129,14 @@ public class OptionMenu implements Panel{
         // scelta difficolta
         else if(difficultySelect){
             if(keyH.downPressed && difficultySelect){
+                gp.playSfx(12);  // sound cursore
                 if(selectedDifficultyIndex < 2)  // se non sono all'ultima scekta
                     selectedDifficultyIndex+=1;  // posso andare alla scelta successiva
                 System.out.println("Difficoltà: "+ selectedDifficultyIndex);
                 keyH.downPressed = false;
             }
             else if(keyH.upPressed && difficultySelect){
+                gp.playSfx(12);  // sound cursore
                 if(selectedDifficultyIndex > 0)  // se non sono alla prima scelta
                     selectedDifficultyIndex-=1;  // posso andare alla scelta precedente
                 System.out.println("Difficoltà: "+ selectedDifficultyIndex);
@@ -140,12 +144,14 @@ public class OptionMenu implements Panel{
             }
         }else if(movementSelect){
             if(keyH.downPressed && movementSelect){
+                gp.playSfx(12);  // sound cursore
                 if(selectedMovementIndex == 0)  // se sto alla prima opzione (mouse)
                     selectedMovementIndex = 1;  // va all'opzione successiva (keyboard)
                 System.out.println("Movimento: "+ selectedMovementIndex);
                 keyH.downPressed = false;
             }
             else if(keyH.upPressed && movementSelect){
+                gp.playSfx(12);  // sound cursore
                 if(selectedMovementIndex == 1)  // se sto all'ultima opzione (keyboard)
                     selectedMovementIndex = 0;  // va all'opzione precedente (mouse)
                 System.out.println("Movimento: "+ selectedMovementIndex);
@@ -154,6 +160,7 @@ public class OptionMenu implements Panel{
         }
         // quando preme invio
         if(keyH.pausePressed){
+            gp.playSfx(11);  // sound invio selezione
             if(pointerIndex==0){  // scelta movimento
                 System.out.println("INVIOOOOOO");
                 if (movementSelect){  // se è già selezionato

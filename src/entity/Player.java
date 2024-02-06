@@ -22,8 +22,8 @@ public class Player extends Entity{
     // public ArrayList<SuperObject> bombObj = new ArrayList<>();
     
     //larghezza e altezza dell' hitbox
-    public int bombNumber, lifeNumber, score;
-    int spriteDeathCounter = 0;
+    public int bombNumber, lifeNumber, score, gameWon, gameLost, gamePlayed;
+    int spriteDeathCounter = 0; 
 
     public Player(GamePanel gp){
         super(gp);
@@ -54,19 +54,16 @@ public class Player extends Entity{
 
         System.out.println("Caricando il player");  // da eliminare
         gp.bombH.addBombNumber();  // aggiunge la prima bomba al player
-        gp.bombH.addBombNumber();  // aggiunge la prima bomba al player
-        gp.bombH.addBombNumber();
         setPlayerDefaultValues();
         getPlayerImage();
         notifyObservers();
-
     }
     
     @Override
     public void notifyObservers(){
         for (int i = 0; i < observers.size(); i++) {
             EntityObserver observer = (EntityObserver)observers.get(i);
-            observer.updateEntity(this);
+            observer.updateEntities(this);
         }
     }
 /* 
@@ -74,62 +71,56 @@ public class Player extends Entity{
         setPlayerDefaultValues();
     }
     */
-	public void setPlayerDefaultValues(){
-        int hitboxX = (0*tileSize) + (tileSize+tileSize/2) + offsetImageX;   // posizione x del player IN ALTO A SINISTRA
-        int hitboxY = (0*tileSize) + 2*tileSize + offsetImageY;    // posizione y del player IN ALTO A SINISTRA
-        this.hitbox = new Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
-        this.imageP = new Point(hitboxX-offsetImageX, hitboxY-offsetImageY);
-        this.hittableHitbox = new Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
+	public void setPlayerDefaultValues(){  // setta i valori iniziali di quando inizia il gioco
         speed = 2;
-        direction = "down";
         firePower = 1;
-        lifeNumber = 5;
-        heartNumber = 1;
+        lifeNumber = 1;
         score = 0;
-        resetInvincibility();
-        died = false;
-        extinguished = false;
-        checkDeathJump = false;
-        checkDeathFall = false;
-        spriteDeathCounter = 0;
-        spriteNum = 0;
-        mouseX = 0;
-        mouseY = 0;
+        gp.bombH.setBombNumber(1);  // resetta il numero di bombe del player
+        resetPlayerGameValue();
         // this.hitbox = new Rectangle(offsetX+imageP.x, offsetY+imageP.y, hitboxWidth, hitboxHeight);
         //setEntityVar(imageP, hitbox, invulnerable, died, extinguished, speed);
         notifyObservers();
     }
 
+    public void resetPlayerGameValue(){  // cambia i valori quando muore 
+        int hitboxX = (0*tileSize) + (tileSize+tileSize/2) + offsetImageX;   // posizione x del player IN ALTO A SINISTRA
+        int hitboxY = (0*tileSize) + 2*tileSize + offsetImageY;    // posizione y del player IN ALTO A SINISTRA
+        this.hitbox = new Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
+        this.imageP = new Point(hitboxX-offsetImageX, hitboxY-offsetImageY);
+        this.hittableHitbox = new Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
+        direction = "down";
+        died = false;
+        extinguished = false;
+        checkDeathJump = false;
+        checkDeathFall = false;
+        spriteDeathCounter = 0;
+        spriteDeathNum = 0;
+        spriteNum = 0;
+        heartNumber = 1;
+        mouseX = 0;
+        mouseY = 0;
+        gp.hud.resetTimer();
+        resetInvincibility();
+        notifyObservers();
+    }
+
     public void kill(){
-        heartNumber--;  // perde una vita del player stesso (non perde il numero di player)
-        invulnerable = true;  // diventa invulnerabile
-        if(heartNumber == 0){  // se perde tutte le vite del player
-            if(!died){  // se non è morto
-                startDeathY = imageP.y;  // inizia lo sprite della morte
-                died = true;  // imposta la morte a true
+        if(!invulnerable){
+            heartNumber--;  // perde una vita del player stesso (non perde il numero di player)
+            invulnerable = true;  // diventa invulnerabile
+            if(heartNumber == 0){  // se perde tutte le vite del player
+                if(!died){  // se non è morto
+                    gp.playSfx(6);  // sound morte player
+                    startDeathY = imageP.y;  // inizia lo sprite della morte
+                    died = true;  // imposta la morte a true
+                }
+                System.out.println("PRIOPRIO MORTO");
             }
-            System.out.println("PRIOPRIO MORTO");
         }
         if(extinguished){  // quando è completamente morto resetta i valori
-            int hitboxX = (0*tileSize) + (tileSize+tileSize/2) + offsetImageX;   // posizione x del player IN ALTO A SINISTRA
-            int hitboxY = (0*tileSize) + 2*tileSize + offsetImageY;    // posizione y del player IN ALTO A SINISTRA
-            this.hitbox = new Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
-            this.imageP = new Point(hitboxX-offsetImageX, hitboxY-offsetImageY);
-            this.hittableHitbox = new Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
-            direction = "down";
-            invulnerable = true;
-            died = false;
-            extinguished = false;
-            checkDeathJump = false;
-            checkDeathFall = false;
-            spriteDeathCounter = 0;
-            spriteDeathNum = 0;
-            spriteNum = 0;
             lifeNumber -= 1;  // diminuisce di 1 la vita
-            heartNumber = 1;
-            mouseX = 0;
-            mouseY = 0;
-            gp.hud.resetTimer();
+            resetPlayerGameValue();
             //setEntityVar(imageP, hitbox, invulnerable, died, extinguished, speed);
         }
         notifyObservers();
@@ -147,7 +138,7 @@ public class Player extends Entity{
                 else if(dir == 2) {directionImage = "left";}
                 else {directionImage = "right";}
                 for(int sprite=1; sprite<=maxSpriteNum; sprite++){  // per quante sprite ci stanno in una direzione
-                    BufferedImage ogImg = ImageIO.read(getClass().getResourceAsStream("../res/player/walking Original/"+directionImage+String.valueOf(sprite)+".png"));
+                    BufferedImage ogImg = ImageIO.read(getClass().getResourceAsStream("../res/player/walking white/"+directionImage+String.valueOf(sprite)+".png"));
                     imageList[dir].add(ogImg);
                     ogImage[dir].add(ogImg);
                     whiteImage[dir].add(ImageIO.read(getClass().getResourceAsStream("../res/player/walking Invincible/"+directionImage+String.valueOf(sprite)+".png")));
@@ -240,6 +231,9 @@ public class Player extends Entity{
     public void powerUpHandler(Point index){
         if(index.x != 999 && gp.obj[index.y][index.x].name != "block" && gp.obj[index.y][index.x] != null && !(gp.obj[index.y][index.x] instanceof Bomb)){  // se non è il valore default o un blocco
             String objName = gp.obj[index.y][index.x].name;
+            
+            if(gp.obj[index.y][index.x].name != "nothing" && gp.obj[index.y][index.x].name != "exit")  // se non è un oggetto nullo o l'uscita
+                gp.playSfx(7);  // suono powerUp ottenuto
             if(gp.obj[index.y][index.x].name != "exit")  // se non è l'exit
                 gp.obj[index.y][index.x] = null;  // allora lo elimina
             switch(objName){
@@ -276,6 +270,10 @@ public class Player extends Entity{
                 case "time":
                     score += 800;
                     gp.hud.resetTimer();
+                break;
+                case "blockCross":
+                    score += 50;
+                    blockCross = true;
                 break;
                 // cibi
                 case "onigiri":

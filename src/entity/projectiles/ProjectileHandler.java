@@ -1,5 +1,6 @@
 package entity.projectiles;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -11,8 +12,8 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
-import entity.Node;
 import main.GamePanel;
+import main.Node;
 import objects.Bomb;
 
 public class ProjectileHandler{
@@ -46,7 +47,7 @@ public class ProjectileHandler{
                     moveX = -moveX;
                 }
                 
-                System.out.println("StartX: "+startX+" StartY: "+startY+" endX: "+endX+" EndY: "+endY+" moveX: "+moveX);
+                // System.out.println("StartX: "+startX+" StartY: "+startY+" endX: "+endX+" EndY: "+endY+" moveX: "+moveX);
                 projectiles.add(new KnightProjectile(tileSize, tileSize, startX, startY, startX+endX, startY+endY, moveX, moveY));
             }
         }else if(bossType == "clown"){
@@ -64,7 +65,7 @@ public class ProjectileHandler{
         for (Projectile projectile : projectiles) {  // per ogni proiettile
             projectile.update();
             // System.out.println("Proiettile: "+projectile.hitbox.x+" "+projectile.hitbox.y+" "+projectile.moveX+" "+projectile.moveY);
-            if(projectile.hitbox.intersects(gp.player.hitbox) && !gp.player.invulnerable){
+            if(projectile.hitbox.intersects(gp.player.hitbox)){
                 gp.player.kill();
             }
         }
@@ -78,6 +79,8 @@ public class ProjectileHandler{
 
     public void drawProjectiles(Graphics2D g2){
         for (Projectile projectile : projectiles) {  // per ogni proiettile
+            g2.setColor(Color.BLUE);
+            g2.draw(projectile.hitbox);
             g2.drawImage(projectile.image, projectile.hitbox.x, projectile.hitbox.y, tileSize, tileSize, null);
         }
     }

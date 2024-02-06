@@ -53,6 +53,7 @@ public class DeathPanel implements Panel{
         if(startGame && alphaVal==255){  // quando è partito il gioco e finisce la transizione
             gp.alphaVal = 255;  // reimposto le variabili necessarie nel gamePanel per permettere la transizione di entrata nel gamepanel
             gp.checkSetup = false;
+            gp.stopMusic();
             gp.setupGame();
             gp.currentPanel = null;
         }
@@ -73,13 +74,15 @@ public class DeathPanel implements Panel{
             }
             
             if(keyH.pausePressed && pointerIndex==0){
-                System.out.println("INVIOOOOOO");
                 startGame = true;
                 keyH.pausePressed = false;
             }
             if(keyH.pausePressed && pointerIndex==1){
                 //disegna transizione
                 startMenu = true;
+                gp.player.gameLost += 1;  // aumenta di uno il numero di partite perse
+                gp.saveScore();  // Salva lo score del player
+                gp.stopMusic();
                 gp.currentPanel = new StartMenu(gp);
                 keyH.pausePressed = false;
             }

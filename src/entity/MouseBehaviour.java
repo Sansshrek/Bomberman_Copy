@@ -3,6 +3,8 @@ package entity;
 import java.awt.Point;
 import java.util.ArrayList;
 
+import main.Node;
+
 public class MouseBehaviour implements EntityMovementBehaviour{
     public void updateMovement(Entity entity){
         entity.collisionOn = false;

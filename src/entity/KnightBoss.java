@@ -7,18 +7,19 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import main.Node;
+
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
 
 public class KnightBoss implements EntityMovementBehaviour{
-    EntityMovementBehaviour stupidBehaviour = new StupidEntity();
     boolean hitboxHitCheck = false, attackCheck = true;
     
     public void updateMovement(Entity entity){
         if(!entity.died){
 
-            entity.projectileHandler.updateProjectiles();  // aggiorna i proiettili
 
             Rectangle hammerHitbox = new Rectangle(entity.hitbox.x, entity.hitbox.y, entity.hitbox.width, entity.hitbox.height*4);  // l'hitbox del martello
             // controlla se la hitbox del martello colpisce il player
@@ -61,6 +62,7 @@ public class KnightBoss implements EntityMovementBehaviour{
             if(hammerHitbox.intersects(entity.gp.player.hitbox)){  // se l'hitbox sotto l'entity interseca l'hitbox del player
                 // System.out.println("Passato sotto");
                 if(entity.canAttack){  // se puo attaccare inizia l'attacco
+                    entity.gp.playSfx(10);
                     entity.startAttack = true;  // inizia l'attacco
                     entity.canAttack = false;  // e non può più attaccare per un po'
                 }

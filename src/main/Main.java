@@ -5,12 +5,16 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class Main {
+
+    public static UserHandler userH;
     public static void main(String[] args) {
         JFrame window = new JFrame();
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
         window.setTitle("Super Bomberman");
 
+        userH = new UserHandler();
+        userH.readUserFile();
         GamePanel gamePanel = new GamePanel();
 
         window.addMouseListener(new MouseListener() {

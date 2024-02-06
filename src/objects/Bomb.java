@@ -19,7 +19,7 @@ public class Bomb extends SuperObject{
     int spriteCounter = 0;
     int spriteNum = 1;
     int firePower;
-    public boolean exploded = false, extinguished = false, newBombAv = false;
+    public boolean exploded = false, extinguished = false, newBombAv = false, soundPlayed = false;
     public boolean endedAnimation = false;
     int stopIndexSx = 10, stopIndexDx = 10, stopIndexUp = 10, stopIndexDw = 10;
     BufferedImage bombImage, largeBomb, mediumBomb, smallBomb;
@@ -108,6 +108,10 @@ public class Bomb extends SuperObject{
     }
 
     public void generateFires(Graphics2D g2){
+        if(!soundPlayed){  // fa partire il suono una sola volta
+            soundPlayed = true;
+            gp.playSfx(9); // suono bomba esplode
+        }
         if(!newBombAv){
             newBombAv = true;
             gp.bombH.addBombNumber();
@@ -135,7 +139,7 @@ public class Bomb extends SuperObject{
         // Draw the horizontal line of the explosion
 
         Rectangle hitboxCenter = new Rectangle(x, y, gp.tileSize, gp.tileSize);
-            if(gp.player.hittableHitbox.intersects(hitboxCenter) && !gp.player.invulnerable){  // se il player non è invulnerabile
+            if(gp.player.hittableHitbox.intersects(hitboxCenter)){  // se il player non è invulnerabile
                 System.out.println("ESPLOSO");
                 gp.player.kill();
             }
@@ -175,7 +179,7 @@ public class Bomb extends SuperObject{
                 }
                 //controllo se colpisce un entita
                 Rectangle hitboxFire = new Rectangle(x - i*bombWidth, y, gp.tileSize, gp.tileSize);
-                if(gp.player.hittableHitbox.intersects(hitboxFire) && !gp.player.invulnerable){  // se il player non è invulnerabile
+                if(gp.player.hittableHitbox.intersects(hitboxFire)){  // se il player non è invulnerabile
                     System.out.println("ESPLOSO");
                     gp.player.kill();
                 }
@@ -228,7 +232,7 @@ public class Bomb extends SuperObject{
                 }
                 //controllo se colpisce un entita
                 Rectangle hitboxFire = new Rectangle(x + i*bombWidth, y, gp.tileSize, gp.tileSize);
-                if(gp.player.hittableHitbox.intersects(hitboxFire) && !gp.player.invulnerable){
+                if(gp.player.hittableHitbox.intersects(hitboxFire)){
                     System.out.println("ESPLOSO");
                     gp.player.kill();
                 }
@@ -277,7 +281,7 @@ public class Bomb extends SuperObject{
                 }
                 //controllo se colpisce un entita
                 Rectangle hitboxFire = new Rectangle(x, y - i*bombWidth, gp.tileSize, gp.tileSize);
-                if(gp.player.hittableHitbox.intersects(hitboxFire) && !gp.player.invulnerable){
+                if(gp.player.hittableHitbox.intersects(hitboxFire)){
                     System.out.println("ESPLOSO");
                     gp.player.kill();
                 }
@@ -333,7 +337,7 @@ public class Bomb extends SuperObject{
                 // }
                 //controllo se colpisce un entita
                 Rectangle hitboxFire = new Rectangle(x, y + i*bombWidth, gp.tileSize, gp.tileSize);
-                if(gp.player.hittableHitbox.intersects(hitboxFire) && !gp.player.invulnerable){
+                if(gp.player.hittableHitbox.intersects(hitboxFire)){
                     System.out.println("ESPLOSO");
                     gp.player.kill();
                 }

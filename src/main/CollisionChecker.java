@@ -11,7 +11,6 @@ import entity.Enemy;
 import entity.Entity;
 import entity.EntityMovementBehaviour;
 import entity.EntityObserver;
-import entity.Node;
 import entity.Player;
 import entity.SearchEntity;
 import entity.StupidEntity;
@@ -30,10 +29,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CollisionChecker implements EntityObserver{
     GamePanel gp;
     int boundaryX, boundaryY, boundaryWidth, boundaryHeight;
-    private ConcurrentHashMap<Integer, Entity> entityMap;
+    private ConcurrentHashMap<Integer, Entity> entitiesMap;
     
     public CollisionChecker(GamePanel gp){
-        this.entityMap = new ConcurrentHashMap<>();
+        this.entitiesMap = new ConcurrentHashMap<>();
         this.gp = gp;
         boundaryX = 0;
         boundaryY = 0;
@@ -41,15 +40,20 @@ public class CollisionChecker implements EntityObserver{
         boundaryHeight = 11*gp.tileSize;
     }
 
-    public void updateEntity(Entity entity){
-        entityMap.put(entity.uniCode, entity);
+    public void updateEntities(Entity entity){
+        entitiesMap.put(entity.uniCode, entity);
     }
-    public void removeEntity(int uniCode){
-        entityMap.remove(uniCode);
+    public void removeEntities(int uniCode){
+        entitiesMap.remove(uniCode);
+    }
+    public void resetEntities(){
+        Entity tmpPlayer = entitiesMap.get(gp.player.uniCode);
+        entitiesMap.clear();
+        entitiesMap.put(0, tmpPlayer); // rimette il player
     }
 
-    public void checkEntity(){
-        for (Map.Entry<Integer, Entity> entry : entityMap.entrySet()) {
+    public void checkEntities(){
+        for (Map.Entry<Integer, Entity> entry : entitiesMap.entrySet()) {
             Entity entity = entry.getValue();
             entity.collisionOn = false;
             // imposta il collisionOn nelle prossime funzioni
@@ -59,8 +63,8 @@ public class CollisionChecker implements EntityObserver{
                 objPoint = checkObj(entity);
             }
             if(!(entity instanceof Player)){  // se è un nemico
-                if(!entityMap.get(0).died){
-                    checkPlayerCollision(entity, entityMap.get(0));  // controlla se colpisce il player
+                if(!entitiesMap.get(0).died){
+                    checkPlayerCollision(entity, entitiesMap.get(0));  // controlla se colpisce il player
                 }
             }else{  // se è il player
                 entity.powerUpHandler(objPoint);  // fa il controllo del powerUp preso in quel blocco
@@ -234,10 +238,8 @@ public class CollisionChecker implements EntityObserver{
                     }
                     if(!(gp.obj[row][col] instanceof Bomb)){
                         if(entityHitboxCheck.intersects(objHitboxCheck)){  // controlla se l'hitbox del player interseca l'hitbox dell'oggetto
-                            if(gp.obj[row][col].collision){  // se puo essere scontrato setta la collisione del player a true
-                                if(entity.type != "cuppen"){
-                                    entity.collisionOn = true;
-                                }
+                            if(gp.obj[row][col].collision && !entity.blockCross){  // se puo essere scontrato setta la collisione del player a true
+                                entity.collisionOn = true;
                             }
                             if(entity instanceof Player){ // se è il player a toccare l'oggetto allora ritorna l'indice
                                 return new Point(col, row);
@@ -293,8 +295,10 @@ public class CollisionChecker implements EntityObserver{
                 entity.bombExitHitbox = false;
             }
         }
-        if(removeBomb != null)  // se la bomba è stata mangiata da un pakupa
+        if(removeBomb != null){  // se la bomba è stata mangiata da un pakupa
             gp.bombH.removeBomb(removeBomb);
+            gp.bombH.addBombNumber();  // rimette la bomba nella lista delle bombe disponibili
+        }
     }
 
     public void checkBomb3(Entity entity){  // FATTO DA FRANCESCO PAGLIACCIA™

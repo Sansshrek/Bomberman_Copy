@@ -35,16 +35,9 @@ public class EnemyDrawBehaviour implements EntityDrawBehaviour{
                 entity.image = entity.deathImage.get(entity.spriteDeathNum);
             }
         }
-
-        if(!entity.extinguished){
-            // entity.g2.drawImage(entity.image, entity.imageP.x, entity.imageP.y, entity.width, entity.height, null);  // disegna lo sprite del personaggio (image) nella posizione x,y di grandezza tileSize
-            // da eliminare
-            entity.g2.setColor(Color.BLUE);
-            entity.g2.draw(entity.hitbox);
-
-            entity.g2.setColor(Color.GREEN);
-            // entity.g2.drawRect(entity.getTileX(), entity.getTileY(), entity.tileSize, entity.tileSize);
-        }
+        
+        entity.g2.drawImage(entity.image, entity.imageP.x, entity.imageP.y, entity.imageWidth, entity.imageHeight, null);  // disegna lo sprite del personaggio (image) nella posizione x,y di grandezza tileSize
+        
         entity.notifyObservers();
     }
 

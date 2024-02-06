@@ -17,8 +17,9 @@ import main.GamePanel;
 
 public class Enemy extends Entity{
     boolean playerCollision = false;  // se c'è una collisione con il player
+    boolean checkSoundBoss = false; // controllo del suono dello stage clear per il boss quando muore
     //largezza e altezza dell' immagine del player
-    public int imageWidth, imageHeight, score, startX, startY; // Aggiungiamo delle variabili specifiche per la scelta della posizione di partenza dell'enemy 
+    public int score, startX, startY; // Aggiungiamo delle variabili specifiche per la scelta della posizione di partenza dell'enemy 
     //e per la grandezza variabile dell'immagine e per il rilascio di punti al player
 
     public Enemy(GamePanel gp, int uniCode, EnemyType type){
@@ -43,6 +44,7 @@ public class Enemy extends Entity{
         this.startX = type.startCol;
         this.startY = type.startRow;
         this.reverseAnimation = type.reverseAnimation;
+        this.blockCross = type.blockCross;
 
         this.invulnerableSec = 2;
         this.tileSize = gp.getTileSize();
@@ -63,9 +65,9 @@ public class Enemy extends Entity{
     public void notifyObservers(){
         for (int i = 0; i < observers.size(); i++) {
             EntityObserver observer = (EntityObserver)observers.get(i);
-            observer.updateEntity(this);
+            observer.updateEntities(this);
             if(extinguished){  // se muore rimuoviamo l'entita
-                observer.removeEntity(uniCode);
+                observer.removeEntities(uniCode);
             }
         }
     }
@@ -137,23 +139,37 @@ public class Enemy extends Entity{
 
     //Metodo per quando un enemy viene colpita
     public void kill(){
-        heartNumber--;
-        System.out.println(heartNumber);
-        invulnerable = true;
-        invulnerableTimer = 0;
-        if(heartNumber == 0){
-            died = true;
-            System.out.println("Enemy morto");
-            gp.enemyNum--;
-            
-            hittableHeight = 32*gp.scale;
-            imageP.y -= 16*gp.scale;
+        if(!invulnerable && !died){
+            heartNumber--;
+            System.out.println(heartNumber);
+            invulnerable = true;
+            invulnerableTimer = 0;
+            if(heartNumber == 0){
+                gp.playSfx(8); // sound enemy muore
+                died = true;
+                System.out.println("Enemy morto");
+                gp.player.score += score;
+                gp.enemyNum--;
+                if(type != "knight" && type != "clown"){
+                    hittableHeight = 32*gp.scale;
+                    imageP.y -= 16*gp.scale;
+                }
+            }
+            notifyObservers();
         }
-        notifyObservers();
     }
 
     //Metodo per aggiornare e spostare l'enemy
     public void update(){  // update viene chiamato 60 volte al secondo
+        if(type == "clown" || type == "knight"){  // anche se il clown o knight è morto fa l'update dei proiettili
+            projectileHandler.updateProjectiles();  // aggiorna i proiettili
+        }
+        /*
+        if((died || gp.keyH.nextLevelPressed) && !checkSoundBoss && (type == "knight" || type == "clown")){  // se ancora non ha fatto partire la musichetta di stage clear
+            gp.stopMusic();  // ferma la musica di gioco
+            gp.playSfx(2);  // sound stage clear
+            checkSoundBoss = true;  // imposta a true il controllo del suono cosi che viene chiamato una sola volta
+        } */
 
         if(!died){  // se non è morto
             // controlliamo cosa fare con l'oggetto
@@ -196,9 +212,6 @@ public class Enemy extends Entity{
         drawBehaviour.draw(this);
         
         if(!extinguished){  // se l'enemy non è esploso totalmente disegna l'immagine
-            g2.drawImage(image, imageP.x, imageP.y, imageWidth, imageHeight, null);  // disegna lo sprite del personaggio (image) nella posizione x,y di grandezza tileSize
-            if(type == "knight" || type == "clown")
-                projectileHandler.drawProjectiles(g2);  // disegna i proiettili
             //da eliminare
             /*
             g2.setColor(Color.BLUE);

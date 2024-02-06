@@ -9,8 +9,8 @@ public class StupidEntityRandom implements EntityMovementBehaviour{
         if(entity.hitbox.x == entity.getTileX() && entity.hitbox.y == entity.getTileY()){
             entity.collisionOn = false;
 
-            entity.gp.cChecker.checkTile(entity);
-            entity.gp.cChecker.checkObj(entity);
+            // entity.gp.cChecker.checkTile(entity);
+            // entity.gp.cChecker.checkObj(entity);
             
             if(entity.gp.cChecker.canMove(entity)){  // se si puo muovere in qualche direzione
                 ArrayList<String> directions = entity.gp.cChecker.validDirections(entity);  // prende ogni posizione in cui si puo muovere

@@ -12,13 +12,15 @@ import javax.imageio.ImageIO;
 public class ClownDrawBehaviour implements EntityDrawBehaviour{
 
     BufferedImage[] attackImage = new BufferedImage[4];
+    BufferedImage deathImage;
+    
     public ClownDrawBehaviour(){
         // carico le sprite dell'attacco
         try {
-            // attack1 = ImageIO.read(getClass().getResourceAsStream("../res/enemies/knight/attack1.png"));
             for(int sprite=1; sprite<=4; sprite++){  // per quante sprite ci stanno in una direzione
-                attackImage[sprite-1] = ImageIO.read(getClass().getResourceAsStream("../res/enemies/knight/attack"+String.valueOf(sprite)+".png"));
+                attackImage[sprite-1] = ImageIO.read(getClass().getResourceAsStream("../res/enemies/clown/attack"+String.valueOf(sprite)+".png"));
             }
+            deathImage = ImageIO.read(getClass().getResourceAsStream("../res/enemies/clown/death.png"));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -49,8 +51,22 @@ public class ClownDrawBehaviour implements EntityDrawBehaviour{
                 entity.image = entity.imageList[0].get(0);  // lo sprite del movimento del knight è uno solo quindi non serve fare lo switch per le direzioni
             }
         }else{  // altrimenti se l'enemy è stato colpito dalla bomba allora disegna l'esplosione
-            System.out.println("DEATH");
-            entity.extinguished = true;  // per ora lo elimina
+            entity.spriteCounter++;
+            if(entity.spriteCounter > 15 && entity.spriteNum < 9){  // se ancora non è finita l'animazione di morte
+                entity.spriteDeathNum++;  // cambia gli sprite della morte
+                entity.spriteCounter = 0;
+                
+            }
+            if(entity.spriteDeathNum%2 == 0){  // se lo spriteDeathNum è pari
+                entity.image = deathImage;  // mette lo sprite della morte
+            }else{
+                entity.image = entity.imageList[0].get(0);  // altrimenti quella di base
+            }
+            if(entity.spriteDeathNum == 9){  // se ha finito l'animazione di morte
+
+                entity.extinguished = true;
+            }
+            // entity.extinguished = true;  // per ora lo elimina
         }
 
         if(!entity.extinguished){
@@ -62,6 +78,11 @@ public class ClownDrawBehaviour implements EntityDrawBehaviour{
             entity.g2.setColor(Color.GREEN);
             // entity.g2.drawRect(entity.getTileX(), entity.getTileY(), entity.tileSize, entity.tileSize);
         }
+
+        entity.g2.drawImage(entity.image, entity.imageP.x, entity.imageP.y, entity.imageWidth, entity.imageHeight, null);  // disegna lo sprite del personaggio (image) nella posizione x,y di grandezza tileSize
+
+        entity.projectileHandler.drawProjectiles(entity.g2);  // disegna i proiettili
+        
         entity.notifyObservers();
     }
 
