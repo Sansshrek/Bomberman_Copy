@@ -22,8 +22,10 @@ public class Player extends Entity{
     // public ArrayList<SuperObject> bombObj = new ArrayList<>();
     
     //larghezza e altezza dell' hitbox
-    public int bombNumber, lifeNumber, score, gameWon, gameLost, gamePlayed;
+    public int bombNumber, lifeNumber, score, gamesWon, gamesLost, gamesPlayed;
     int spriteDeathCounter = 0; 
+    public String nickname = "player";
+    public String avatarColor = "black";
 
     public Player(GamePanel gp){
         super(gp);
@@ -74,7 +76,7 @@ public class Player extends Entity{
 	public void setPlayerDefaultValues(){  // setta i valori iniziali di quando inizia il gioco
         speed = 2;
         firePower = 1;
-        lifeNumber = 1;
+        lifeNumber = 5;
         score = 0;
         gp.bombH.setBombNumber(1);  // resetta il numero di bombe del player
         resetPlayerGameValue();
@@ -138,14 +140,15 @@ public class Player extends Entity{
                 else if(dir == 2) {directionImage = "left";}
                 else {directionImage = "right";}
                 for(int sprite=1; sprite<=maxSpriteNum; sprite++){  // per quante sprite ci stanno in una direzione
-                    BufferedImage ogImg = ImageIO.read(getClass().getResourceAsStream("../res/player/walking white/"+directionImage+String.valueOf(sprite)+".png"));
+                    BufferedImage ogImg = ImageIO.read(getClass().getResourceAsStream("../res/player/Player Walking/walking "+avatarColor+"/"+directionImage+String.valueOf(sprite)+".png"));
                     imageList[dir].add(ogImg);
                     ogImage[dir].add(ogImg);
                     whiteImage[dir].add(ImageIO.read(getClass().getResourceAsStream("../res/player/walking Invincible/"+directionImage+String.valueOf(sprite)+".png")));
                 }
             }
+            deathImage = new ArrayList<>();
             for(int sprite=1; sprite<=7; sprite++){
-                deathImage.add(ImageIO.read(getClass().getResourceAsStream("../res/player/Player Death/death"+String.valueOf(sprite)+".png")));
+                deathImage.add(ImageIO.read(getClass().getResourceAsStream("../res/player/Player Death/"+avatarColor+"/death"+String.valueOf(sprite)+".png")));
             }
         }catch(IOException e){
             e.printStackTrace();

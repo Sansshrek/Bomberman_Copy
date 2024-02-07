@@ -18,9 +18,8 @@ import entity.MouseBehaviour;
 public class ScoreMenu implements Panel{
     KeyHandler keyH = KeyHandler.getInstance(); 
     
-    ArrayList<BufferedImage> letters = new ArrayList<>();
-    ArrayList<BufferedImage> numbers = new ArrayList<>();
     Map<String, BufferedImage> characters = new HashMap<>();
+    Map<String, String> scoreMap = new HashMap<>();
 
     BufferedImage backgroundImage, backImage, pointerImage, pointerLeftImage, pointerRightImage, scoreBox;
     int nicknameX, nicknameY, borderOffset, borderX, borderWidth, borderHeight;  // nickname
@@ -31,7 +30,6 @@ public class ScoreMenu implements Panel{
     int startPointerX, startPointerY, pointerX, pointerY, backPointerX, backPointerY, pointerIndex = 0, pointerWidth, pointerHeight, pointerOptionDistance, choosePointerX, choosePointerWidth, choosePointerHeight;
     int avatarPointerX, avatarPointerY, avatarPointerWidth, avatarPointerHeight, avatarPointerDistance;
     BufferedImage[] avatarImages = new BufferedImage[4];
-    BufferedImage avatarImage;
     String nicknameString = "nickname", bestScoreString = "00000", lastGameString = "1-2", lastScoreString = "00000", gamesWonString = "00", gamesLostString = "00", gamesPlayedString = "00";
     int selectedAvatarIndex = 0, totAvatarOption = 4, maxNicknameLenght = 8, scoreLenght = 1, scoreMaxLenght = 6, scoreDefault = 0, totOptionNumber = 3, gpScale;  // difficulty: normal | movement: keyboard
     boolean nicknameSelect = false, avatarSelect = false;
@@ -86,40 +84,32 @@ public class ScoreMenu implements Panel{
         backImageHeight = 10*gp.scale;
         backPointerX = backImageX - 10*gpScale;
         backPointerY = backImageY;
-        // chooseDistance = 10*gpScale;  // disanza tra le scelte e le opzioni
-        
-        /*
-        borderOffset = 4*gpScale;  // distanza tra il rettangolo e il testo
-        borderX = optionX+optionWidth+chooseDistance-borderOffset;
-        borderHeight = optionHeight+borderOffset*2;
-
-        choosePointerX = borderX+(optionWidth/2)-choosePointerWidth/2;
-        choosePointerDownY = optionY+optionHeight+borderOffset/2;
-        choosePointerUpY = optionY-choosePointerHeight-borderOffset/2;  // posizione del puntatore per le scelte a meta del testo e del bordo del rettangolo
-        */
+        // prende i valori da file
+        scoreMap = gp.readScore();
+        if(scoreMap != null) {
+            nicknameString = scoreMap.get("Nk");
+            selectedAvatarIndex = getAvatarIndex(scoreMap.get("Av"));
+            bestScoreString = scoreMap.get("Bs");
+            lastScoreString = scoreMap.get("Ls");
+            lastGameString = scoreMap.get("Lw") + "-" + scoreMap.get("Ll");
+            gamesWonString = scoreMap.get("Gw");
+            gamesLostString = scoreMap.get("Gl");
+            gamesPlayedString = scoreMap.get("Gp");
+        }
         try {
-            avatarImages[0] = ImageIO.read(getClass().getResourceAsStream("../res/player/walking white/down2.png"));
-            avatarImages[1] = ImageIO.read(getClass().getResourceAsStream("../res/player/walking blue/down2.png"));
-            avatarImages[2] = ImageIO.read(getClass().getResourceAsStream("../res/player/walking black/down2.png"));
-            avatarImages[3] = ImageIO.read(getClass().getResourceAsStream("../res/player/walking orange/down2.png"));
+            avatarImages[0] = ImageIO.read(getClass().getResourceAsStream("../res/player/Player Walking/walking white/down2.png"));
+            avatarImages[1] = ImageIO.read(getClass().getResourceAsStream("../res/player/Player Walking/walking blue/down2.png"));
+            avatarImages[2] = ImageIO.read(getClass().getResourceAsStream("../res/player/Player Walking/walking black/down2.png"));
+            avatarImages[3] = ImageIO.read(getClass().getResourceAsStream("../res/player/Player Walking/walking orange/down2.png"));
             for(char ch = 'a'; ch <= 'z'; ++ch){
-                // letters.add(ImageIO.read(getClass().getResourceAsStream("../res/letters/"+ch+".png")));
                 characters.put(Character.toString(ch), ImageIO.read(getClass().getResourceAsStream("../res/letters/"+ch+".png")));
             }
             for(int i = 0; i < 10; ++i){
-                // numbers.add(ImageIO.read(getClass().getResourceAsStream("../res/letters/"+i+".png")));
                 characters.put(Integer.toString(i), ImageIO.read(getClass().getResourceAsStream("../res/letters/"+i+".png")));
             }
             characters.put("-", ImageIO.read(getClass().getResourceAsStream("../res/letters/hypen.png")));
 
-
-            // ballonImage = ImageIO.read(getClass().getResourceAsStream("../res/menu/Ballon.png"));
-            // cloudImage = ImageIO.read(getClass().getResourceAsStream("../res/menu/Cloud.png"));
-
             backgroundImage = ImageIO.read(getClass().getResourceAsStream("../res/menu/Background.png"));
-            // avatarImages[0] = ImageIO.read(getClass().getResourceAsStream("../res/menu/options/mouseOption.png"));  // scelta mouse
-            // avatarImages[1] = ImageIO.read(getClass().getResourceAsStream("../res/menu/options/keyboardOption.png"));  // scelta keyboard
-            avatarImage = ImageIO.read(getClass().getResourceAsStream("../res/player/walking white/down2.png"));  // immagine player
             backImage = ImageIO.read(getClass().getResourceAsStream("../res/menu/back.png"));  // back
             pointerImage = ImageIO.read(getClass().getResourceAsStream("../res/menu/pointer.png"));
             pointerRightImage = ImageIO.read(getClass().getResourceAsStream("../res/menu/pointer.png"));
@@ -129,6 +119,28 @@ public class ScoreMenu implements Panel{
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    public int getAvatarIndex(String avatar){
+        if(avatar.equals("white"))
+            return 0;
+        else if(avatar.equals("blue"))
+            return 1;
+        else if(avatar.equals("black"))
+            return 2;
+        else if(avatar.equals("orange"))
+            return 3;
+        return 0;
+    }
+    public String getAvataString(int index){
+        if(index == 0)
+            return "white";
+        else if(index == 1)
+            return "blue";
+        else if(index == 2)
+            return "black";
+        else if(index == 3)
+            return "orange";
+        return "white";
     }
 
     public void drawPanel(Graphics2D g2, GamePanel gp){
@@ -175,6 +187,8 @@ public class ScoreMenu implements Panel{
     }
 
     public void printCharacters(Graphics2D g2, String string, int x, int y, int width, int height, int letterDistance){
+        if(string== null)
+            return;
         for (int i=0;i<string.length();i++){
             BufferedImage image = characters.get(Character.toString(string.charAt(i)));
             g2.drawImage(image, x+letterDistance*i, y, letterDistance, letterDistance, null);
@@ -183,7 +197,6 @@ public class ScoreMenu implements Panel{
 
     public void chooseOptions(GamePanel gp){
         if(!nicknameSelect && !avatarSelect){  // se ancora non ha selezionato nulla
-            System.out.println(pointerIndex);
             if(keyH.upPressed){  // se preme a destra
                 gp.playSfx(12);  // sound cursore
                 pointerIndex--;  // aumenta il pointerIndex per andare alla prossima scelta
@@ -271,6 +284,9 @@ public class ScoreMenu implements Panel{
             }else if(pointerIndex==2){  // back
                 //disegna transizione 
                 // gp.player.movementBehaviour = avatarChoice[selectedAvatarIndex];
+                scoreMap.put("Nk", nicknameString);  // aggiorna i valori del nickname e avatar
+                scoreMap.put("Av", getAvataString(selectedAvatarIndex));
+                gp.writeScore(scoreMap);  // aggiorna il file txt con i nuovi valori
                 gp.currentPanel = new StartMenu(gp);
             }
             keyH.pausePressed = false; 

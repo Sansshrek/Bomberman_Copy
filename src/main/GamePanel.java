@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 import java.awt.Point;
 import java.util.concurrent.*;
@@ -109,9 +111,10 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     void resetGamePanel(){  // funzione che resetta i valori basici del gamePanel per esempio quando si chiama dallo startMenu
-        player.gamePlayed ++;  // aumenta il numero di partite giocate
+        player.gamesPlayed ++;  // aumenta il numero di partite giocate
         checkSetup = false;
         checkGameOn = false;
+        alphaVal = 255;
         minBlock = 30;
         maxBlock = 35;
         levelIndex = 0;  // resetta al primo livello del gioco
@@ -120,6 +123,12 @@ public class GamePanel extends JPanel implements Runnable{
         currentPanel = null;  // resevtta il pannello corrente
         player.registerObserver(cChecker);
         player.setPlayerDefaultValues();
+        Map<String, String> scoreMap = readScore();
+        if (scoreMap != null) {
+            player.nickname = scoreMap.get("Nk");
+            player.avatarColor = scoreMap.get("Av");
+        }
+        player.getPlayerImage();
         setupGame();  // esegue il setup del gioco
     }
 
@@ -346,24 +355,60 @@ public class GamePanel extends JPanel implements Runnable{
             level = levelIndex-3;  // l'index del secondo mondo va da 4 a 7 quindi rimuoviamo 3 per avere un index da 1 a 4
         }
         //legge i valori nel file txt per salvarli temporaneamente
+        Map<String, String> scoreMap = readScore();
+
+        // aggiorna i valori nel file in base a quelli di gioco attuali
+        scoreMap = updateScore(scoreMap, world, level);
+
+        // riscrive su file i dati aggiornati
+        writeScore(scoreMap);
+    }
+
+    public Map<String, String> readScore(){
+        Map<String, String> scoreMap = new HashMap<>();
+        String line = "";
         try (Scanner scan = new Scanner(new File("./src/res/score.txt"))){
-            while(scan.hasNext()){
-                System.out.println(scan.nextLine());
-            }
+                line = scan.nextLine();
         } catch (IOException e){
             System.out.println("Errore nella lettura dello score");
             e.printStackTrace();
         }
-
-        // riscrive su file i dati aggiornati
-        try (FileWriter writer = new FileWriter("./src/res/score.txt", true); 
-        BufferedWriter bwr = new BufferedWriter(writer);){
-              // scrive lo score del player il mondo e il livello corrente tutti separati da uno spazio e torna a capo
-            bwr.write("S"+player.score+" W"+world+" L"+level+"\n");
+        System.out.println(line);
+        String[] score = line.split(" ");
+        for(int i=0; i < score.length; i++){
+            // System.out.println(score[i]);
+            String key = score[i].substring(0, 2);
+            String value = score[i].substring(2);
+            scoreMap.put(key, value);
+        }
+        return scoreMap;
+    }
+    public void writeScore(Map<String, String> scoreMap){
+        String finalScore = "";
+        for(Map.Entry<String, String> entry: scoreMap.entrySet()){
+            finalScore += entry.getKey() + entry.getValue() + " ";  // salva ogni valore come chiave (2char) + valore + spazio (es: "Bs120 ")
+        }
+        finalScore += "\n";  // ritorna a capo
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("./src/res/score.txt"))){
+            writer.write(finalScore);
         } catch (IOException e){
-            System.out.println("Errore nel salvataggio dello score");
+            System.out.println("Errore nella scrittura dello score");
             e.printStackTrace();
         }
+    }
+    public Map<String, String> updateScore(Map<String, String> scoreMap, int world, int level){
+        scoreMap.put("Nk", player.nickname);
+        scoreMap.put("Av", String.valueOf(player.avatarColor));
+        if(player.score > Integer.parseInt(scoreMap.get("Bs"))){  // se lo score del player è migliore di quello salvato
+            scoreMap.put("Bs", String.valueOf(player.score));  // cambia il Best Score
+        }
+        scoreMap.put("Gw", Integer.toString(Integer.parseInt(scoreMap.get("Gw")) + player.gamesWon));  // aumenta il numero di partite vinte
+        scoreMap.put("Gl", Integer.toString(Integer.parseInt(scoreMap.get("Gl")) + player.gamesLost));  // aumenta il numero di partite perse
+        scoreMap.put("Gp", Integer.toString(Integer.parseInt(scoreMap.get("Gp")) + player.gamesPlayed));  // aumenta il numero di partite giocate
+        scoreMap.put("Ls", Integer.toString(player.score));  // salva l'ultimo score
+        scoreMap.put("Lw", Integer.toString(world));  // salva l'ultimo mondo
+        scoreMap.put("Ll", Integer.toString(level));  // salva l'ultimo livello
+        return scoreMap;
     }
 
     

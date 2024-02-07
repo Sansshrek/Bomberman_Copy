@@ -19,7 +19,7 @@ public class EndPanel implements Panel{
             e.printStackTrace();
         }
         gp.playMusic(16);
-        gp.player.gameWon += 1;
+        gp.player.gamesWon += 1;
     }
 
     public void drawPanel(Graphics2D g2, GamePanel gp){

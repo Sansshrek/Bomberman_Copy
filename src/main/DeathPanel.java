@@ -80,7 +80,7 @@ public class DeathPanel implements Panel{
             if(keyH.pausePressed && pointerIndex==1){
                 //disegna transizione
                 startMenu = true;
-                gp.player.gameLost += 1;  // aumenta di uno il numero di partite perse
+                gp.player.gamesLost += 1;  // aumenta di uno il numero di partite perse
                 gp.saveScore();  // Salva lo score del player
                 gp.stopMusic();
                 gp.currentPanel = new StartMenu(gp);
