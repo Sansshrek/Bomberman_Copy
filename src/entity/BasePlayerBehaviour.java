@@ -46,6 +46,9 @@ public class BasePlayerBehaviour implements EntityMovementBehaviour{
                 entity.spriteCounter = 0;  // e resetta il counter
             }
         }
+        if(entity.keyH.bombPressed){ // se preme il tasto P (bomba)
+            ((Player)entity).createBomb();
+        }
         
     }
 

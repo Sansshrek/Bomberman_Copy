@@ -1,20 +1,19 @@
 package main;
 
 import javax.swing.JFrame;
+
+import entity.MouseBehaviour;
+
 import java.awt.*;
 import java.awt.event.*;
 
 public class Main {
-
-    public static UserHandler userH;
     public static void main(String[] args) {
         JFrame window = new JFrame();
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
         window.setTitle("Super Bomberman");
 
-        userH = new UserHandler();
-        userH.readUserFile();
         GamePanel gamePanel = new GamePanel();
 
         window.addMouseListener(new MouseListener() {
@@ -28,7 +27,7 @@ public class Main {
 				int x = me.getX()-7;
 				int y = me.getY()-30;
 				gamePanel.player.updateMousePosition(x, y);
-			} else if (me.getButton() == MouseEvent.BUTTON3) {
+			} else if (me.getButton() == MouseEvent.BUTTON3 && gamePanel.player.movementBehaviour instanceof MouseBehaviour) {
 				System.out.println("Right button clicked");
 				gamePanel.player.createBomb();
 			} 

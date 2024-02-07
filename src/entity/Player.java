@@ -72,8 +72,6 @@ public class Player extends Entity{
         score = 0;
         gp.bombH.setBombNumber(1);  // resetta il numero di bombe del player
         resetPlayerGameValue();
-        // this.hitbox = new Rectangle(offsetX+imageP.x, offsetY+imageP.y, hitboxWidth, hitboxHeight);
-        notifyObservers();
     }
 
     public void resetPlayerGameValue(){  // cambia i valori quando muore 
@@ -164,15 +162,6 @@ public class Player extends Entity{
             }
 
             movementBehaviour.updateMovement(this);
-
-            if(keyH.bombPressed){ // se preme il tasto P (bomba)
-                // BombHandler bomb = new BombHandler(getPlayerCenterCol()*gp.tileSize+(gp.tileSize/2), getPlayerCenterRow()*gp.tileSize+(24 * gp.scale), firePower, g2, gp.tileSize);
-                createBomb();
-                // gp.cChecker.checkBomb(this);
-                // BombHandler bomb = new BombHandler(x, y, firePower, g2, gp.tileSize);
-                // gp.bombs.add(bomb);
-                // gp.obj.add(bomb);
-            }
 
             if(keyH.statsPressed){ // tasto L da eliminare
                 System.out.println("\nFire "+firePower);

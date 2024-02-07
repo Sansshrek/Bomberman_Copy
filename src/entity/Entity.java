@@ -23,6 +23,7 @@ public class Entity implements EntityObservable{
     KeyHandler keyH;  // oggetto keyHandler per la gestione degli input da tastiera
     GamePanel gp;  // oggetto GamePanel per accedere a variabili e metodi del gioco
     int tileSize;  // dimensione di un tile del livello
+    public Graphics2D g2; // oggetto grafico per disegnare l'entita'
     // public int x, y;  // le coordinate nel mondo
     public Point imageP;  // le coordinate in alto a sinistra dell'immagine
     public Point findP;  // le coordinate di un reachingPoint
