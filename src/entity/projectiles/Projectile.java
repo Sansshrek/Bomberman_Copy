@@ -9,5 +9,5 @@ public class Projectile {
     BufferedImage image;
     boolean extinguished = false;
     
-    public void update(){}
+    public void update(){} 
 }

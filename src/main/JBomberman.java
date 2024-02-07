@@ -7,7 +7,7 @@ import entity.MouseBehaviour;
 import java.awt.*;
 import java.awt.event.*;
 
-public class Main {
+public class JBomberman {
     public static void main(String[] args) {
         JFrame window = new JFrame();
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
