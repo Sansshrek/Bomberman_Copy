@@ -74,7 +74,7 @@ public class Entity implements EntityObservable{
         this.died = false;
         this.extinguished = false;
         this.bombExitHitbox = false;
-        this.speed = 5;
+        this.speed = 1;
 
         this.spriteCounter = 0;
         this.spriteNum = 0;
