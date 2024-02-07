@@ -134,13 +134,15 @@ public class StartMenu implements Panel{
                 gp.playSfx(11);  // sound invio selezione
                 //disegna transizione
                 scoreMenu = true;
-                gp.currentPanel = new ScoreMenu(gp);
                 keyH.pausePressed = false;
             }
-        }else if(!startGame && optionMenu){
+        }else if(!startGame && (optionMenu || scoreMenu)){
             titleY -= 11;
             if(titleHeight+titleY<0){
-                gp.currentPanel = new OptionMenu(gp);
+                if(optionMenu)
+                    gp.currentPanel = new OptionMenu(gp);
+                else if(scoreMenu)
+                    gp.currentPanel = new ScoreMenu(gp);
             }
         }
     }
