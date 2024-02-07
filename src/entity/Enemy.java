@@ -19,7 +19,7 @@ public class Enemy extends Entity{
     boolean playerCollision = false;  // se c'è una collisione con il player
     boolean checkSoundBoss = false; // controllo del suono dello stage clear per il boss quando muore
     //largezza e altezza dell' immagine del player
-    public int score, startX, startY; // Aggiungiamo delle variabili specifiche per la scelta della posizione di partenza dell'enemy 
+    public int startX, startY; // Aggiungiamo delle variabili specifiche per la scelta della posizione di partenza dell'enemy 
     //e per la grandezza variabile dell'immagine e per il rilascio di punti al player
 
     public Enemy(GamePanel gp, int uniCode, EnemyType type){

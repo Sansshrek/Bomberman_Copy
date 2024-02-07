@@ -23,7 +23,6 @@ public class Entity implements EntityObservable{
     KeyHandler keyH;  // oggetto keyHandler per la gestione degli input da tastiera
     GamePanel gp;  // oggetto GamePanel per accedere a variabili e metodi del gioco
     int tileSize;  // dimensione di un tile del livello
-    public Graphics2D g2; // oggetto grafico per disegnare l'entita'
     // public int x, y;  // le coordinate nel mondo
     public Point imageP;  // le coordinate in alto a sinistra dell'immagine
     public Point findP;  // le coordinate di un reachingPoint
@@ -34,7 +33,7 @@ public class Entity implements EntityObservable{
     public ArrayList<Node> pathSearch; //percorso di ricerca utilizzato a seconda del comportamento dell'entita' (Utilizzato insieme al findP)
 
     //Proprietà delle entità
-    public int spriteCounter, spriteNum, maxSpriteNum, invulnerableSec, invulnerableTimer = 0, lifeNumber = 1, heartNumber = 1, spriteDeathNum = 0, startDeathY, imageWidth, imageHeight;
+    public int spriteCounter, spriteNum, maxSpriteNum, invulnerableSec, score, invulnerableTimer = 0, lifeNumber = 1, heartNumber = 1, spriteDeathNum = 0, startDeathY, imageWidth, imageHeight;
 
     //Hitbox per il controllo delle collisioni 
     public Rectangle hitbox, hittableHitbox;
@@ -168,37 +167,6 @@ public class Entity implements EntityObservable{
                     break;
             }
         }
-    }
-
-    //set Method
-    public void setEntityVar(Point imageP, Rectangle hitbox, Rectangle hittableHitbox, boolean invulnerable, boolean died, boolean extinguished, double speed){
-        this.imageP = imageP;
-        this.hitbox = hitbox;
-        this.hittableHitbox=hittableHitbox;
-        this.invulnerable = invulnerable;
-        this.died = died;
-        this.extinguished = extinguished;
-        this.speed = speed;
-        notifyObservers();
-    }
-
-    public void setLocation(Point imageP, Rectangle hitbox){
-        this.imageP = imageP;
-        this.hitbox = hitbox;
-        notifyObservers();
-    }
-
-    public void setStatus(boolean invulnerable, boolean died, boolean extinguished, double speed){
-        this.invulnerable = invulnerable;
-        this.died = died;
-        this.extinguished = extinguished;
-        this.speed = speed;
-        notifyObservers();
-    }
-
-    public void setExtingused(boolean extinguished){
-        this.extinguished = extinguished;
-        notifyObservers();
     }
 
     public void powerUpHandler(Point index){};

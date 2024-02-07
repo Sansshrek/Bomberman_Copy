@@ -22,7 +22,7 @@ public class Player extends Entity{
     // public ArrayList<SuperObject> bombObj = new ArrayList<>();
     
     //larghezza e altezza dell' hitbox
-    public int bombNumber, lifeNumber, firePower, score, gamesWon, gamesLost, gamesPlayed;
+    public int bombNumber, firePower, gamesWon, gamesLost, gamesPlayed;
     int spriteDeathCounter = 0; 
     public String nickname = "player";
     public String avatarColor = "black";
@@ -73,7 +73,6 @@ public class Player extends Entity{
         gp.bombH.setBombNumber(1);  // resetta il numero di bombe del player
         resetPlayerGameValue();
         // this.hitbox = new Rectangle(offsetX+imageP.x, offsetY+imageP.y, hitboxWidth, hitboxHeight);
-        //setEntityVar(imageP, hitbox, invulnerable, died, extinguished, speed);
         notifyObservers();
     }
 
@@ -115,7 +114,6 @@ public class Player extends Entity{
         if(extinguished){  // quando è completamente morto resetta i valori
             lifeNumber -= 1;  // diminuisce di 1 la vita
             resetPlayerGameValue();
-            //setEntityVar(imageP, hitbox, invulnerable, died, extinguished, speed);
         }
         notifyObservers();
     }
