@@ -1,9 +1,7 @@
 package entity;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import main.Node;
 
@@ -34,9 +32,6 @@ public class SearchEntity implements EntityMovementBehaviour{
                     entity.notifyObservers();
                 }
             }else{  // comportamento idiota
-                
-                // entity.gp.cChecker.checkTile(entity);
-                // entity.gp.cChecker.checkObj(entity);
                 if(entity.collisionOn){
                     ArrayList<String> directions = entity.gp.cChecker.validDirections(entity);  // prende ogni posizione in cui si puo muovere
                     Collections.shuffle(directions);  

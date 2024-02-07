@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -14,7 +13,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
-import java.awt.Point;
 import java.util.concurrent.*;
 
 import javax.imageio.ImageIO;
@@ -22,9 +20,6 @@ import javax.swing.JPanel;
 
 import entity.Enemy;
 import entity.EnemyType;
-import entity.Entity;
-import entity.EntityManager;
-import entity.EntityObserver;
 import entity.Player;
 import entity.projectiles.ProjectileHandler;
 import objects.Bomb;
@@ -34,8 +29,6 @@ import tile.TileManager;
 
 public class GamePanel extends JPanel implements Runnable{
     // User Settings
-    // public int userNumber = 0;
-    // public UserHandler userH = new UserHandler();
 
     AudioManager audioM = new AudioManager();
     AudioManager musicM = new AudioManager();
@@ -93,7 +86,6 @@ public class GamePanel extends JPanel implements Runnable{
 
     EnemyType test = EnemyType.PUROPEN;
 
-    // test da eliminare
     boolean checkSetup, checkGameOn;
     
     public GamePanel(){
@@ -106,8 +98,6 @@ public class GamePanel extends JPanel implements Runnable{
         getLevelImage();
         checkSetup = false;
         checkGameOn = false;
-        
-        // setupGame();
     }
 
     void resetGamePanel(){  // funzione che resetta i valori basici del gamePanel per esempio quando si chiama dallo startMenu
@@ -132,15 +122,14 @@ public class GamePanel extends JPanel implements Runnable{
         setupGame();  // esegue il setup del gioco
     }
 
-    public void setupGame(){  // imposto il gioco da capo
+    public void setupGame(){  // reimposta le variabili del gioco
         if(!checkSetup){
             playSfx(1);  // sound stage intro
             canDrawLevelNumber = true;  // fa partire l'animazione del numero del livello
             checkSetup = true;
             pauseGame = false;
-            hud.resetTimer();
-            player.resetPlayerGameValue();
-            tileM.setupTile();
+            player.resetPlayerGameValue();  // reimposta i valori del player
+            tileM.setupTile();  // carica i tile della mappa
 
             for(int row=0; row<maxGameRow; row++){  // reset obj
                 for(int col=0; col<maxGameCol; col++){
@@ -149,7 +138,6 @@ public class GamePanel extends JPanel implements Runnable{
             }
 
             if(levelType != "firstBoss" && levelType != "secondBoss"){  // se non è un boss carica i blocchi distruttibili
-                System.out.println("Caricando i blocchi distruttibili");  // da eliminare
                 aSetter.setMatrixBlocks(minBlock, maxBlock);
             }
             enemy.clear();  // resetto la lista dei nemici
@@ -161,7 +149,6 @@ public class GamePanel extends JPanel implements Runnable{
                 listaNemici = levelListNormal[levelIndex].getEnemyList();
             else if(gameDifficulty == "hard")
                 listaNemici = levelListHard[levelIndex].getEnemyList();
-            // ArrayList<EnemyType> listaNemici = livello.getEnemyList(gameDifficulty);
             enemyNum = listaNemici.size();
             entityCounter = 1;
             int counter = 0;
@@ -177,14 +164,11 @@ public class GamePanel extends JPanel implements Runnable{
                 enemy.get(counter).registerObserver(cChecker);
                 counter++;
             }
-            // startTransition = true;
-            // senza il delay parte direttamente il gioco senza far vedere la transizione
             ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);  // crea una nuova pool di thread di una grandezza
             Runnable task = () -> {startingTransition(); playMusic(themeIndex);};  // crea una nuova funzione eseguibile che setta checkGameOn a true e fa partire il suono dello stage intro
         
             executor.schedule(task, 3, TimeUnit.SECONDS);  // esegue la task dopo 2 secondi in parallelo col programma
             executor.shutdown();  // chiude la pool di thread 
-            // checkGameOn = true;
         }
     }
 
@@ -207,14 +191,12 @@ public class GamePanel extends JPanel implements Runnable{
     public void closingTransition(){
         alphaVal = 0;  // reimposta l'alphaVal
         closeTransition = true;
-        // checkSetup = false;
         checkGameOn = false;
     }
 
     public void drawTransition(Graphics2D g2){
-        // System.out.println("Drawing "+alphaVal+" transition "+startTransition+ " "+closeTransition);
         g2.setColor(new Color(0, 0, 0, alphaVal));  // setta il colore con alpha
-        g2.fillRect(0, 0, screenWidth, screenHeight);  // disegna il background
+        g2.fillRect(0, 0, screenWidth, screenHeight);  // disegna lo schermo
     }
 
     public void resetLevel(){
@@ -286,9 +268,6 @@ public class GamePanel extends JPanel implements Runnable{
     public int getScale(){
         return scale;
     }
-    public int getOgTileSize(){
-        return originalTileSize;
-    }
 
     public void startGameThread(){
         gameThread = new Thread(this);  //this = la classe GamePanel al costruttore di Thread
@@ -329,10 +308,7 @@ public class GamePanel extends JPanel implements Runnable{
             hud.drawScore(g2, player.score);
             hud.drawLife(g2, player.lifeNumber);
             if(hud.clockLeft == 1){  // se finisce il tempo
-                System.out.println("---Finito il tempo---\n\n");
-                // checkGameOn = false;  // ferma il gioco
                 player.kill();  // uccide il player
-                // resetLevel();  // resetta il gioco
                 ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);  // crea una nuova pool di thread di una grandezza
                 Runnable task = () -> resetLevel();  // crea una nuova funzione eseguibile che setta checkGameOn a true
             
@@ -373,10 +349,8 @@ public class GamePanel extends JPanel implements Runnable{
             System.out.println("Errore nella lettura dello score");
             e.printStackTrace();
         }
-        System.out.println(line);
         String[] score = line.split(" ");
         for(int i=0; i < score.length; i++){
-            // System.out.println(score[i]);
             String key = score[i].substring(0, 2);
             String value = score[i].substring(2);
             scoreMap.put(key, value);
@@ -490,8 +464,6 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     public void paintGame(Graphics2D g2){
-        if(g2 == null)
-            System.out.println(g2);
         player.g2 = g2;
 
         for(Enemy entity: enemy){  // itero i nemici
@@ -508,32 +480,19 @@ public class GamePanel extends JPanel implements Runnable{
         tileM.drawMap(g2, 24*this.scale, this.hudHeight+(8*this.scale), "house");  // poi i palazzi
         tileM.drawMap(g2, -8*this.scale, this.hudHeight-(8*this.scale), "walls");  // poi le mura
 
-        g2.setColor(Color.RED);  // da eliminare
-        for(int row=0; row<maxGameRow; row++){
-            for(int col=0; col<maxGameCol; col++){
-                if(tileM.houseHitbox[row][col] != null)
-                    g2.draw(tileM.houseHitbox[row][col]);
-            }
-        }
-
         for(int row=0; row < maxGameRow; row++){
             for(int col=0; col < maxGameCol; col++){
                 if(obj[row][col] != null){
                     obj[row][col].draw(g2, this);
-                    g2.setColor(Color.YELLOW);
-                    g2.draw(obj[row][col].hitbox);
                 }
             }
         }
-
         bombH.updateBomb();
-        // player.draw();  // poi il player
         player.drawBehaviour.draw(player);
         ArrayList<Enemy> enemyDelete = new ArrayList<>();  // lista di nemici temporanea da eliminare nel caso dalla lista enemy originale
         for(Enemy entity: enemy){
             if(!entity.extinguished){  // se ancora non è esploso del tutto
                 entity.drawBehaviour.draw(entity);  // disegna l'enemy
-                // entity.drawBehaviour.draw(entity);
             }else{
                 enemyDelete.add(entity);  // aggiunge il nemico morto alla lista temporanea dei nemici da eliminare
                 if(entity.type == "knight" || entity.type == "clown"){  // se è uno dei boss allora vai direttamente al prossimo livello
@@ -554,10 +513,10 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     public void stopMusic(){
-        musicM.stop();  // 
+        musicM.stop();  // // ferma la clip audio
     }
     public void playSfx(int index){
-        audioM.setAudio(index);
-        audioM.play();
+        audioM.setAudio(index);  // carica la clip di effetto sonoro selezionata in base all'index
+        audioM.play();  // la mette in loop
     }
 }

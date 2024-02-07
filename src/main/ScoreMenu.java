@@ -147,7 +147,6 @@ public class ScoreMenu implements Panel{
         g2.setColor(new Color(0, 0, 255));
         g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);  // disegna il background
         g2.drawImage(backgroundImage, 0, 0, gp.screenWidth, gp.screenHeight, null);  //Disegna l'etichetta del nickname
-        // g2.drawImage(letters.get(0), 100, 100, 15*gpScale, 15*gpScale, null);
         g2.drawImage(scoreBox, boxX, boxY, boxWidth, boxHeight, null);
         g2.drawImage(backImage, backImageX, backImageY, backImageWidth, backImageHeight, null);  //Disegna l'opzione back
         g2.drawImage(avatarImages[selectedAvatarIndex], avatarX, avatarY, avatarWidth, avatarHeight, null);
@@ -174,15 +173,8 @@ public class ScoreMenu implements Panel{
             //disegna un rettangolo rosso
             g2.setColor(new Color(255, 0, 0));
             g2.setStroke(new BasicStroke(2)); // Imposta lo spessore del bordo a 2
-            // g2.drawRect(borderX, optionY-borderOffset+optionDistance, optionWidth, borderHeight);
             g2.drawImage(pointerLeftImage, avatarPointerX, avatarPointerY, avatarPointerWidth, avatarPointerWidth, null);
             g2.drawImage(pointerRightImage, avatarPointerX + avatarPointerDistance, avatarPointerY, avatarPointerWidth, avatarPointerWidth, null);
-            /*
-            if(selectedAvatarIndex != 0)  // se mi trovo in una posizione diversa dalla prima disegna la freccia per andare sopra
-                g2.drawImage(pointerUpImage, choosePointerX, choosePointerUpY+optionDistance, choosePointerWidth, choosePointerHeight, null);
-            if(selectedAvatarIndex != 2)  // se mi trovo in una posizione diversa dall'ultima disegna la freccia per andare sotto
-                g2.drawImage(pointerDownImage, choosePointerX, choosePointerDownY+optionDistance, choosePointerWidth, choosePointerHeight, null);
-            */
         }
     }
 
@@ -214,7 +206,6 @@ public class ScoreMenu implements Panel{
                 }
                 keyH.upPressed = false;
             }else if(keyH.downPressed){ 
-                System.out.println("sx");
                 gp.playSfx(12);  // sound cursore
                 pointerIndex++;
                 if (pointerIndex == totOptionNumber)  // se supera il numero di scelte
@@ -252,7 +243,6 @@ public class ScoreMenu implements Panel{
                 selectedAvatarIndex--;
                 if(selectedAvatarIndex < 0)  // se va prima del primo avatar
                     selectedAvatarIndex = totAvatarOption-1;  // va all'ultimo avatar
-                System.out.println("Avatar: "+ selectedAvatarIndex);
                 keyH.leftPressed = false;
             }
             else if(keyH.rightPressed && avatarSelect){
@@ -260,7 +250,6 @@ public class ScoreMenu implements Panel{
                 selectedAvatarIndex++;
                 if(selectedAvatarIndex == totAvatarOption)  // se supera l'ultimo avatar
                     selectedAvatarIndex = 0;  // torna al primo
-                System.out.println("avatar: "+ selectedAvatarIndex);
                 keyH.rightPressed = false;
             }
         }
@@ -283,7 +272,6 @@ public class ScoreMenu implements Panel{
                 } 
             }else if(pointerIndex==2){  // back
                 //disegna transizione 
-                // gp.player.movementBehaviour = avatarChoice[selectedAvatarIndex];
                 scoreMap.put("Nk", nicknameString);  // aggiorna i valori del nickname e avatar
                 scoreMap.put("Av", getAvataString(selectedAvatarIndex));
                 gp.writeScore(scoreMap);  // aggiorna il file txt con i nuovi valori

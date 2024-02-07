@@ -1,10 +1,7 @@
 package main;
 
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.awt.BasicStroke;
 import java.awt.Color;
 
 import javax.imageio.ImageIO;
@@ -50,8 +47,6 @@ public class OptionMenu implements Panel{
         choosePointerDownY = optionY+optionHeight+borderOffset/2;
         choosePointerUpY = optionY-choosePointerHeight-borderOffset/2;  // posizione del puntatore per le scelte a meta del testo e del bordo del rettangolo
         try {
-            // ballonImage = ImageIO.read(getClass().getResourceAsStream("../res/menu/Ballon.png"));
-            // cloudImage = ImageIO.read(getClass().getResourceAsStream("../res/menu/Cloud.png"));
             backgroundImage = ImageIO.read(getClass().getResourceAsStream("../res/menu/Background.png"));
             movementOptionImage = ImageIO.read(getClass().getResourceAsStream("../res/menu/options/movement.png"));  // scelta movement
             movementImages[0] = ImageIO.read(getClass().getResourceAsStream("../res/menu/options/mouseOption.png"));  // scelta mouse
@@ -82,19 +77,11 @@ public class OptionMenu implements Panel{
         if(!movementSelect && !difficultySelect)  // se non ha selezionato nulla disegna il pointer dell'opzione
             g2.drawImage(pointerImage, pointerX, pointerY, pointerWidth, pointerHeight, null);
         if (movementSelect){
-            //disegna un rettangolo rosso
-            g2.setColor(new Color(255, 0, 0, 255));
-            g2.setStroke(new BasicStroke(4)); // Imposta lo spessore del bordo a 4
-            // g2.drawRect(borderX, optionY-borderOffset, optionWidth, borderHeight);
             if(selectedMovementIndex == 0)  // se sto alla prima opzione disegna la freccia per andare sotto
                 g2.drawImage(pointerDownImage, choosePointerX, choosePointerDownY, choosePointerWidth, choosePointerHeight, null);
             else if(selectedMovementIndex == 1)  // se sto all'ultima opzione disegna la freccia per andare sopra 
                 g2.drawImage(pointerUpImage, choosePointerX, choosePointerUpY, choosePointerWidth, choosePointerHeight, null);
         }else if (difficultySelect){
-            //disegna un rettangolo rosso
-            g2.setColor(new Color(255, 0, 0, 255));
-            g2.setStroke(new BasicStroke(4)); // Imposta lo spessore del bordo a 4
-            // g2.drawRect(borderX, optionY-borderOffset+optionDistance, optionWidth, borderHeight);
             if(selectedDifficultyIndex != 0)  // se mi trovo in una posizione diversa dalla prima disegna la freccia per andare sopra
                 g2.drawImage(pointerUpImage, choosePointerX, choosePointerUpY+optionDistance, choosePointerWidth, choosePointerHeight, null);
             if(selectedDifficultyIndex != 2)  // se mi trovo in una posizione diversa dall'ultima disegna la freccia per andare sotto
@@ -132,14 +119,12 @@ public class OptionMenu implements Panel{
                 gp.playSfx(12);  // sound cursore
                 if(selectedDifficultyIndex < 2)  // se non sono all'ultima scekta
                     selectedDifficultyIndex+=1;  // posso andare alla scelta successiva
-                System.out.println("Difficoltà: "+ selectedDifficultyIndex);
                 keyH.downPressed = false;
             }
             else if(keyH.upPressed && difficultySelect){
                 gp.playSfx(12);  // sound cursore
                 if(selectedDifficultyIndex > 0)  // se non sono alla prima scelta
                     selectedDifficultyIndex-=1;  // posso andare alla scelta precedente
-                System.out.println("Difficoltà: "+ selectedDifficultyIndex);
                 keyH.upPressed = false;
             }
         }else if(movementSelect){
@@ -147,14 +132,12 @@ public class OptionMenu implements Panel{
                 gp.playSfx(12);  // sound cursore
                 if(selectedMovementIndex == 0)  // se sto alla prima opzione (mouse)
                     selectedMovementIndex = 1;  // va all'opzione successiva (keyboard)
-                System.out.println("Movimento: "+ selectedMovementIndex);
                 keyH.downPressed = false;
             }
             else if(keyH.upPressed && movementSelect){
                 gp.playSfx(12);  // sound cursore
                 if(selectedMovementIndex == 1)  // se sto all'ultima opzione (keyboard)
                     selectedMovementIndex = 0;  // va all'opzione precedente (mouse)
-                System.out.println("Movimento: "+ selectedMovementIndex);
                 keyH.upPressed = false;
             }
         }
@@ -162,7 +145,6 @@ public class OptionMenu implements Panel{
         if(keyH.pausePressed){
             gp.playSfx(11);  // sound invio selezione
             if(pointerIndex==0){  // scelta movimento
-                System.out.println("INVIOOOOOO");
                 if (movementSelect){  // se è già selezionato
                     movementSelect = false;  // deseleziona e il pointer torna alla posizione iniziale
                 }
@@ -171,7 +153,6 @@ public class OptionMenu implements Panel{
                 }
                 keyH.pausePressed = false;
             }else if(pointerIndex==1){  // scelta difficolta
-                System.out.println("INVIOOOOOO");
                 if (difficultySelect){  // se è già selezionato
                     difficultySelect = false;  // deseleziona e il pointer torna alla posizione iniziale
                 }
@@ -184,7 +165,6 @@ public class OptionMenu implements Panel{
                 //disegna transizione
                 gp.gameDifficulty = difficultyStrings[selectedDifficultyIndex];
                 gp.player.movementBehaviour = movementBehaviours[selectedMovementIndex];
-                System.out.println("Scelta difficolta: "+ gp.gameDifficulty);
                 gp.currentPanel = new StartMenu(gp);
                 keyH.pausePressed = false;
             }

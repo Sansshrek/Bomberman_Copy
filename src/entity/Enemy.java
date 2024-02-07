@@ -1,14 +1,11 @@
 
 package entity;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 import javax.imageio.ImageIO;
@@ -77,7 +74,6 @@ public class Enemy extends Entity{
         int hitboxXAv, hitboxYAv;
         if(startX == -1){  // se la pos di partenza è quella di default allora la cambia
             Point avPos = findAvStartPos();  // trova una posizione disponibile sulla mappa
-            // Point avPos = new Point(1, 0);
             hitboxXAv = (avPos.x*tileSize) + (tileSize+tileSize/2);   // posizione x dell'enemy IN ALTO A SINISTRA
             hitboxYAv = (avPos.y*tileSize) + (2*tileSize+tileSize/2);   // posizione y dell'enemy IN ALTO A SINISTRA
             
@@ -90,7 +86,6 @@ public class Enemy extends Entity{
         this.hittableHitbox = new Rectangle(imageP.x+offsetHittableX, imageP.y+offsetHittableY, hittableWidth, hittableHeight);
         this.collisionOn = true;
         this.direction = "down";
-        // gp.cChecker.checkTile(this);
         notifyObservers();
     }
 
@@ -141,13 +136,11 @@ public class Enemy extends Entity{
     public void kill(){
         if(!invulnerable && !died){
             heartNumber--;
-            System.out.println(heartNumber);
             invulnerable = true;
             invulnerableTimer = 0;
             if(heartNumber == 0){
                 gp.playSfx(8); // sound enemy muore
                 died = true;
-                System.out.println("Enemy morto");
                 gp.player.score += score;
                 gp.enemyNum--;
                 if(type != "knight" && type != "clown"){
@@ -164,18 +157,11 @@ public class Enemy extends Entity{
         if(type == "clown" || type == "knight"){  // anche se il clown o knight è morto fa l'update dei proiettili
             projectileHandler.updateProjectiles();  // aggiorna i proiettili
         }
-        /*
-        if((died || gp.keyH.nextLevelPressed) && !checkSoundBoss && (type == "knight" || type == "clown")){  // se ancora non ha fatto partire la musichetta di stage clear
-            gp.stopMusic();  // ferma la musica di gioco
-            gp.playSfx(2);  // sound stage clear
-            checkSoundBoss = true;  // imposta a true il controllo del suono cosi che viene chiamato una sola volta
-        } */
 
         if(!died){  // se non è morto
             // controlliamo cosa fare con l'oggetto
 
             movementBehaviour.updateMovement(this);
-            //System.out.println("Collision:" + collisionOn + "  Row:" + getTileNumRow() + "  Col:" + getTileNumCol() + "  Direction:" + direction);
            
             changeSpriteDirection();
             // controlla se colpiamo qualche blocco

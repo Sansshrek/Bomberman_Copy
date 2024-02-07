@@ -37,11 +37,6 @@ public class Block extends SuperObject {
             destroyimg4 = ImageIO.read(getClass().getResourceAsStream("../res/tiles/destructible/alarm_destroy04.png"));
             destroyimg5 = ImageIO.read(getClass().getResourceAsStream("../res/tiles/destructible/alarm_destroy05.png"));
             destroyimg6 = ImageIO.read(getClass().getResourceAsStream("../res/tiles/destructible/alarm_destroy06.png"));
-             /*
-            img1 = ImageIO.read(getClass().getResourceAsStream("../res/tiles/destructible/totti.png"));
-            img2 = ImageIO.read(getClass().getResourceAsStream("../res/tiles/destructible/totti.png"));
-            img3 = ImageIO.read(getClass().getResourceAsStream("../res/tiles/destructible/totti.png"));
-            img4 = ImageIO.read(getClass().getResourceAsStream("../res/tiles/destructible/totti.png"));*/
         } catch (Exception e) {
             e.printStackTrace();
         }

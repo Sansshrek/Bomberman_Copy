@@ -3,26 +3,17 @@ package main;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 
 import entity.Enemy;
 import entity.Entity;
-import entity.EntityMovementBehaviour;
 import entity.EntityObserver;
 import entity.Player;
-import entity.SearchEntity;
-import entity.StupidEntity;
 import objects.Block;
 import objects.Bomb;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.Point;
-
-import java.util.concurrent.ConcurrentHashMap;
-
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -208,7 +199,6 @@ public class CollisionChecker implements EntityObserver{
         if (enemy.hitbox.intersects(player.hitbox) && !player.invulnerable) {  // se colpisce l'hitbox del player e non è invulnerabile
             // Se il nemico sta andando a destra e il giocatore è alla sua destra, ferma il nemico
             enemy.collisionOn = true;
-            System.out.println("Colpito player");
             player.kill();
             // appena l'enemy colpisce il player, attiva la var. bool playerCollision nell'oggetto enemy
             // cosi che la funzione non viene chiamata finche playerCollision non torna false dopo che finisce il timer in enemy
@@ -300,41 +290,6 @@ public class CollisionChecker implements EntityObserver{
             gp.bombH.addBombNumber();  // rimette la bomba nella lista delle bombe disponibili
         }
     }
-
-    public void checkBomb3(Entity entity){  // FATTO DA FRANCESCO PAGLIACCIA™
-    
-        Rectangle entityHitboxCheck = new Rectangle(entity.hitbox.x, entity.hitbox.y, entity.hitboxWidth, entity.hitboxHeight);
-        switch(entity.direction){
-            case "up":
-                entityHitboxCheck.y -= entity.speed;
-            break;
-            case "down":
-                entityHitboxCheck.y += entity.speed;
-            break;
-            case "left":
-                entityHitboxCheck.x -= entity.speed;
-            break;
-            case "right":
-                entityHitboxCheck.x += entity.speed;
-            break;
-        }
-        for(Bomb bomb: gp.bombH.bombs){
-            if(!bomb.exploded){
-                for(Map.Entry<Entity, Boolean> EntityMap: bomb.hashExitEntity.entrySet()){
-                    if(entityHitboxCheck.intersects(bomb.hitbox)){
-                        if(EntityMap.getValue()){  // controlla se è gia uscito
-                            EntityMap.getKey().collisionOn = true;
-                        }
-                    }else{
-                        bomb.hashExitEntity.put(EntityMap.getKey(), true);
-                    }
-                }
-            }else{
-                entity.bombExitHitbox = false;
-            }
-        }
-    }
-
     
     public ArrayList<Node> findPath(Entity entity, int findRow, int findCol, GamePanel gp) {
         String entityType = entity.type;

@@ -11,19 +11,14 @@ public class EntityManager implements EntityObserver { //EntityManagerObservable
             instance = new EntityManager();}
         return instance;
     }
-    private ConcurrentHashMap<Integer, Entity> entityMap;  // Mappa 
-    //private List<EntityObserver> observers;
+    private ConcurrentHashMap<Integer, Entity> entityMap;  // Mappa delle entita
 
     public EntityManager() {
-        this.entityMap = new ConcurrentHashMap<>();  //
-        //observers = new ArrayList<>();
+        this.entityMap = new ConcurrentHashMap<>(); 
     }
 
     public void updateEntities(Entity entity){
         entityMap.put(entity.uniCode, entity);
-        /*if (entity instanceof Player) {
-            System.out.println("Entity updated" + entity.hitbox.x + " " + entity.hitbox.y);  }
-        */
     }
     public void removeEntities(int uniCode){
         entityMap.remove(uniCode);

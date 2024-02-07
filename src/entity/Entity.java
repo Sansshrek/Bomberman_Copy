@@ -3,8 +3,6 @@ package entity;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.PriorityQueue;
 
 import entity.projectiles.ProjectileHandler;
 
@@ -197,16 +195,13 @@ public class Entity implements EntityObservable{
                         imageList[dir] = ogImage[dir];
                     }
                 }
-                // System.out.println(invulnerableTimer);
                 if(invulnerableTimer == invulnerableSec*60){  // quando finisce il timer
-                    System.out.println("Finita invulnerabilita");
                     invulnerable = false;  // finisce l'invulnerabilità
                     // resetta le immagini originali per sicurezza
                     for(int dir=0; dir<4; dir++){
                         imageList[dir] = ogImage[dir];
                     }
                     invulnerableTimer = 0;  // resetta il timer
-                    //setStatus(invulnerable, died, extinguished, speed);
                 }
                 notifyObservers();
             }

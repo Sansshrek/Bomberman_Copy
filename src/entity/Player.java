@@ -1,14 +1,9 @@
 package entity;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
@@ -16,7 +11,6 @@ import javax.imageio.ImageIO;
 import main.GamePanel;
 import main.KeyHandler;
 import objects.Bomb;
-import objects.BombHandler;
 
 public class Player extends Entity{
     // public ArrayList<SuperObject> bombObj = new ArrayList<>();
@@ -25,12 +19,11 @@ public class Player extends Entity{
     public int bombNumber, firePower, gamesWon, gamesLost, gamesPlayed;
     int spriteDeathCounter = 0; 
     public String nickname = "player";
-    public String avatarColor = "black";
+    public String avatarColor = "white";
 
     public Player(GamePanel gp){
         super(gp);
         this.keyH = KeyHandler.getInstance();
-        // this.keyH = gp.keyH;
         int scale = gp.getScale();
         this.tileSize = gp.getTileSize();
         this.maxSpriteNum = 3;
@@ -54,17 +47,12 @@ public class Player extends Entity{
         this.movementBehaviour = new BasePlayerBehaviour();
         this.drawBehaviour = new PlayerDrawBehaviour();
 
-        System.out.println("Caricando il player");  // da eliminare
         gp.bombH.addBombNumber();  // aggiunge la prima bomba al player
         setPlayerDefaultValues();
         getPlayerImage();
         notifyObservers();
     }
-/* 
-    public void setEntityDefaultValues(){
-        setPlayerDefaultValues();
-    }
-    */
+
 	public void setPlayerDefaultValues(){  // setta i valori iniziali di quando inizia il gioco
         speed = 2;
         firePower = 1;
@@ -106,7 +94,6 @@ public class Player extends Entity{
                     startDeathY = imageP.y;  // inizia lo sprite della morte
                     died = true;  // imposta la morte a true
                 }
-                System.out.println("PRIOPRIO MORTO");
             }
         }
         if(extinguished){  // quando è completamente morto resetta i valori
@@ -163,47 +150,13 @@ public class Player extends Entity{
 
             movementBehaviour.updateMovement(this);
 
-            if(keyH.statsPressed){ // tasto L da eliminare
-                System.out.println("\nFire "+firePower);
-                System.out.println("Speed "+speed);
-                System.out.println("BombNumber "+bombNumber);
-                System.out.println("Life "+lifeNumber);
-                keyH.statsPressed = false;
-            }
-            if(keyH.firePressed){  // tasto K
-                firePower++;
-                System.out.println("Range fuoco aumentato");
-                keyH.firePressed = false;
-            }
             if(keyH.resetPressed){  // tasto R
                 gp.resetLevel();
                 keyH.resetPressed = false;
             }
-            if(keyH.debugPressed){  // tasto I
-                System.out.println("Debug");
-                keyH.debugPressed = false;
-            }
         }
         notifyObservers();
     }
-
-/* 
-    public void playerDeathJump(){
-        if(died){
-            for(int i=0; i<gp.tileSize*2; i++){
-                imageP.y -= 1;
-                hitbox.y -= 1;
-                
-            }
-            for(int i=0; i<gp.tileSize*2; i++){
-                imageP.y += 1;
-                hitbox.y += 1;
-                g2.drawImage(death1, imageP.x, imageP.y, gp.player.width, gp.player.height, null);
-            }
-            extinguished = true;
-        }
-    }
-*/
 
     public void resetInvincibility(){
         invulnerableTimer = 0;
@@ -231,7 +184,6 @@ public class Player extends Entity{
                 case "skate":
                     score += 10;
                     speed += 1;
-                    //setStatus(invulnerable, died, extinguished, speed);
                 break;
                 case "life":
                     score += 50;

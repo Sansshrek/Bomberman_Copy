@@ -29,7 +29,6 @@ public class KnightProjectile extends Projectile{
     }
 
     public void update(){
-        // System.out.println("X: "+hitbox.x+" Y: "+hitbox.y+ " endX: "+endX+" rise: "+rise+" middleX: "+middleX);
         hitbox.x += moveX;  // sposta il proiettile in base al movimento dato
         if(hitbox.y > endY){  // se supera alla posizione dove deve andare
             extinguished = true;  // si estingue il proiettile

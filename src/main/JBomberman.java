@@ -4,7 +4,6 @@ import javax.swing.JFrame;
 
 import entity.MouseBehaviour;
 
-import java.awt.*;
 import java.awt.event.*;
 
 public class JBomberman {
@@ -23,12 +22,10 @@ public class JBomberman {
         public void mouseExited(MouseEvent me) { }
         public void mouseClicked(MouseEvent me) { 
 			if (me.getButton() == MouseEvent.BUTTON1){
-				System.out.println("Left button clicked");
 				int x = me.getX()-7;
 				int y = me.getY()-30;
 				gamePanel.player.updateMousePosition(x, y);
 			} else if (me.getButton() == MouseEvent.BUTTON3 && gamePanel.player.movementBehaviour instanceof MouseBehaviour) {
-				System.out.println("Right button clicked");
 				gamePanel.player.createBomb();
 			} 
         }

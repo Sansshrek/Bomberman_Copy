@@ -4,7 +4,6 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.Color;
 
-import java.util.concurrent.*;
 import javax.imageio.ImageIO;
 
 public class DeathPanel implements Panel{
@@ -48,8 +47,6 @@ public class DeathPanel implements Panel{
     }
 
     public void chooseOptions(GamePanel gp){
-        // System.out.println("pointer index:" + pointerIndex);
-        // System.out.println(pointerY);
         if(startGame && alphaVal==255){  // quando è partito il gioco e finisce la transizione
             gp.alphaVal = 255;  // reimposto le variabili necessarie nel gamePanel per permettere la transizione di entrata nel gamepanel
             gp.checkSetup = false;

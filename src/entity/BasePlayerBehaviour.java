@@ -24,8 +24,6 @@ public class BasePlayerBehaviour implements EntityMovementBehaviour{
 
             entity.changeSpriteDirection();
 
-            // hitbox.x = x + hitboxX;
-            // hitbox.y = y + hitboxY;
             // controlliamo cosa fare con l'oggetto
 
             entity.spriteCounter++;

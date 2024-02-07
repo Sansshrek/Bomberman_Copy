@@ -1,9 +1,7 @@
 package entity;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import main.Node;
 import objects.Bomb;
@@ -14,7 +12,6 @@ public class SearchBomb implements EntityMovementBehaviour{
     
     public void updateMovement(Entity entity){
         if(entity.hitbox.x == entity.getTileX() && entity.hitbox.y == entity.getTileY()){
-            // entity.findP = new Point(entity.gp.player.getTileNumCol(), entity.gp.player.getTileNumRow());  // prendo la pos del player
             Bomb bombSearch = null;
             for(Bomb bomb: entity.gp.bombH.bombs){
                 if(!bomb.exploded && !bomb.extinguished){
@@ -43,12 +40,7 @@ public class SearchBomb implements EntityMovementBehaviour{
                         entity.direction = "right";
                 }
             }else{  // comportamento idiota
-                // entity.gp.cChecker.checkTile(entity);
-                // System.out.println("Collision: " + entity.collisionOn + " Entity.x: " + (entity.hitbox.y + entity.hitboxHeight));
-                // entity.gp.cChecker.checkObj(entity);
-                // System.out.println("Direction: " + entity.direction);
-                // System.out.println("Collision: " + entity.collisionOn + " Entity.x: " + (entity.hitbox.y + entity.hitboxHeight));
-                // entity.gp.cChecker.checkObj(entity);
+                
                 if(entity.collisionOn){
                     ArrayList<String> directions = entity.gp.cChecker.validDirections(entity);  // prende ogni posizione in cui si puo muovere
                     Collections.shuffle(directions);  
@@ -56,8 +48,6 @@ public class SearchBomb implements EntityMovementBehaviour{
                         entity.collisionOn = false;  // resettiamo la collisione
                         entity.direction = dir;  // impostiamo la posizione per l'entity
                         entity.gp.cChecker.checkTile(entity);  // se in quella posizione si puo muovere allora entity.collision resta false
-                        // System.out.println("Direction: " + entity.direction);
-                        // System.out.println("Collision: " + entity.collisionOn);
                         if(!entity.collisionOn){  // se si puo muovere
                             entity.notifyObservers();
                             break;  // esce dal ciclo e lascia la direzione inserita come quella scelta

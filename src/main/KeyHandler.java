@@ -16,7 +16,7 @@ public class KeyHandler implements KeyListener {
 
     public boolean upPressed, downPressed, leftPressed, rightPressed, bombPressed, pausePressed, nextLevelPressed;
     public boolean backspacePressed, qPressed, wPressed, ePressed, rPressed, tPressed, yPressed, uPressed, iPressed, oPressed, pPressed, aPressed, sPressed, dPressed, fPressed, gPressed, hPressed, jPressed, kPressed, lPressed, zPressed, xPressed, cPressed, vPressed, bPressed, nPressed, mPressed;
-    public boolean statsPressed, firePressed, resetPressed, debugPressed;  // da eliminare
+    public boolean resetPressed;
     
     @Override
     public void keyTyped(KeyEvent e) {
@@ -45,7 +45,6 @@ public class KeyHandler implements KeyListener {
         }
         if(code == KeyEvent.VK_ENTER){  // preme il tasto Enter (Pausa)
             pausePressed = true;
-            System.out.println("ENTERR");
         }
 
         //INPUT NICKNAME-------------------------------------------        
@@ -104,14 +103,8 @@ public class KeyHandler implements KeyListener {
         if(code == KeyEvent.VK_BACK_SPACE)
             backspacePressed = true;
         //Tasti speciali
-        if(code == KeyEvent.VK_L)  // da eliminare
-            statsPressed = true;
-        if(code == KeyEvent.VK_K)
-            firePressed = true;
         if(code == KeyEvent.VK_R)  // reset livello
             resetPressed = true;
-        if(code == KeyEvent.VK_I)  // debug
-            debugPressed = true;
     }
 
     public String getLetter(){

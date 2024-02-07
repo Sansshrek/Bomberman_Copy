@@ -1,12 +1,10 @@
 package tile;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.awt.Rectangle;
@@ -14,7 +12,6 @@ import java.awt.Rectangle;
 import javax.imageio.ImageIO;
 
 import main.GamePanel;
-import objects.Bomb;
 
 public class TileManager {
     GamePanel gp;
@@ -55,16 +52,12 @@ public class TileManager {
             currentTiles = secondWorld;  // inizializza l'array con la seconda mappa
         }
     
-        System.out.println("Caricando la mappa delle mura"); // da eliminare
         loadMap("../res/map/walls01.txt", "walls");
-        System.out.println("Caricando la mappa del pavimento"); // da eliminare
         loadMap("../res/map/ground01.txt", "ground");
-        System.out.println("Generando palazzi random");
         generateHouse();  // genera le case random 
     }
 
     public ArrayList<Tile> getTileImage(String resourceDir){
-        System.out.println("Prendendo l'immagine dei Tiles di "+resourceDir);  // da eliminare
         ArrayList<Tile> tileGetter = new ArrayList<>();
         try {
             //  transparent tile (0)
@@ -178,9 +171,7 @@ public class TileManager {
         // Assicurati che la posizione x e y sia all'interno dei limiti della mappa
         int xBlock = (((x - (gp.tileSize+gp.tileSize/2)))/gp.tileSize);
         int yBlock = ((y - (2*gp.tileSize + (gp.tileSize/2)))/gp.tileSize );
-        // System.out.print("x: "+xBlock+" y: "+yBlock); // da eliminare
         if (xBlock >= 0 && xBlock < drawScreenCol && yBlock >= 0 && yBlock < gp.maxScreenRow) {
-            // System.out.println(" block "+blockTileNum[xBlock][yBlock]);  // da eliminare
             if(houseTileNum[yBlock][xBlock] == 3){
                 return true; // Restituisci true se il tile corrispondente alla posizione (x, y) è un palazzo
             }

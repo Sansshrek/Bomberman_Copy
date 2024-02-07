@@ -1,6 +1,4 @@
 package entity;
-import java.awt.Point;
-import java.awt.Rectangle;
 
 //Implementazione dell'interfaccia Observer (Observer Pattern)
 public interface EntityObserver {

@@ -1,7 +1,5 @@
 package entity;
 
-import java.awt.Color;
-
 public class EnemyDrawBehaviour implements EntityDrawBehaviour{
 
     // disegna l'enemy

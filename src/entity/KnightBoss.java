@@ -1,16 +1,12 @@
 package entity;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import main.Node;
 
-import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
 
@@ -60,7 +56,6 @@ public class KnightBoss implements EntityMovementBehaviour{
             }
 
             if(hammerHitbox.intersects(entity.gp.player.hitbox)){  // se l'hitbox sotto l'entity interseca l'hitbox del player
-                // System.out.println("Passato sotto");
                 if(entity.canAttack){  // se puo attaccare inizia l'attacco
                     entity.gp.playSfx(10);
                     entity.startAttack = true;  // inizia l'attacco

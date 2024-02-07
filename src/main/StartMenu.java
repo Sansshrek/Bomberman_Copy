@@ -4,7 +4,6 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.Color;
 
-import java.util.concurrent.*;
 import javax.imageio.ImageIO;
 
 public class StartMenu implements Panel{
@@ -32,31 +31,14 @@ public class StartMenu implements Panel{
         startPointerY = optionY - 1*gp.scale;
         pointerY = startPointerY;
         optionDistance = 20*gp.scale;   //distanza tra le opzioni
-        
-
-        /* 
-        options[0][0] = 400;//optionWidth
-        options[0][1] = 55;//optionHeight
-        options[0][2] = (gp.screenWidth - options[0][0])/2;//optionX
-        options[0][3] = (gp.screenHeight - options[0][1])/2+100;//optionY
-        options[1][0] = 400;//optionWidth
-        options[1][1] = 55;//optionHeight
-        options[1][2] = (gp.screenWidth - options[1][0])/2;//optionX
-        options[1][3] = (gp.screenHeight - options[1][1])/2+160;//optionY
-        options[2][0] = 400;//optionWidth
-        options[2][1] = 55;//optionHeight
-        options[2][2] = (gp.screenWidth - options[2][0])/2;//optionX
-        options[2][3] = (gp.screenHeight - options[2][1])/2+220; //optionY0*/
+    
         try {
-            // ballonImage = ImageIO.read(getClass().getResourceAsStream("../res/menu/Ballon.png"));
-            // cloudImage = ImageIO.read(getClass().getResourceAsStream("../res/menu/Cloud.png"));
             backgroundImage = ImageIO.read(getClass().getResourceAsStream("../res/menu/Background.png"));
             optionStartImage = ImageIO.read(getClass().getResourceAsStream("../res/menu/Start.png"));
             optionSettingsImage = ImageIO.read(getClass().getResourceAsStream("../res/menu/Settings.png"));
             optionScoreImage = ImageIO.read(getClass().getResourceAsStream("../res/menu/Score.png"));
             pointerImage = ImageIO.read(getClass().getResourceAsStream("../res/menu/pointer.png"));
             title = ImageIO.read(getClass().getResourceAsStream("../res/menu/Title.png"));
-            // transitionImage = ImageIO.read(getClass().getResourceAsStream("../res/menu/transiton.png"));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -86,8 +68,6 @@ public class StartMenu implements Panel{
     }
 
     public void chooseOptions(GamePanel gp){
-        // System.out.println("pointer index:" + pointerIndex);
-        // System.out.println(pointerY);
         if(startGame && alphaVal==255){  // quando è partito il gioco e finisce la transizione
             gp.resetGamePanel();
         }
@@ -118,7 +98,6 @@ public class StartMenu implements Panel{
             if(keyH.pausePressed && pointerIndex==0){
                 gp.stopMusic();
                 gp.playSfx(11);  // sound invio selezione
-                System.out.println("INVIOOOOOO");
                 startGame = true;
                 keyH.pausePressed = false;
             }
