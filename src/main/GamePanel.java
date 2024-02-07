@@ -532,7 +532,7 @@ public class GamePanel extends JPanel implements Runnable{
         ArrayList<Enemy> enemyDelete = new ArrayList<>();  // lista di nemici temporanea da eliminare nel caso dalla lista enemy originale
         for(Enemy entity: enemy){
             if(!entity.extinguished){  // se ancora non è esploso del tutto
-                entity.draw();  // disegna l'enemy
+                entity.drawBehaviour.draw(entity);  // disegna l'enemy
                 // entity.drawBehaviour.draw(entity);
             }else{
                 enemyDelete.add(entity);  // aggiunge il nemico morto alla lista temporanea dei nemici da eliminare

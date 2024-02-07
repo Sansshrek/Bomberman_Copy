@@ -22,7 +22,7 @@ public class Player extends Entity{
     // public ArrayList<SuperObject> bombObj = new ArrayList<>();
     
     //larghezza e altezza dell' hitbox
-    public int bombNumber, lifeNumber, score, gamesWon, gamesLost, gamesPlayed;
+    public int bombNumber, lifeNumber, firePower, score, gamesWon, gamesLost, gamesPlayed;
     int spriteDeathCounter = 0; 
     public String nickname = "player";
     public String avatarColor = "black";
@@ -33,7 +33,7 @@ public class Player extends Entity{
         // this.keyH = gp.keyH;
         int scale = gp.getScale();
         this.tileSize = gp.getTileSize();
-        this. maxSpriteNum = 3;
+        this.maxSpriteNum = 3;
         this.invulnerableSec = 12;
         this.type = "player";
 
@@ -59,14 +59,6 @@ public class Player extends Entity{
         setPlayerDefaultValues();
         getPlayerImage();
         notifyObservers();
-    }
-    
-    @Override
-    public void notifyObservers(){
-        for (int i = 0; i < observers.size(); i++) {
-            EntityObserver observer = (EntityObserver)observers.get(i);
-            observer.updateEntities(this);
-        }
     }
 /* 
     public void setEntityDefaultValues(){
@@ -300,10 +292,5 @@ public class Player extends Entity{
             }
             notifyObservers();
         }
-    }
-    
-
-    public void draw(){
-        drawBehaviour.draw(this);
     }
 }

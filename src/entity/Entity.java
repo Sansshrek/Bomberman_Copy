@@ -34,7 +34,7 @@ public class Entity implements EntityObservable{
     public ArrayList<Node> pathSearch; //percorso di ricerca utilizzato a seconda del comportamento dell'entita' (Utilizzato insieme al findP)
 
     //Proprietà delle entità
-    public int firePower, spriteCounter, spriteNum, maxSpriteNum, invulnerableSec, invulnerableTimer = 0, lifeNumber = 1, heartNumber = 1, spriteDeathNum = 0, startDeathY, imageWidth, imageHeight;
+    public int spriteCounter, spriteNum, maxSpriteNum, invulnerableSec, invulnerableTimer = 0, lifeNumber = 1, heartNumber = 1, spriteDeathNum = 0, startDeathY, imageWidth, imageHeight;
 
     //Hitbox per il controllo delle collisioni 
     public Rectangle hitbox, hittableHitbox;

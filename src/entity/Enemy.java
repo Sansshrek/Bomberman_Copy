@@ -205,24 +205,4 @@ public class Enemy extends Entity{
             notifyObservers();
         }
     }
-
-    //Metodo per disegnare l'enemy
-    public void draw(){
-
-        drawBehaviour.draw(this);
-        
-        if(!extinguished){  // se l'enemy non è esploso totalmente disegna l'immagine
-            //da eliminare
-            /*
-            g2.setColor(Color.BLUE);
-            g2.draw(hitbox);
-
-            g2.setColor(Color.GREEN);
-            g2.drawRect(getTileX(), getTileY(), tileSize, tileSize);  */
-            g2.setColor(Color.GREEN);
-            g2.draw(hittableHitbox);
-            g2.setColor(Color.BLUE);
-            g2.draw(hitbox);
-        }
-    }
 }
